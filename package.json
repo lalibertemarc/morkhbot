@@ -1,0 +1,13 @@
+{
+  "name": "Morkh's Bot",
+  "version": "1.0.0",
+  "description": "My own Discord bot",
+  "main": "bot.js",
+  "author": "Marc Laliberte",
+  "dependencies": {
+    "discord.io": "^2.5.2",
+    "discord.js": "^11.2.1",
+    "opusscript": "0.0.3",
+    "winston": "^2.3.1"
+  }
+}
