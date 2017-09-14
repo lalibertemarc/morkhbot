@@ -23,5 +23,8 @@ Bot.on("message", (message) => {
   if (message.content.startsWith(prefix + "mick")) {
     message.channel.send("Mick ye poche y joue a Destiny 2 sur console... lol");
   }
+  if (message.content.startsWith(prefix + "roll")) {
+    message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
+  }
 
 });
