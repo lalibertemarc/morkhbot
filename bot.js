@@ -103,7 +103,7 @@ Bot.on("message", (message) => {
   	var cmd = message.content;
 
   	switch (cmd){
-
+  		//winner of the day commands
   		case "!winner":
 	  		message.channel.send("The Winner of the day is "+ winnerOfTheDay + "! Gratz!!");
 	  		break;
@@ -125,7 +125,7 @@ Bot.on("message", (message) => {
     	case "!roll":
     		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
     		break;
-
+    	//bot will leave or join general channel	
     	case "!joinGeneral":
     		joinGeneralChannel();
     		break;
@@ -133,6 +133,7 @@ Bot.on("message", (message) => {
     		leaveGeneralChannel();
     		break;
 
+    	//point system commands
     	case "!points":
     		var key =  message.author.username;
   			if(userHash[key]==undefined || userHash[key]==null){
@@ -151,12 +152,6 @@ Bot.on("message", (message) => {
   			message.channel.send(message.author+" has now "+userHash[key]+" points.");
   			break;
 
-  		case "!give points ":
-  			var key =  message.author.username;
-  			var points = +message.content.slice(-2); 			
-  			givepoints(key,points);
-  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
-  			break;
   		case "!allpoints":
   			message.channel.send(JSON.stringify(userHash));
   			break;
@@ -166,7 +161,17 @@ Bot.on("message", (message) => {
   				message.channel.send(JSON.stringify(userHash));  
   			}else{
   				message.channel.send("You don't have the permission to do that");
-  			} 	  		
+  			}
+
+  		//to call different functions
+  		default :
+  		 	 if(message.content.startsWith(prefix+"give points ")){
+	  			var key =  message.author.username;
+	  			var points = +message.content.slice(-2); 			
+	  			givepoints(key,points);
+	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
+	  			return
+	  		} 		
 
 	}
 }
