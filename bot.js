@@ -163,7 +163,7 @@ Bot.on("message", (message) => {
   				message.channel.send("You don't have the permission to do that");
   			}
 
-  		//to call different functions
+  		//to call different functions, more complicated
   		default :
   		 	 if(message.content.startsWith(prefix+"give points ")){
 	  			var key =  message.author.username;
@@ -171,7 +171,21 @@ Bot.on("message", (message) => {
 	  			givepoints(key,points);
 	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
 	  			return
-	  		} 		
+	  		}
+	  		if(message.content.startsWith(prefix+"give ")){
+	  			var key =  message.content.substring(6, message.content.length-3 );
+	  			var points = +message.content.slice(-2); 
+	  			if(userHash[key]==null || userHash[key]==null)	{
+	  				message.channel.send("User is not defined");
+	  				return;
+	  			}else{
+	  				givepoints(key,points);
+	  				message.channel.send(key+" has now "+userHash[key]+" points.");
+	  				return
+	  			}		
+	  			
+	  		}
+
 
 	}
 }
