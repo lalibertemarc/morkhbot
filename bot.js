@@ -3,12 +3,19 @@ const music = require('discord.js-music-v11');
 const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
+const {PubgAPI, PubgAPIErrors, REGION, SEASON, MATCH} = require('pubg-api-redis');
+
 var winnerOfTheDay;
 var generalChannel;
+var help;
 
 var fs = require("fs");
 var contents  = fs.readFileSync("userHash.json");
 userHash = JSON.parse(contents);
+var helpcontent = fs.readFileSync("help.json");
+help = JSON.parse(helpcontent);
+var pubgContent = fs.readFileSync("pubgNames.json");
+pubgNames= JSON.parse(pubgContent);
 
 music(Bot);
 Bot.login(token);
@@ -25,7 +32,9 @@ Bot.on('ready', () => {
     generalChannel=channel;
 });
 
-
+const api = new PubgAPI({
+  apikey: 'f9d81a7a-fb97-4ee3-90c4-bd58f397fd56',
+});
 
 //change the winner of the day 
 function changeWinner(){
@@ -126,7 +135,7 @@ Bot.on("message", (message) => {
     		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
     		break;
     	//bot will leave or join general channel	
-    	case "!joinGeneral":
+    	case "!joinGeneral":!
     		joinGeneralChannel();
     		break;
     	case "!leaveGeneral":
@@ -158,23 +167,138 @@ Bot.on("message", (message) => {
   		case "!resetpoints":
   			if(message.author.username=="Morkh"){
   				resetPoints();
-  				message.channel.send(JSON.stringify(userHash));  
+  				message.channel.send(userHash);  
   			}else{
   				message.channel.send("You don't have the permission to do that");
   			}
+  		case "!help":
+  			message.channel.send(help);
+  			break;
+
+  		case "!getPubgDuoStats":
+  			var key =  message.author.username;	
+  				api.getProfileByNickname(pubgNames[key])
+				  .then((profile) => {
+				    const data = profile.content;
+				    const stats = profile.getStats({
+				      region: REGION.ALL,
+				      season: SEASON.EA2017pre4, 
+				      match: MATCH.DUO 
+				    });
+				    message.channel.send("Duo stats for "+pubgNames[key])
+				    message.channel.send("Performance:")
+				    message.channel.send(JSON.stringify(stats.performance));
+				    message.channel.send("Combat:")
+				    message.channel.send(JSON.stringify(stats.combat));
+				  }).catch(message.channel.send("The Stats API is currently disabled"));					
+			break;				
+		case "!getPubgSquadStats":
+			var key =  message.author.username;
+	  			api.getProfileByNickname(pubgNames[key])
+				  .then((profile) => {
+				    const data = profile.content;
+				    const stats = profile.getStats({
+				      region: REGION.ALL,
+				      season: SEASON.EA2017pre4, 
+				      match: MATCH.SQUAD
+				    });
+				    message.channel.send("Squad stats for "+pubgNames[key])
+				    message.channel.send("Performance:")
+				    message.channel.send(JSON.stringify(stats.performance));
+				    message.channel.send("Combat:")
+				    message.channel.send(JSON.stringify(stats.combat));
+				  }).catch(message.channel.send("The Stats API is currently disabled"));
+			break;
+		case "!getPubgDuoFPPStats":
+			var key =  message.author.username;
+	  			api.getProfileByNickname(pubgNames[key])
+				  .then((profile) => {
+				    const data = profile.content;
+				    const stats = profile.getStats({
+				      region: REGION.ALL,
+				      season: SEASON.EA2017pre4, 
+				      match: MATCH.DUOFPP
+				    });
+				    message.channel.send("DuoFPP stats for "+pubgNames[key])
+				    message.channel.send("Performance:")
+				    message.channel.send(JSON.stringify(stats.performance));
+				    message.channel.send("Combat:")
+				    message.channel.send(JSON.stringify(stats.combat));
+				  }).catch(message.channel.send("The Stats API is currently disabled"));
+			break;
+		case "!getPubgSquadFPPStats":
+			var key =  message.author.username;
+	  			api.getProfileByNickname(pubgNames[key])
+				  .then((profile) => {
+				    const data = profile.content;
+				    const stats = profile.getStats({
+				      region: REGION.ALL,
+				      season: SEASON.EA2017pre4, 
+				      match: MATCH.SQUADFPP
+				    });
+				    message.channel.send("SquadFPP stats for "+pubgNames[key])
+				    message.channel.send("Performance:")
+				    message.channel.send(JSON.stringify(stats.performance));
+				    message.channel.send("Combat:")
+				    message.channel.send(JSON.stringify(stats.combat));
+				  }).catch(message.channel.send("The Stats API is currently disabled"));
+			break;
+		case "!getPubgSoloStats":
+  			var key =  message.author.username;
+	  			api.getProfileByNickname(pubgNames[key])
+				  .then((profile) => {
+				    const data = profile.content;
+				    const stats = profile.getStats({
+				      region: REGION.ALL,
+				      season: SEASON.EA2017pre4, 
+				      match: MATCH.SOLO 
+				    });
+				    message.channel.send("Solo stats for "+pubgNames[key])
+				    message.channel.send("Performance:")
+				    message.channel.send(JSON.stringify(stats.performance));
+				    message.channel.send("Combat:")
+				    message.channel.send(JSON.stringify(stats.combat));
+				  }).catch(message.channel.send("The Stats API is currently disabled"));
+			break;
+		case "!getPubgSoloFPPStats":
+  			var key =  message.author.username;
+	  			api.getProfileByNickname(pubgNames[key])
+				  .then((profile) => {
+				    const data = profile.content;
+				    const stats = profile.getStats({
+				      region: REGION.ALL,
+				      season: SEASON.EA2017pre4, 
+				      match: MATCH.SOLOFPP 
+				    });
+				    message.channel.send("SoloFPP stats for "+pubgNames[key])
+				    message.channel.send("Performance:")
+				    message.channel.send(JSON.stringify(stats.performance));
+				    message.channel.send("Combat:")
+				    message.channel.send(JSON.stringify(stats.combat));
+				  }).catch(message.channel.send("The Stats API is currently disabled"));
+			break;		
 
   		//to call different functions, more complicated
   		default :
+  				//user will recieve points
   		 	 if(message.content.startsWith(prefix+"give points ")){
 	  			var key =  message.author.username;
-	  			var points = +message.content.slice(-2); 			
+	  			var string = message.content.split(" "); 
+	  			var points = +string[string.length-1];			
 	  			givepoints(key,points);
 	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
 	  			return
 	  		}
+	  			//user will give specified user points
 	  		if(message.content.startsWith(prefix+"give ")){
-	  			var key =  message.content.substring(6, message.content.length-3 );
-	  			var points = +message.content.slice(-2); 
+	  			console.log(key)
+	  			var string = message.content.split(" ");
+	  			if(string.length>3){
+	  				message.channel.send("Invalid command");
+	  				return;
+	  			} 
+	  			var key = string[1];
+	  			var points = +string[string.length-1]; 
 	  			if(userHash[key]==null || userHash[key]==null)	{
 	  				message.channel.send("User is not defined");
 	  				return;
@@ -182,10 +306,8 @@ Bot.on("message", (message) => {
 	  				givepoints(key,points);
 	  				message.channel.send(key+" has now "+userHash[key]+" points.");
 	  				return
-	  			}		
-	  			
+	  			}			  			
 	  		}
-
 
 	}
 }
