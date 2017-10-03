@@ -174,6 +174,10 @@ Bot.on("message", (message) => {
   		case "!help":
   			message.channel.send(help);
   			break;
+  		case "!leaveCurrent": 
+  				joinGeneral();
+  				leaveGeneral();
+  				break;
 
   		case "!getPubgDuoStats":
   			var key =  message.author.username;	
