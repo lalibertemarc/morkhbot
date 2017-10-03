@@ -175,8 +175,8 @@ Bot.on("message", (message) => {
   			message.channel.send(help);
   			break;
   		case "!leaveCurrent": 
-  				joinGeneral();
-  				leaveGeneral();
+  				joinGeneralChannel();
+  				leaveGeneralChannel();
   				break;
 
   		case "!getPubgDuoStats":
