@@ -14,8 +14,6 @@ var contents  = fs.readFileSync("userHash.json");
 userHash = JSON.parse(contents);
 var helpcontent = fs.readFileSync("help.json");
 help = JSON.parse(helpcontent);
-var pubgContent = fs.readFileSync("pubgNames.json");
-pubgNames= JSON.parse(pubgContent);
 
 music(Bot);
 Bot.login(token);
@@ -30,10 +28,6 @@ Bot.on('ready', () => {
     //for some reasons the bot wont get channeId in global variables
     var channel = Bot.channels.get("353747084819693571");
     generalChannel=channel;
-});
-
-const api = new PubgAPI({
-  apikey: 'f9d81a7a-fb97-4ee3-90c4-bd58f397fd56',
 });
 
 //change the winner of the day 
@@ -97,8 +91,6 @@ function resetPoints(){
 	}
 	saveUserPoints();
 }
-
-
 
 //chat commands
 let prefix = "!";
@@ -177,110 +169,7 @@ Bot.on("message", (message) => {
   		case "!leaveCurrent": 
   				joinGeneralChannel();
   				leaveGeneralChannel();
-  				break;
-
-  		case "!getPubgDuoStats":
-  			var key =  message.author.username;	
-  				api.getProfileByNickname(pubgNames[key])
-				  .then((profile) => {
-				    const data = profile.content;
-				    const stats = profile.getStats({
-				      region: REGION.ALL,
-				      season: SEASON.EA2017pre4, 
-				      match: MATCH.DUO 
-				    });
-				    message.channel.send("Duo stats for "+pubgNames[key])
-				    message.channel.send("Performance:")
-				    message.channel.send(JSON.stringify(stats.performance));
-				    message.channel.send("Combat:")
-				    message.channel.send(JSON.stringify(stats.combat));
-				  }).catch(message.channel.send("The Stats API is currently disabled"));					
-			break;				
-		case "!getPubgSquadStats":
-			var key =  message.author.username;
-	  			api.getProfileByNickname(pubgNames[key])
-				  .then((profile) => {
-				    const data = profile.content;
-				    const stats = profile.getStats({
-				      region: REGION.ALL,
-				      season: SEASON.EA2017pre4, 
-				      match: MATCH.SQUAD
-				    });
-				    message.channel.send("Squad stats for "+pubgNames[key])
-				    message.channel.send("Performance:")
-				    message.channel.send(JSON.stringify(stats.performance));
-				    message.channel.send("Combat:")
-				    message.channel.send(JSON.stringify(stats.combat));
-				  }).catch(message.channel.send("The Stats API is currently disabled"));
-			break;
-		case "!getPubgDuoFPPStats":
-			var key =  message.author.username;
-	  			api.getProfileByNickname(pubgNames[key])
-				  .then((profile) => {
-				    const data = profile.content;
-				    const stats = profile.getStats({
-				      region: REGION.ALL,
-				      season: SEASON.EA2017pre4, 
-				      match: MATCH.DUOFPP
-				    });
-				    message.channel.send("DuoFPP stats for "+pubgNames[key])
-				    message.channel.send("Performance:")
-				    message.channel.send(JSON.stringify(stats.performance));
-				    message.channel.send("Combat:")
-				    message.channel.send(JSON.stringify(stats.combat));
-				  }).catch(message.channel.send("The Stats API is currently disabled"));
-			break;
-		case "!getPubgSquadFPPStats":
-			var key =  message.author.username;
-	  			api.getProfileByNickname(pubgNames[key])
-				  .then((profile) => {
-				    const data = profile.content;
-				    const stats = profile.getStats({
-				      region: REGION.ALL,
-				      season: SEASON.EA2017pre4, 
-				      match: MATCH.SQUADFPP
-				    });
-				    message.channel.send("SquadFPP stats for "+pubgNames[key])
-				    message.channel.send("Performance:")
-				    message.channel.send(JSON.stringify(stats.performance));
-				    message.channel.send("Combat:")
-				    message.channel.send(JSON.stringify(stats.combat));
-				  }).catch(message.channel.send("The Stats API is currently disabled"));
-			break;
-		case "!getPubgSoloStats":
-  			var key =  message.author.username;
-	  			api.getProfileByNickname(pubgNames[key])
-				  .then((profile) => {
-				    const data = profile.content;
-				    const stats = profile.getStats({
-				      region: REGION.ALL,
-				      season: SEASON.EA2017pre4, 
-				      match: MATCH.SOLO 
-				    });
-				    message.channel.send("Solo stats for "+pubgNames[key])
-				    message.channel.send("Performance:")
-				    message.channel.send(JSON.stringify(stats.performance));
-				    message.channel.send("Combat:")
-				    message.channel.send(JSON.stringify(stats.combat));
-				  }).catch(message.channel.send("The Stats API is currently disabled"));
-			break;
-		case "!getPubgSoloFPPStats":
-  			var key =  message.author.username;
-	  			api.getProfileByNickname(pubgNames[key])
-				  .then((profile) => {
-				    const data = profile.content;
-				    const stats = profile.getStats({
-				      region: REGION.ALL,
-				      season: SEASON.EA2017pre4, 
-				      match: MATCH.SOLOFPP 
-				    });
-				    message.channel.send("SoloFPP stats for "+pubgNames[key])
-				    message.channel.send("Performance:")
-				    message.channel.send(JSON.stringify(stats.performance));
-				    message.channel.send("Combat:")
-				    message.channel.send(JSON.stringify(stats.combat));
-				  }).catch(message.channel.send("The Stats API is currently disabled"));
-			break;		
+  				break; 		
 
   		//to call different functions, more complicated
   		default :
