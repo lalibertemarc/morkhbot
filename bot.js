@@ -193,12 +193,11 @@ Bot.on("message", (message) => {
 	  			var key = string[1];
 	  			var points = +string[string.length-1]; 
 	  			if(userHash[key]==null || userHash[key]==null)	{
-	  				message.channel.send("User is not defined");
-	  				return;
-	  			}else{
-	  				givepoints(key,points);
-	  				message.channel.send(key+" has now "+userHash[key]+" points.");
-	  				return
+	  				userHash[key]=0;	  				
+	  			}
+	  			givepoints(key,points);
+	  			message.channel.send(key+" has now "+userHash[key]+" points.");
+	  			return
 	  			}			  			
 	  		}
 
