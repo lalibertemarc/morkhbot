@@ -92,6 +92,24 @@ function resetPoints(){
 	saveUserPoints();
 }
 
+function launcher(d){
+	var dice = d.split("d")
+	var number = +dice[0]
+	var face = +dice[1]
+	var somme=0
+	
+	if(number<=0){return "You rolled  a 0, congratz!"}
+	if (face <=0){return "Please use dices with at least 1 face"}
+
+	for(var i=0; i<number;i++){
+		somme+=Math.floor(Math.random()*face+1)
+	}
+	if(somme==face*number){return "You rolled a "+somme+ ". Best in possible outcome."}
+	if(number==1 && face==20 && somme==20){return "You rolled a 20! Critical hit!"}
+	if(number==1 && face==20 && somme==1){return "You rolled a 1! Fumble!"}
+	return "You rolled a "+somme+"."
+}
+
 //chat commands
 let prefix = "!";
 Bot.on("message", (message) => {
@@ -198,10 +216,15 @@ Bot.on("message", (message) => {
 	  			givepoints(key,points);
 	  			message.channel.send(key+" has now "+userHash[key]+" points.");
 	  			return
-	  			}			  			
+	  			}
+
+	  		if(message.content.startsWith(prefix+"roll ")){	
+	  			var string = message.content.split(" ");
+	  			message.channel.send(launcher(string[1]));
+	  			}		  			
 	  		}
 
-	}
+	
 }
 
 });
