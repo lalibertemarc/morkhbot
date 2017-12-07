@@ -3,7 +3,6 @@ const music = require('discord.js-music-v11');
 const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
-const {PubgAPI, PubgAPIErrors, REGION, SEASON, MATCH} = require('pubg-api-redis');
 
 var winnerOfTheDay;
 var generalChannel;
@@ -18,6 +17,7 @@ help = JSON.parse(helpcontent);
 music(Bot);
 Bot.login(token);
 
+//activate boy
 Bot.on('ready', () => {
     console.log(`[Start] ${new Date()}`);
     winnerOfTheDay = Bot.users.random().username
@@ -66,6 +66,7 @@ function givepoint(key){
 	saveUserPoints();
 }
 
+//give custom number points to user-key
 function givepoints(key, points){
 	console.log(points)
 		//new user will be put in userHash
@@ -92,6 +93,7 @@ function resetPoints(){
 	saveUserPoints();
 }
 
+//launche dices
 function launcher(d){
 	var dice = d.split("d")
 	var number = +dice[0]
