@@ -106,9 +106,10 @@ function launcher(d){
 	for(var i=0; i<number;i++){
 		somme+=Math.floor(Math.random()*face+1)
 	}
-	if(somme==face*number){return "You rolled a "+somme+ ". Best in possible outcome."}
+	
 	if(number==1 && face==20 && somme==20){return "You rolled a 20! Critical hit!"}
 	if(number==1 && face==20 && somme==1){return "You rolled a 1! Fumble!"}
+	if(somme==face*number){return "You rolled a "+somme+ ". Best in possible outcome."}
 	return "You rolled a "+somme+"."
 }
 
