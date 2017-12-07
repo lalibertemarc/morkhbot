@@ -245,6 +245,12 @@ process.stdin.on('keypress', function (ch, key) {
   if (key && key.shift && key.name == 'l') {
     NotifiyChannel.send("keypress detected")
   }
+  if (key && key.shift && key.name == 'm') {
+    NotifiyChannel.send("What if I told you.... you have shit taste in music!")
+  }
+  if (key && key.shift && key.name == 'c') {
+    NotifiyChannel.send("ChipChocolate plz carry us! ChipChocolate for president!")
+  }
 });
 
 process.stdin.setRawMode(true);
