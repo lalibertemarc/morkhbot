@@ -17,7 +17,13 @@ help = JSON.parse(helpcontent);
 music(Bot);
 Bot.login(token);
 
-//activate boy
+
+var keypress = require('keypress');
+ 
+// make `process.stdin` begin emitting "keypress" events 
+keypress(process.stdin);
+
+//activate bot
 Bot.on('ready', () => {
     console.log(`[Start] ${new Date()}`);
     winnerOfTheDay = Bot.users.random().username
@@ -25,8 +31,7 @@ Bot.on('ready', () => {
     if(winnerOfTheDay=="Clyde" || winnerOfTheDay=="Morkh's Bot"){
     	changeWinner();
     }
-    //for some reasons the bot wont get channeId in global variables
-    var channel = Bot.channels.get("353747084819693571");
+    var channel = Bot.channels.find("id", "353747084819693570");
     generalChannel=channel;
 });
 
@@ -93,7 +98,7 @@ function resetPoints(){
 	saveUserPoints();
 }
 
-//launche dices
+//launche dices, needs string input like 2d6
 function launcher(d){
 	var dice = d.split("d")
 	var number = +dice[0]
@@ -232,8 +237,13 @@ Bot.on("message", (message) => {
 
 });
 
+process.stdin.on('keypress', function (ch, key) {
+  console.log('got "keypress"', key);
+  if (key && key.shift && key.name == 'l') {
+    generalChannel.send("keypress detected")
+  }
+});
 
-
-
+process.stdin.setRawMode(true);
         
 
