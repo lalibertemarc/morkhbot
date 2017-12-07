@@ -6,6 +6,7 @@ const token = auth.token;
 
 var winnerOfTheDay;
 var generalChannel;
+var NotifiyChannel;
 var help;
 
 var fs = require("fs");
@@ -32,9 +33,11 @@ Bot.on('ready', () => {
     	changeWinner();
     }
     var channel = Bot.channels.find("id", "353747084819693570");
-    generalChannel=channel;
-});
+    NotifiyChannel=channel;
+    var channel2 = Bot.channels.get("353747084819693571");
+    generalChannel=channel2;
 
+});
 //change the winner of the day 
 function changeWinner(){
 	while(winnerOfTheDay=="Clyde" || winnerOfTheDay=="Morkh's Bot" ){
@@ -240,7 +243,7 @@ Bot.on("message", (message) => {
 process.stdin.on('keypress', function (ch, key) {
   console.log('got "keypress"', key);
   if (key && key.shift && key.name == 'l') {
-    generalChannel.send("keypress detected")
+    NotifiyChannel.send("keypress detected")
   }
 });
 
