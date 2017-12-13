@@ -5,8 +5,13 @@ const auth = require('./auth.json');
 const token = auth.token;
 
 var winnerOfTheDay;
+
+//to join or disconnect the bot from channel
 var generalChannel;
+
+//to send message without using message object
 var NotifiyChannel;
+
 var help;
 
 var fs = require("fs");
@@ -18,10 +23,12 @@ help = JSON.parse(helpcontent);
 music(Bot);
 Bot.login(token);
 
+// web crawler related
+var Crawler = require("node-webcrawler");
+var url = require('url');
 
-var keypress = require('keypress');
- 
-// make `process.stdin` begin emitting "keypress" events 
+//key press var and begin process
+var keypress = require('keypress'); 
 keypress(process.stdin);
 
 //activate bot
@@ -34,6 +41,7 @@ Bot.on('ready', () => {
     }
     var channel = Bot.channels.find("id", "353747084819693570");
     NotifiyChannel=channel;
+
     var channel2 = Bot.channels.get("353747084819693571");
     generalChannel=channel2;
 
@@ -112,7 +120,7 @@ function launcher(d){
 	if (face <=0){return "Please use dices with at least 1 face"}
 
 	for(var i=0; i<number;i++){
-		somme+=Math.floor(Math.random()*face+1)
+		somme+=Math.floor(Math.random()*face+1);
 	}
 	
 	if(number==1 && face==20 && somme==20){return "You rolled a 20! Critical hit!"}
@@ -121,14 +129,46 @@ function launcher(d){
 	return "You rolled a "+somme+"."
 }
 
+
+ //R6 web crawler
+var r6 = new Crawler({
+    maxConnections : 10,
+    // This will be called for each crawled page 
+    callback : function (error, result, $) {
+        
+        if(error){
+            console.log(error);
+        }else{
+            value = $( "div.value" ).text().split("\n");
+            console.log(value[5]);
+            NotifiyChannel.send("You have a Kill/Death ratio of " value[5]); 
+        }
+    }
+});
+
+//launch R6 web crawler
+function launchR6Crawler(author){
+	switch (author){
+		case "Morkh":
+			r6.queue('https://r6stats.com/stats/uplay/morkh1436');
+			break;
+		case "chipchocolate":
+			r6.queue('https://r6stats.com/stats/uplay/chipchocolate7');
+			break;
+		default:
+			NotifiyChannel.send("Your username is not initialized in the bot code, ask your Discord server admin.");
+			break;
+
+	}
+}
+
 //chat commands
 let prefix = "!";
 Bot.on("message", (message) => {
   if (message.author.id === Bot.user.id || message.author.bot) return;
   let args = message.content.split(" ").slice(1);
 
-
-  //winner of the day
+  //huge switch case, seems to be faster than if then else
   if (message.content.startsWith(prefix)) {
   	var cmd = message.content;
 
@@ -160,6 +200,7 @@ Bot.on("message", (message) => {
     		joinGeneralChannel();
     		break;
     	case "!leaveGeneral":
+    		joinGeneralChannel();
     		leaveGeneralChannel();
     		break;
 
@@ -198,11 +239,14 @@ Bot.on("message", (message) => {
   		case "!leaveCurrent": 
   				joinGeneralChannel();
   				leaveGeneralChannel();
+  				break;
+  		case "!getR6Kd":
+  				launchR6Crawler(message.author.username)
   				break; 		
 
   		//to call different functions, more complicated
   		default :
-  				//user will recieve points
+  				//message author will recieve points
   		 	 if(message.content.startsWith(prefix+"give points ")){
 	  			var key =  message.author.username;
 	  			var string = message.content.split(" "); 
@@ -211,7 +255,7 @@ Bot.on("message", (message) => {
 	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
 	  			return
 	  		}
-	  			//user will give specified user points
+	  			//user will give specified user points !give usename 10
 	  		if(message.content.startsWith(prefix+"give ")){
 	  			console.log(key)
 	  			var string = message.content.split(" ");
@@ -240,16 +284,18 @@ Bot.on("message", (message) => {
 
 });
 
+//keypress commands
 process.stdin.on('keypress', function (ch, key) {
   console.log('got "keypress"', key);
-  if (key && key.shift && key.name == 'l') {
-    NotifiyChannel.send("keypress detected")
-  }
   if (key && key.shift && key.name == 'm') {
-    NotifiyChannel.send("What if I told you.... you have shit taste in music!")
+    NotifiyChannel.send("What if I told you.... you have shit taste in music!");
   }
   if (key && key.shift && key.name == 'c') {
-    NotifiyChannel.send("ChipChocolate plz carry us! ChipChocolate for president!")
+    NotifiyChannel.send("ChipChocolate plz carry us! ChipChocolate for president!");
+  }
+  //to keep node feature to exit program with ctrl+c
+  if (key && key.ctrl && key.name == 'c') {
+    process.exit(1);
   }
 });
 
