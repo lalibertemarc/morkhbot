@@ -141,7 +141,7 @@ var r6 = new Crawler({
         }else{
             value = $( "div.value" ).text().split("\n");
             console.log(value[5]);
-            NotifiyChannel.send("You have a Kill/Death ratio of " value[5]); 
+            NotifiyChannel.send("You have a Kill/Death ratio of " + value[5]); 
         }
     }
 });
