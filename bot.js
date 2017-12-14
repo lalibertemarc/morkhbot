@@ -86,7 +86,12 @@ function givepoint(key){
 //give custom number points to user-key
 function givepoints(key, points){
 	console.log(points)
-		//new user will be put in userHash
+	//check if points is number
+	if(!Number.isInteger(points)){
+		NotifiyChannel.send("Teehee")
+		return;
+	}
+	//new user will be put in userHash
 	if(userHash[key]==null || userHash[key]==undefined ){
 		userHash[key]=0;
 	}
@@ -151,7 +156,10 @@ function eval(a, b, c){
 	}
 	if(b=='-'){
 		return a-c
-	}	
+	}
+	if(b=='^'){
+		return Math.pow(a,c)
+	}		
 }
 
 //string to array for calculator functions
@@ -160,7 +168,7 @@ function toArray(exp){
 	var string=""
 	for (var i=0; i<=exp.length;i++){
 		if(exp.charAt(i)=='+'||exp.charAt(i)=='-'
-			||exp.charAt(i)=='*' ||exp.charAt(i)=='/'){
+			||exp.charAt(i)=='*' ||exp.charAt(i)=='/'||exp.charAt(i)=='^'){
 			result.push(string);
 			result.push(exp.charAt(i));
 			string="";
@@ -188,7 +196,7 @@ function interpreter(exp){
 	var i=0
 	//evaluate * and / first
 	while(i!=exp.length){
-		if (exp[i]=="*" || exp[i]=="/"){
+		if (exp[i]=="*" || exp[i]=="/"|| exp[i]=="^"){
 			var terme = eval(exp[i-1], exp[i], exp[i+1])
 			var test=exp.slice(0,i-1)
 			test.push(terme)
@@ -308,7 +316,7 @@ Bot.on("message", (message) => {
   		case "!gimmepoint":
   			var key =  message.author.username;
   			givepoint(key);
-  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
+  			message.channel.send(key+" has now "+userHash[key]+" points.");
   			break;
 
   		case "!allpoints":
