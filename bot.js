@@ -44,6 +44,7 @@ Bot.on('ready', () => {
 
     var channel2 = Bot.channels.get("353747084819693571");
     generalChannel=channel2;
+    Bot.user.setGame("Node.js")
 
 });
 //change the winner of the day 
@@ -115,18 +116,105 @@ function launcher(d){
 	var number = +dice[0]
 	var face = +dice[1]
 	var somme=0
+	var result=[]
 	
 	if(number<=0){return "You rolled  a 0, congratz!"}
 	if (face <=0){return "Please use dices with at least 1 face"}
 
 	for(var i=0; i<number;i++){
-		somme+=Math.floor(Math.random()*face+1);
+		var tir = Math.floor(Math.random()*face+1)
+		somme+=tir;
+		result.push(tir)
 	}
 	
 	if(number==1 && face==20 && somme==20){return "You rolled a 20! Critical hit!"}
 	if(number==1 && face==20 && somme==1){return "You rolled a 1! Fumble!"}
 	if(somme==face*number){return "You rolled a "+somme+ ". Best in possible outcome."}
-	return "You rolled a "+somme+"."
+	if(number>1){
+		return "You rolled a "+somme+". Your results were "+result+"."
+	}else{
+		return "You rolled a "+somme+"."
+	}
+	
+}
+
+//evaluate simple expression
+function eval(a, b, c){
+	if(b=='+'){
+		return a+c
+	}
+	if(b=='*'){
+		return a*c
+	}
+	if(b=='/'){
+		return a/c
+	}
+	if(b=='-'){
+		return a-c
+	}	
+}
+
+//string to array for calculator functions
+function toArray(exp){
+	var result =[]
+	var string=""
+	for (var i=0; i<=exp.length;i++){
+		if(exp.charAt(i)=='+'||exp.charAt(i)=='-'
+			||exp.charAt(i)=='*' ||exp.charAt(i)=='/'){
+			result.push(string);
+			result.push(exp.charAt(i));
+			string="";
+			continue
+		}
+		string+=exp.charAt(i);
+		if(i==exp.length-1){
+			result.push(string)
+		}
+		
+
+	}
+	return result
+}
+
+//interpretor for input string from calc chat command
+function interpreter(exp){
+	exp=toArray(exp)
+	//string to int//float
+	for(var i=0;i<exp.length;i++){
+		if(i%2==0){
+			exp[i]=+exp[i]
+		}
+	}
+	var i=0
+	//evaluate * and / first
+	while(i!=exp.length){
+		if (exp[i]=="*" || exp[i]=="/"){
+			var terme = eval(exp[i-1], exp[i], exp[i+1])
+			var test=exp.slice(0,i-1)
+			test.push(terme)
+			test2=exp.slice(i+2, exp.length)
+			test=test.concat(test2)
+			exp=test;
+			i=0						
+		}
+		i++
+	}
+	if(exp.length==1){
+		return exp[0]
+	}
+	var i=0
+	var test=[]
+	//evaluate rest.
+	while(exp.length!=1){
+		if(exp[i]=="+" ||exp[i]=="-"){
+			var terme = eval(exp[i-1], exp[i], exp[i+1])
+			test=[terme].concat(exp.slice(i+2, exp.length))
+			exp=test
+			i=0
+		}
+		i++
+	}
+	return exp[0]
 }
 
 
@@ -276,8 +364,13 @@ Bot.on("message", (message) => {
 	  		if(message.content.startsWith(prefix+"roll ")){	
 	  			var string = message.content.split(" ");
 	  			message.channel.send(launcher(string[1]));
-	  			}		  			
-	  		}
+	  			}
+	  		if(message.content.startsWith(prefix+"calc ")){
+	  			var string = message.content.split(" ")
+	  			NotifiyChannel.send(interpreter(string[1]))
+	  		}	
+
+	}
 
 	
 }
