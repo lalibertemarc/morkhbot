@@ -3,6 +3,14 @@ const music = require('discord.js-music-v11');
 const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
+const calc = require('./calc.js');
+const launcher = require('./dicelauncher.js')
+var duel = require('./duel.js')
+//var test=require('./test.js')
+
+ // web crawler related
+var Crawler = require("node-webcrawler");
+var url = require('url');
 
 var winnerOfTheDay;
 
@@ -10,7 +18,9 @@ var winnerOfTheDay;
 var generalChannel;
 
 //to send message without using message object
-var NotifiyChannel;
+var NotifyChannel;
+var testChannel;
+
 
 var help;
 
@@ -23,9 +33,7 @@ help = JSON.parse(helpcontent);
 music(Bot);
 Bot.login(token);
 
-// web crawler related
-var Crawler = require("node-webcrawler");
-var url = require('url');
+
 
 //key press var and begin process
 var keypress = require('keypress'); 
@@ -40,7 +48,9 @@ Bot.on('ready', () => {
     	changeWinner();
     }
     var channel = Bot.channels.find("id", "353747084819693570");
-    NotifiyChannel=channel;
+    NotifyChannel=channel;
+    testChannel = Bot.channels.find("id", "391706259923140618");
+    //test.send();
 
     var channel2 = Bot.channels.get("353747084819693571");
     generalChannel=channel2;
@@ -88,7 +98,7 @@ function givepoints(key, points){
 	console.log(points)
 	//check if points is number
 	if(!Number.isInteger(points)){
-		NotifiyChannel.send("Teehee")
+		NotifyChannel.send("Teehee")
 		return;
 	}
 	//new user will be put in userHash
@@ -115,118 +125,7 @@ function resetPoints(){
 	saveUserPoints();
 }
 
-//launche dices, needs string input like 2d6
-function launcher(d){
-	var dice = d.split("d")
-	var number = +dice[0]
-	var face = +dice[1]
-	var somme=0
-	var result=[]
-	
-	if(number<=0){return "You rolled  a 0, congratz!"}
-	if (face <=0){return "Please use dices with at least 1 face"}
-
-	for(var i=0; i<number;i++){
-		var tir = Math.floor(Math.random()*face+1)
-		somme+=tir;
-		result.push(tir)
-	}
-	
-	if(number==1 && face==20 && somme==20){return "You rolled a 20! Critical hit!"}
-	if(number==1 && face==20 && somme==1){return "You rolled a 1! Fumble!"}
-	if(somme==face*number){return "You rolled a "+somme+ ". Best in possible outcome."}
-	if(number>1){
-		return "You rolled a "+somme+". Your results were "+result+"."
-	}else{
-		return "You rolled a "+somme+"."
-	}
-	
-}
-
-//evaluate simple expression
-function eval(a, b, c){
-	if(b=='+'){
-		return a+c
-	}
-	if(b=='*'){
-		return a*c
-	}
-	if(b=='/'){
-		return a/c
-	}
-	if(b=='-'){
-		return a-c
-	}
-	if(b=='^'){
-		return Math.pow(a,c)
-	}		
-}
-
-//string to array for calculator functions
-function toArray(exp){
-	var result =[]
-	var string=""
-	for (var i=0; i<=exp.length;i++){
-		if(exp.charAt(i)=='+'||exp.charAt(i)=='-'
-			||exp.charAt(i)=='*' ||exp.charAt(i)=='/'||exp.charAt(i)=='^'){
-			result.push(string);
-			result.push(exp.charAt(i));
-			string="";
-			continue
-		}
-		string+=exp.charAt(i);
-		if(i==exp.length-1){
-			result.push(string)
-		}
-		
-
-	}
-	return result
-}
-
-//interpretor for input string from calc chat command
-function interpreter(exp){
-	exp=toArray(exp)
-	//string to int//float
-	for(var i=0;i<exp.length;i++){
-		if(i%2==0){
-			exp[i]=+exp[i]
-		}
-	}
-	var i=0
-	//evaluate * and / first
-	while(i!=exp.length){
-		if (exp[i]=="*" || exp[i]=="/"|| exp[i]=="^"){
-			var terme = eval(exp[i-1], exp[i], exp[i+1])
-			var test=exp.slice(0,i-1)
-			test.push(terme)
-			test2=exp.slice(i+2, exp.length)
-			test=test.concat(test2)
-			exp=test;
-			i=0						
-		}
-		i++
-	}
-	if(exp.length==1){
-		return exp[0]
-	}
-	var i=0
-	var test=[]
-	//evaluate rest.
-	while(exp.length!=1){
-		if(exp[i]=="+" ||exp[i]=="-"){
-			var terme = eval(exp[i-1], exp[i], exp[i+1])
-			test=[terme].concat(exp.slice(i+2, exp.length))
-			exp=test
-			i=0
-		}
-		i++
-	}
-	return exp[0]
-}
-
-
- //R6 web crawler
+//R6 web crawler
 var r6 = new Crawler({
     maxConnections : 10,
     // This will be called for each crawled page 
@@ -236,8 +135,8 @@ var r6 = new Crawler({
             console.log(error);
         }else{
             value = $( "div.value" ).text().split("\n");
-            console.log(value[5]);
-            NotifiyChannel.send("You have a Kill/Death ratio of " + value[5]); 
+            console.log(value[5])
+            NotifyChannel.send("You have a Kill/Death ratio of " + value[5]) ;
         }
     }
 });
@@ -252,11 +151,12 @@ function launchR6Crawler(author){
 			r6.queue('https://r6stats.com/stats/uplay/chipchocolate7');
 			break;
 		default:
-			NotifiyChannel.send("Your username is not initialized in the bot code, ask your Discord server admin.");
+			"Your username is not initialized in the bot code, ask your Discord server admin.";
 			break;
 
 	}
 }
+
 
 //chat commands
 let prefix = "!";
@@ -368,15 +268,26 @@ Bot.on("message", (message) => {
 	  			message.channel.send(key+" has now "+userHash[key]+" points.");
 	  			return
 	  			}
-
+	  		//roll dices commands like !roll 2d6
 	  		if(message.content.startsWith(prefix+"roll ")){	
 	  			var string = message.content.split(" ");
-	  			message.channel.send(launcher(string[1]));
+	  			message.channel.send(launcher.launcher(string[1]));
 	  			}
+	  		//calculator functions
 	  		if(message.content.startsWith(prefix+"calc ")){
 	  			var string = message.content.split(" ")
-	  			NotifiyChannel.send(interpreter(string[1]))
-	  		}	
+	  			message.channel.send(calc.interpreter(string[1]))
+	  		}
+	  		//duel fonctions	
+	  		if(message.content.startsWith(prefix+"challengeDuel ")){
+	  			var initiator = message.author.username;
+	  			var string = message.content.split(" ");
+	  			var target = string[1];
+	  			duel.initiateDuel(initiator, target);
+	  		}
+	  		if(message.content.startsWith(prefix+"acceptDuel")){
+	  			duel.acceptDuel(message.author.username)
+	  		}
 
 	}
 
@@ -402,4 +313,3 @@ process.stdin.on('keypress', function (ch, key) {
 
 process.stdin.setRawMode(true);
         
-
