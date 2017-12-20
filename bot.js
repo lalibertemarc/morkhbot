@@ -3,16 +3,18 @@ const music = require('discord.js-music-v11');
 const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
+
 const calc = require('./calc.js');
-const launcher = require('./dicelauncher.js')
-var duel = require('./duel.js')
+const launcher = require('./dicelauncher.js');
+const duel = require('./duel.js');
+const pts = require('./points.js');
+const prime = require('./prime.js')
+//console.log(points)
 //var test=require('./test.js')
 
  // web crawler related
 var Crawler = require("node-webcrawler");
 var url = require('url');
-
-var winnerOfTheDay;
 
 //to join or disconnect the bot from channel
 var generalChannel;
@@ -21,19 +23,17 @@ var generalChannel;
 var NotifyChannel;
 var testChannel;
 
+//var from other modules
+var userHash;
 
 var help;
-
 var fs = require("fs");
-var contents  = fs.readFileSync("userHash.json");
-userHash = JSON.parse(contents);
 var helpcontent = fs.readFileSync("help.json");
 help = JSON.parse(helpcontent);
 
 music(Bot);
+
 Bot.login(token);
-
-
 
 //key press var and begin process
 var keypress = require('keypress'); 
@@ -42,27 +42,30 @@ keypress(process.stdin);
 //activate bot
 Bot.on('ready', () => {
     console.log(`[Start] ${new Date()}`);
-    winnerOfTheDay = Bot.users.random().username
-    givepoint(winnerOfTheDay);
-    if(winnerOfTheDay=="Clyde" || winnerOfTheDay=="Morkh's Bot"){
-    	changeWinner();
-    }
+    userHash = pts.userHash;
+    initUsers();
+    //init variables for channels
     var channel = Bot.channels.find("id", "353747084819693570");
     NotifyChannel=channel;
     testChannel = Bot.channels.find("id", "391706259923140618");
-    //test.send();
 
     var channel2 = Bot.channels.get("353747084819693571");
     generalChannel=channel2;
     Bot.user.setGame("Node.js")
 
 });
-//change the winner of the day 
-function changeWinner(){
-	while(winnerOfTheDay=="Clyde" || winnerOfTheDay=="Morkh's Bot" ){
-		winnerOfTheDay = Bot.users.random().username
-		givepoint(winnerOfTheDay);
-	}	
+
+//iterate overs users to initate them in userhash
+function initUsers(){
+	for(user of Bot.users){
+		points = userHash[user[1].username]
+		if (points==null || points==undefined){
+			userHash[user[1].username]=0
+		}
+	}
+	pts.userHash=userHash
+	pts.saveUserPoints();
+	console.log(userHash);	
 }
 
 //bot will join general voice chat
@@ -78,52 +81,6 @@ function leaveGeneralChannel(){
   	console.log('Disconnected');
 }
 
-
-//give +1 points to message author
-function givepoint(key){
-	//new user will be put in userHash
-	if(userHash[key]==null || userHash[key]==undefined ){
-		userHash[key]=0;
-		console.log(userHash);
-		saveUserPoints();
-		return
-	}
-	userHash[key]=userHash[key]+=1;
-	console.log(userHash);
-	saveUserPoints();
-}
-
-//give custom number points to user-key
-function givepoints(key, points){
-	console.log(points)
-	//check if points is number
-	if(!Number.isInteger(points)){
-		NotifyChannel.send("Teehee")
-		return;
-	}
-	//new user will be put in userHash
-	if(userHash[key]==null || userHash[key]==undefined ){
-		userHash[key]=0;
-	}
-	userHash[key]=userHash[key]+points;
-	console.log(userHash);
-	saveUserPoints();
-}
-
-//save user points to json file
-function saveUserPoints(){
-	var json = JSON.stringify(userHash);
-	fs.writeFile('userHash.json', json, 'utf8');
-	console.log("saved to userHash.json");
-}
-
-//reset all points
-function resetPoints(){
-	for(key in userHash){
-		userHash[key]=0;
-	}
-	saveUserPoints();
-}
 
 //R6 web crawler
 var r6 = new Crawler({
@@ -169,25 +126,9 @@ Bot.on("message", (message) => {
   	var cmd = message.content;
 
   	switch (cmd){
-  		//winner of the day commands
-  		case "!winner":
-	  		message.channel.send("The Winner of the day is "+ winnerOfTheDay + "! Gratz!!");
-	  		break;
-
-  		case "!changewinner":
-	  		if(message.author.username=="Morkh"){
-	  			changeWinner();
-	    		message.channel.send("The Winner of the day is now "+ winnerOfTheDay);
-	  		}else{
-	  			message.channel.send("You don't have the permission to do that");
-	  		}
-	  		break;
-
-  		//get a point if you make a play command
-    	case "!play":
-    		givepoint(message.author.username);
-    		break;
-
+  		case "!test":
+  			test.send();
+  			break;	
     	case "!roll":
     		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
     		break;
@@ -196,15 +137,18 @@ Bot.on("message", (message) => {
     		joinGeneralChannel();
     		break;
     	case "!leaveGeneral":
-    		joinGeneralChannel();
     		leaveGeneralChannel();
     		break;
+    	case "!leaveCurrent": 
+  			joinGeneralChannel();
+  			;eaveGeneralChannel();
+  			break;
 
     	//point system commands
     	case "!points":
     		var key =  message.author.username;
   			if(userHash[key]==undefined || userHash[key]==null){
-  				givepoint(key);
+  				pts.givepoint(key);
   			}
   			if(!userHash[key]){
   				message.channel.send(message.author+" has 0 points. RIP");
@@ -213,18 +157,18 @@ Bot.on("message", (message) => {
   			}
   			break; 	
   		
-  		case "!gimmepoint":
+  		case "!gimmePoint":
   			var key =  message.author.username;
-  			givepoint(key);
+  			pts.givepoint(key);
   			message.channel.send(key+" has now "+userHash[key]+" points.");
   			break;
 
-  		case "!allpoints":
+  		case "!allPoints":
   			message.channel.send(JSON.stringify(userHash));
   			break;
-  		case "!resetpoints":
+  		case "!resetPoints":
   			if(message.author.username=="Morkh"){
-  				resetPoints();
+  				pts.resetPoints();
   				message.channel.send(userHash);  
   			}else{
   				message.channel.send("You don't have the permission to do that");
@@ -232,10 +176,7 @@ Bot.on("message", (message) => {
   		case "!help":
   			message.channel.send(help);
   			break;
-  		case "!leaveCurrent": 
-  				joinGeneralChannel();
-  				leaveGeneralChannel();
-  				break;
+ 
   		case "!getR6Kd":
   				launchR6Crawler(message.author.username)
   				break; 		
@@ -243,11 +184,11 @@ Bot.on("message", (message) => {
   		//to call different functions, more complicated
   		default :
   				//message author will recieve points
-  		 	 if(message.content.startsWith(prefix+"give points ")){
+  		 	 if(message.content.startsWith(prefix+"gimme points ")){
 	  			var key =  message.author.username;
 	  			var string = message.content.split(" "); 
 	  			var points = +string[string.length-1];			
-	  			givepoints(key,points);
+	  			pts.givepoints(key,points);
 	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
 	  			return
 	  		}
@@ -264,7 +205,7 @@ Bot.on("message", (message) => {
 	  			if(userHash[key]==null || userHash[key]==null)	{
 	  				userHash[key]=0;	  				
 	  			}
-	  			givepoints(key,points);
+	  			pts.givepoints(key,points);
 	  			message.channel.send(key+" has now "+userHash[key]+" points.");
 	  			return
 	  			}
@@ -278,15 +219,47 @@ Bot.on("message", (message) => {
 	  			var string = message.content.split(" ")
 	  			message.channel.send(calc.interpreter(string[1]))
 	  		}
+	  		//prime numbers function
+	  		if(message.content.startsWith(prefix+"isPrime ")){
+	  			var string = message.content.split(" ")	  			
+	  			message.channel.send(prime.isPrime(+string[1]))
+	  		}
+	  		if(message.content.startsWith(prefix+"nPrime ")){
+	  			var string = message.content.split(" ")
+	  			message.channel.send(prime.nPrime(+string[1]))
+	  		}//throw in gcd, why not
+	  		if(message.content.startsWith(prefix+"gcd ")){
+	  			var string = message.content.split(" ")	  			
+	  			message.channel.send(prime.gcd(+string[1], +string[2]))
+	  		}
+
 	  		//duel fonctions	
 	  		if(message.content.startsWith(prefix+"challengeDuel ")){
 	  			var initiator = message.author.username;
 	  			var string = message.content.split(" ");
 	  			var target = string[1];
 	  			duel.initiateDuel(initiator, target);
+	  			message.channel.send(target +" you have been challenge in a duel by "+initiator+".");
+	  			message.channel.send("Type !acceptDuel if you accept or !refuseDuel if you're too affraid.")
 	  		}
 	  		if(message.content.startsWith(prefix+"acceptDuel")){
-	  			duel.acceptDuel(message.author.username)
+	  			duel.acceptDuel(message.author.username);
+	  			message.channel.send("Duel is starting, in 3-2-1 GO!")
+	  			message.channel.send("Type !duelRoll <typeRoll>, like !duelRoll 1d20 or whatever.")
+	  		}
+	  		if(message.content.startsWith(prefix+"duelRoll ")){	
+	  			var typeRoll = message.content.split(" ");
+	  			message.channel.send(duel.duelRoll(message.author.username, typeRoll[1]))
+	  		}
+	  		if(message.content.startsWith(prefix+"endDuel")){	
+	  			message.channel.send(duel.endDuel());
+	  		}
+	  		if(message.content.startsWith(prefix+"clearDuel")){	
+	  			duel.clearDuelData();
+	  		}
+	  		if(message.content.startsWith(prefix+"refuseDuel")){	
+	  			duel.clearDuelData();
+	  			message.channel.send("Duel is ready to be initiated again.")
 	  		}
 
 	}
@@ -312,4 +285,7 @@ process.stdin.on('keypress', function (ch, key) {
 });
 
 process.stdin.setRawMode(true);
-        
+
+module.exports={
+	testChannel:testChannel
+}
