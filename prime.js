@@ -45,10 +45,11 @@ function isPrime(n){
 }
 
 //console.log(isPrime(359))
-//nPrime(4000)
 
 module.exports={
 	isPrime:isPrime,
 	nPrime:nPrime,
 	gcd:gcd
 }
+
+//printAll(nPrime(10))

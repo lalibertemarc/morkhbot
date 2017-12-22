@@ -1,10 +1,9 @@
 var fs = require("fs");
-
-const Discord = require('discord.js');
-const Bot = new Discord.Client();
-var testChannel  = require('./bot.js')
+var bot  = require('./bot.js');
+var testChannel;
 
 function send(){
+	testChannel=bot.testChannel;
 	testChannel.send("hello")
 }
 

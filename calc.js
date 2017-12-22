@@ -43,8 +43,7 @@ function toArray (exp){
 	for (var i=0; i<=exp.length;i++){
 		if(exp.charAt(i)=='+'||exp.charAt(i)=='-'
 			||exp.charAt(i)=='*' ||exp.charAt(i)=='/'||exp.charAt(i)=='^'
-			||exp.charAt(i)=='(' ||exp.charAt(i)==')'){	
-			console.log(string)			
+			||exp.charAt(i)=='(' ||exp.charAt(i)==')'){		
 			result.push(string);
 			result.push(exp.charAt(i));
 			string="";
@@ -67,7 +66,6 @@ function toArray (exp){
 			result[i]=+result[i]
 		}
 	}
-	console.log("apres array", result)
 	return result
 }
 
