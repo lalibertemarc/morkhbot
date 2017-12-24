@@ -222,7 +222,7 @@ Bot.on("message", (message) => {
 	  		//prime numbers function
 	  		if(message.content.startsWith(prefix+"isPrime ")){
 	  			var string = message.content.split(" ")	  			
-	  			message.channel.send(prime.isPrime(+string[1]))
+	  			message.channel.send(prime.isPrime(+string[1],[1]))
 	  		}
 	  		if(message.content.startsWith(prefix+"nPrime ")){
 	  			var string = message.content.split(" ")

@@ -18,9 +18,9 @@ function nPrime(n){
 		return "Please enter integers."
 	}
 	var resultat=[1];
-	var i=0;
+	var i=2;
 	while(resultat.length!=n){
-		if(isPrime(i)){
+		if(isPrimeArray(i,resultat)){
 			resultat.push(i);
 		}
 		i++;
@@ -28,23 +28,35 @@ function nPrime(n){
 	return resultat;
 }
 
-//check if number is prime
+//check if number is prime with array
+function isPrimeArray(n,r){
+	if(!Number.isInteger(n)){	  	
+		return "Please enter integers.";
+	}
+	for(var j=0;j<r.length;j++){
+			if(gcd(n,r[j])!=1){
+				return false
+			}			
+		}
+		return true
+}
+
+//mode brute to be used by bot
 function isPrime(n){
 	if(!Number.isInteger(n)){	  	
 		return "Please enter integers.";
 	}
-	for(var j=1;j<=n;j++){
+	for(var j=1;j<n/2;j++){
 			if(gcd(n,j)!=1){
-				break;
+				return false
 			}			
 		}
-		if(j==n){
-			return true;
-		}
-	return false;
+		return true
 }
 
-//console.log(isPrime(359))
+
+//console.log(nPrime(10))
+//console.log(isPrime(13))
 
 module.exports={
 	isPrime:isPrime,
