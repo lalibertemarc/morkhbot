@@ -28,7 +28,7 @@ function nPrime(n){
 	return resultat;
 }
 
-//check if number is prime with array
+//check if number is prime with array of primes
 function isPrimeArray(n,r){
 	if(!Number.isInteger(n)){	  	
 		return "Please enter integers.";

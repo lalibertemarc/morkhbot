@@ -141,7 +141,7 @@ Bot.on("message", (message) => {
     		break;
     	case "!leaveCurrent": 
   			joinGeneralChannel();
-  			;eaveGeneralChannel();
+  			leaveGeneralChannel();
   			break;
 
     	//point system commands
