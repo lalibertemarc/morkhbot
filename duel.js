@@ -6,6 +6,7 @@ function initiateDuel(initatorName, targetName){
 	if(typeof initatorName !='string' || typeof targetName !='string'){
 		return
 	}
+
 	duelData['initiator']=initatorName
 	duelData['target']= targetName
 	console.log(duelData)

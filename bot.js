@@ -1,16 +1,16 @@
 const Discord = require('discord.js');
-const music = require('discord.js-music-v11');
 const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
 
+//const from other modules
+const music = require('discord.js-music-v11');
 const calc = require('./calc.js');
 const launcher = require('./dicelauncher.js');
 const duel = require('./duel.js');
 const pts = require('./points.js');
 const prime = require('./prime.js')
-//console.log(points)
-//var test=require('./test.js')
+
 
  // web crawler related
 var Crawler = require("node-webcrawler");
@@ -21,12 +21,11 @@ var generalChannel;
 
 //to send message without using message object
 var NotifyChannel;
-var testChannel;
 
 //var from other modules
 var userHash;
-
 var help;
+
 var fs = require("fs");
 var helpcontent = fs.readFileSync("help.json");
 help = JSON.parse(helpcontent);
@@ -47,7 +46,6 @@ Bot.on('ready', () => {
     //init variables for channels
     var channel = Bot.channels.find("id", "353747084819693570");
     NotifyChannel=channel;
-    testChannel = Bot.channels.find("id", "391706259923140618");
 
     var channel2 = Bot.channels.get("353747084819693571");
     generalChannel=channel2;
@@ -55,9 +53,11 @@ Bot.on('ready', () => {
 
 });
 
+
+
 //iterate overs users to initate them in userhash
 function initUsers(){
-	for(user of Bot.users){
+	for(user of Bot.users){		
 		points = userHash[user[1].username]
 		if (points==null || points==undefined){
 			userHash[user[1].username]=0
@@ -110,7 +110,6 @@ function launchR6Crawler(author){
 		default:
 			"Your username is not initialized in the bot code, ask your Discord server admin.";
 			break;
-
 	}
 }
 
@@ -125,10 +124,7 @@ Bot.on("message", (message) => {
   if (message.content.startsWith(prefix)) {
   	var cmd = message.content;
 
-  	switch (cmd){
-  		case "!test":
-  			test.send();
-  			break;	
+  	switch (cmd){	
     	case "!roll":
     		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
     		break;
@@ -160,7 +156,7 @@ Bot.on("message", (message) => {
   		case "!gimmePoint":
   			var key =  message.author.username;
   			pts.givepoint(key);
-  			message.channel.send(key+" has now "+userHash[key]+" points.");
+  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
   			break;
 
   		case "!allPoints":
@@ -183,16 +179,7 @@ Bot.on("message", (message) => {
 
   		//to call different functions, more complicated
   		default :
-  				//message author will recieve points
-  		 	 if(message.content.startsWith(prefix+"gimme points ")){
-	  			var key =  message.author.username;
-	  			var string = message.content.split(" "); 
-	  			var points = +string[string.length-1];			
-	  			pts.givepoints(key,points);
-	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
-	  			return
-	  		}
-	  			//user will give specified user points !give usename 10
+	  			//user will give specified user points !give username 10
 	  		if(message.content.startsWith(prefix+"give ")){
 	  			console.log(key)
 	  			var string = message.content.split(" ");
@@ -206,7 +193,7 @@ Bot.on("message", (message) => {
 	  				userHash[key]=0;	  				
 	  			}
 	  			pts.givepoints(key,points);
-	  			message.channel.send(key+" has now "+userHash[key]+" points.");
+	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
 	  			return
 	  			}
 	  		//roll dices commands like !roll 2d6
@@ -216,21 +203,25 @@ Bot.on("message", (message) => {
 	  			}
 	  		//calculator functions
 	  		if(message.content.startsWith(prefix+"calc ")){
-	  			var string = message.content.split(" ")
-	  			message.channel.send(calc.interpreter(string[1]))
+	  			var string = message.content.split(" ");
+	  			message.channel.send(calc.interpreter(string[1]));
 	  		}
 	  		//prime numbers function
 	  		if(message.content.startsWith(prefix+"isPrime ")){
-	  			var string = message.content.split(" ")	  			
-	  			message.channel.send(prime.isPrime(+string[1],[1]))
+	  			var string = message.content.split(" ");	  			
+	  			message.channel.send(prime.isPrime(+string[1],[1]));
 	  		}
 	  		if(message.content.startsWith(prefix+"nPrime ")){
-	  			var string = message.content.split(" ")
-	  			message.channel.send(prime.nPrime(+string[1]))
+	  			var string = message.content.split(" ");
+	  			message.channel.send(prime.nPrime(+string[1]));
 	  		}//throw in gcd, why not
 	  		if(message.content.startsWith(prefix+"gcd ")){
-	  			var string = message.content.split(" ")	  			
-	  			message.channel.send(prime.gcd(+string[1], +string[2]))
+	  			var string = message.content.split(" ");	  			
+	  			message.channel.send(prime.gcd(+string[1], +string[2]));
+	  		}
+	  		if(message.content.startsWith(prefix+"primeRange ")){
+	  			var string = message.content.split(" ");
+	  			message.channel.send(prime.primeRange(+string[1],+string[2]))
 	  		}
 
 	  		//duel fonctions	
@@ -238,6 +229,10 @@ Bot.on("message", (message) => {
 	  			var initiator = message.author.username;
 	  			var string = message.content.split(" ");
 	  			var target = string[1];
+	  			if(initiator==target){
+	  				message.channel.send("You have won over yourself, congratz!")
+	  				return;
+	  			}
 	  			duel.initiateDuel(initiator, target);
 	  			message.channel.send(target +" you have been challenge in a duel by "+initiator+".");
 	  			message.channel.send("Type !acceptDuel if you accept or !refuseDuel if you're too affraid.")
@@ -260,11 +255,8 @@ Bot.on("message", (message) => {
 	  		if(message.content.startsWith(prefix+"refuseDuel")){	
 	  			duel.clearDuelData();
 	  			message.channel.send("Duel is ready to be initiated again.")
-	  		}
-
-	}
-
-	
+	  		}	  		
+	}	
 }
 
 });
@@ -273,7 +265,7 @@ Bot.on("message", (message) => {
 process.stdin.on('keypress', function (ch, key) {
   console.log('got "keypress"', key);
   if (key && key.shift && key.name == 'm') {
-    NotifiyChannel.send("What if I told you.... you have shit taste in music!");
+    NotifiyChannel.send("What if I told you.... you have bad taste in music!");
   }
   if (key && key.shift && key.name == 'c') {
     NotifiyChannel.send("ChipChocolate plz carry us! ChipChocolate for president!");
@@ -286,6 +278,4 @@ process.stdin.on('keypress', function (ch, key) {
 
 process.stdin.setRawMode(true);
 
-module.exports={
-	testChannel:testChannel
-}
+

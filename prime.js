@@ -15,7 +15,7 @@ function printAll(p){
 //find prime numbers between 1 and n
 function nPrime(n){
 	if(!Number.isInteger(n)){	  	
-		return "Please enter integers."
+		return "Please enter integers.";
 	}
 	var resultat=[1];
 	var i=2;
@@ -35,33 +35,51 @@ function isPrimeArray(n,r){
 	}
 	for(var j=0;j<r.length;j++){
 			if(gcd(n,r[j])!=1){
-				return false
+				return false;
 			}			
 		}
-		return true
+		return true;
 }
 
-//mode brute to be used by bot
+function primeRange(n,k){
+	if(!Number.isInteger(n) || !Number.isInteger(k)){	  	
+		return "Please enter integers.";
+	}
+	//inversion du range si jamais cest inverse a linput
+	if(k<n){
+		var temp=n;
+		n=k;
+		k=temp;
+
+	}
+	var resultat=[]
+	for(var i=n;i<=k;i++){
+		if(isPrime(i)){
+			resultat.push(i)
+		}
+	}
+	return resultat;
+}
+
+//mode semi-brute to be used by bot
 function isPrime(n){
 	if(!Number.isInteger(n)){	  	
 		return "Please enter integers.";
 	}
 	for(var j=1;j<n/2;j++){
 			if(gcd(n,j)!=1){
-				return false
+				return false;
 			}			
 		}
-		return true
+		return true;
 }
 
 
-//console.log(nPrime(10))
-//console.log(isPrime(13))
 
 module.exports={
 	isPrime:isPrime,
 	nPrime:nPrime,
-	gcd:gcd
+	gcd:gcd,
+	primeRange : primeRange
 }
 
-//printAll(nPrime(10))
