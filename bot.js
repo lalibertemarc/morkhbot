@@ -10,7 +10,8 @@ const launcher = require('./dicelauncher.js');
 const duel = require('./duel.js');
 const pts = require('./points.js');
 const prime = require('./prime.js')
-
+const name = require('./randomName.js')
+const fortnite = require('./fortnite.js')
 
  // web crawler related
 var Crawler = require("node-webcrawler");
@@ -49,7 +50,7 @@ Bot.on('ready', () => {
 
     var channel2 = Bot.channels.get("353747084819693571");
     generalChannel=channel2;
-    Bot.user.setGame("Node.js")
+    //Bot.user.setActivity("Node.js")
 
 });
 
@@ -139,7 +140,20 @@ Bot.on("message", (message) => {
   			joinGeneralChannel();
   			leaveGeneralChannel();
   			break;
-
+  		case "!changeName":
+  			var newName = name.getRandomName()
+  			message.channel.send("New name is "+newName)
+  			message.member.setNickname(newName)
+  			.catch(console.error);
+  			break;
+  		case "!resetName":
+  			message.channel.send("Name is back to normal")
+  			message.member.setNickname("")
+  			.catch(console.error);
+  			break;
+  		case "!landingZone":
+  			message.channel.send(fortnite.getLandingZone());
+  			break;
     	//point system commands
     	case "!points":
     		var key =  message.author.username;
@@ -276,6 +290,6 @@ process.stdin.on('keypress', function (ch, key) {
   }
 });
 
-process.stdin.setRawMode(true);
+//process.stdin.setRawMode(true);
 
 

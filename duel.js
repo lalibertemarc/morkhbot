@@ -61,7 +61,7 @@ function endDuel(){
 				duelData['initiatorRoll']+" over " +duelData['targetRoll']+"."
 	}
 	if(duelData['initiatorRoll'] < duelData['targetRoll']){
-		return duelData['target']+" wins the duel over "+ duelData['initiatorRoll']+" with a roll of "+
+		return duelData['target']+" wins the duel over "+ duelData['initiator']+" with a roll of "+
 				duelData['targetRoll']+" over " +duelData['initiatorRoll']+"."
 	}
 	if(duelData['initiatorRoll']==duelData['targetRoll']){
