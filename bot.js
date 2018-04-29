@@ -10,12 +10,26 @@ const launcher = require('./dicelauncher.js');
 const duel = require('./duel.js');
 const pts = require('./points.js');
 const prime = require('./prime.js')
-const name = require('./randomName.js')
-const fortnite = require('./fortnite.js')
+const name = require('./randomName.js');
+const fortnite = require('./fortnite.js');
+
+
+const translate = require('google-translate-api');
+
+//server
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express()
+
+app.use(express.static('public'))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json('application/json'));
+
 
  // web crawler related
-var Crawler = require("node-webcrawler");
-var url = require('url');
+ var Crawler = require("node-webcrawler");
+ var url = require('url');
+
 
 //to join or disconnect the bot from channel
 var generalChannel;
@@ -41,9 +55,9 @@ keypress(process.stdin);
 
 //activate bot
 Bot.on('ready', () => {
-    console.log(`[Start] ${new Date()}`);
-    userHash = pts.userHash;
-    initUsers();
+  console.log(`[Start] ${new Date()}`);
+  userHash = pts.userHash;
+  initUsers();
     //init variables for channels
     var channel = Bot.channels.find("id", "353747084819693570");
     NotifyChannel=channel;
@@ -52,9 +66,25 @@ Bot.on('ready', () => {
     generalChannel=channel2;
     //Bot.user.setActivity("Node.js")
 
-});
+  });
 
+//fortnite webhook
+app.post('/webhook', function (req, res) {
 
+  NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
+  NotifyChannel.send(req.body.commits[0].message)
+  NotifyChannel.send("Check it out at http://74.58.124.137:8888/")
+  res.send({message:"we received webhook"});
+})
+
+//morkh bot.
+app.post('/webhook2', function (req, res) {
+  NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
+  NotifyChannel.send(req.body.commits[0].message)
+  res.send({message:"we received webhook"});
+})
+
+app.listen(8000, () => console.log('Now listening to 8000'));
 
 //iterate overs users to initate them in userhash
 function initUsers(){
@@ -72,46 +102,46 @@ function initUsers(){
 //bot will join general voice chat
 function joinGeneralChannel(){
 	generalChannel.join()
-  	.then(connection => console.log('Connected'))
-  	.catch(console.error);
+ .then(connection => console.log('Connected'))
+ .catch(console.error);
 }
 
 //bot will leave general voice chat
 function leaveGeneralChannel(){
 	generalChannel.leave();
-  	console.log('Disconnected');
+ console.log('Disconnected');
 }
 
 
 //R6 web crawler
 var r6 = new Crawler({
-    maxConnections : 10,
+  maxConnections : 10,
     // This will be called for each crawled page 
     callback : function (error, result, $) {
-        
-        if(error){
-            console.log(error);
-        }else{
-            value = $( "div.value" ).text().split("\n");
-            console.log(value[5])
-            NotifyChannel.send("You have a Kill/Death ratio of " + value[5]) ;
-        }
+
+      if(error){
+        console.log(error);
+      }else{
+        value = $( "div.value" ).text().split("\n");
+        console.log(value[5])
+        NotifyChannel.send("You have a Kill/Death ratio of " + value[5]) ;
+      }
     }
-});
+  });
 
 //launch R6 web crawler
 function launchR6Crawler(author){
 	switch (author){
 		case "Morkh":
-			r6.queue('https://r6stats.com/stats/uplay/morkh1436');
-			break;
-		case "chipchocolate":
-			r6.queue('https://r6stats.com/stats/uplay/chipchocolate7');
-			break;
-		default:
-			"Your username is not initialized in the bot code, ask your Discord server admin.";
-			break;
-	}
+   r6.queue('https://r6stats.com/stats/uplay/morkh1436');
+   break;
+   case "chipchocolate":
+   r6.queue('https://r6stats.com/stats/uplay/chipchocolate7');
+   break;
+   default:
+   "Your username is not initialized in the bot code, ask your Discord server admin.";
+   break;
+ }
 }
 
 
@@ -126,95 +156,108 @@ Bot.on("message", (message) => {
   	var cmd = message.content;
 
   	switch (cmd){	
-    	case "!roll":
-    		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
-    		break;
+     case "!roll":
+     message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
+     break;
     	//bot will leave or join general channel	
     	case "!joinGeneral":!
-    		joinGeneralChannel();
-    		break;
-    	case "!leaveGeneral":
-    		leaveGeneralChannel();
-    		break;
-    	case "!leaveCurrent": 
-  			joinGeneralChannel();
-  			leaveGeneralChannel();
-  			break;
-  		case "!changeName":
-  			var newName = name.getRandomName()
-  			message.channel.send("New name is "+newName)
-  			message.member.setNickname(newName)
-  			.catch(console.error);
-  			break;
-  		case "!resetName":
-  			message.channel.send("Name is back to normal")
-  			message.member.setNickname("")
-  			.catch(console.error);
-  			break;
-  		case "!landingZone":
-  			message.channel.send(fortnite.getLandingZone());
-  			break;
+      joinGeneralChannel();
+      break;
+      case "!leaveGeneral":
+      leaveGeneralChannel();
+      break;
+      case "!leaveCurrent": 
+      joinGeneralChannel();
+      leaveGeneralChannel();
+      break;
+      case "!changeName":
+      var newName = name.getRandomName()
+      message.channel.send("New name is "+newName)
+      message.member.setNickname(newName)
+      .catch(console.error);
+      break;
+      case "!resetName":
+      message.channel.send("Name is back to normal")
+      message.member.setNickname("")
+      .catch(console.error);
+      break;
+      case "!landingZone":
+      message.channel.send(fortnite.getLandingZone());
+      break;
     	//point system commands
     	case "!points":
-    		var key =  message.author.username;
-  			if(userHash[key]==undefined || userHash[key]==null){
-  				pts.givepoint(key);
-  			}
-  			if(!userHash[key]){
-  				message.channel.send(message.author+" has 0 points. RIP");
-  			}else{
-  				message.channel.send(message.author+" has "+userHash[key]+" points.");
-  			}
-  			break; 	
-  		
-  		case "!gimmePoint":
-  			var key =  message.author.username;
-  			pts.givepoint(key);
-  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
-  			break;
+      var key =  message.author.username;
+      if(userHash[key]==undefined || userHash[key]==null){
+        pts.givepoint(key);
+      }
+      if(!userHash[key]){
+        message.channel.send(message.author+" has 0 points. RIP");
+      }else{
+        message.channel.send(message.author+" has "+userHash[key]+" points.");
+      }
+      break; 	
 
-  		case "!allPoints":
-  			message.channel.send(JSON.stringify(userHash));
-  			break;
-  		case "!resetPoints":
-  			if(message.author.username=="Morkh"){
-  				pts.resetPoints();
-  				message.channel.send(userHash);  
-  			}else{
-  				message.channel.send("You don't have the permission to do that");
-  			}
-  		case "!help":
-  			message.channel.send(help);
-  			break;
- 
-  		case "!getR6Kd":
-  				launchR6Crawler(message.author.username)
-  				break; 		
+      case "!gimmePoint":
+      var key =  message.author.username;
+      pts.givepoint(key);
+      message.channel.send(message.author+" has now "+userHash[key]+" points.");
+      break;
 
+      case "!allPoints":
+      message.channel.send(JSON.stringify(userHash));
+      break;
+      case "!resetPoints":
+      if(message.author.username=="Morkh"){
+        pts.resetPoints();
+        message.channel.send(userHash);  
+      }else{
+        message.channel.send("You don't have the permission to do that");
+      }
+      case "!help":
+      message.channel.send(help);
+      break;
+
+      case "!getR6Kd":
+      launchR6Crawler(message.author.username)
+      break; 
+
+      case "!languages":
+      var result=""
+      var it=0
+      for(key in translate.languages){
+        it++
+        result+=key+": "+translate.languages[key]+"\n"
+        if(it==105){
+          break;
+        }
+      }
+      //console.log(result);
+      message.channel.send(result);		
+      break;
   		//to call different functions, more complicated
   		default :
 	  			//user will give specified user points !give username 10
-	  		if(message.content.startsWith(prefix+"give ")){
-	  			console.log(key)
-	  			var string = message.content.split(" ");
-	  			if(string.length>3){
-	  				message.channel.send("Invalid command");
-	  				return;
-	  			} 
-	  			var key = string[1];
-	  			var points = +string[string.length-1]; 
-	  			if(userHash[key]==null || userHash[key]==null)	{
-	  				userHash[key]=0;	  				
-	  			}
-	  			pts.givepoints(key,points);
-	  			message.channel.send(message.author+" has now "+userHash[key]+" points.");
-	  			return
-	  			}
+         if(message.content.startsWith(prefix+"give ")){
+          console.log(key)
+          var string = message.content.split(" ");
+          if(string.length>3){
+           message.channel.send("Invalid command");
+           return;
+         } 
+         var key = string[1];
+         var points = +string[string.length-1]; 
+         if(userHash[key]==null || userHash[key]==null)	{
+           userHash[key]=0;	  				
+         }
+         pts.givepoints(key,points);
+         message.channel.send(message.author+" has now "+userHash[key]+" points.");
+         return
+       }
 	  		//roll dices commands like !roll 2d6
 	  		if(message.content.startsWith(prefix+"roll ")){	
 	  			var string = message.content.split(" ");
 	  			message.channel.send(launcher.launcher(string[1]));
-	  			}
+        }
 	  		//calculator functions
 	  		if(message.content.startsWith(prefix+"calc ")){
 	  			var string = message.content.split(" ");
@@ -237,6 +280,18 @@ Bot.on("message", (message) => {
 	  			var string = message.content.split(" ");
 	  			message.channel.send(prime.primeRange(+string[1],+string[2]))
 	  		}
+        //translate
+        if(message.content.startsWith(prefix+"translate/")){
+          var string = message.content.split("/");
+          //console.log(string)
+          translate(string[1], {from: string[2], to: string[3]}).then(res => {
+            message.channel.send(res.text);
+              //=> I speak English 
+              //message.channel.send(res.from.text.autoCorrected);
+            }).catch(err => {
+              console.error(err);
+            });        
+        }
 
 	  		//duel fonctions	
 	  		if(message.content.startsWith(prefix+"challengeDuel ")){
@@ -270,10 +325,10 @@ Bot.on("message", (message) => {
 	  			duel.clearDuelData();
 	  			message.channel.send("Duel is ready to be initiated again.")
 	  		}	  		
-	}	
-}
+     }	
+   }
 
-});
+ });
 
 //keypress commands
 process.stdin.on('keypress', function (ch, key) {
