@@ -77,7 +77,7 @@ app.post('/webhook', function (req, res) {
   res.send({message:"we received webhook"});
 })
 
-//morkh bot.
+//morkh bot webhook
 app.post('/webhook2', function (req, res) {
   NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
   NotifyChannel.send(req.body.commits[0].message)
