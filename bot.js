@@ -73,7 +73,7 @@ app.post('/webhook', function (req, res) {
 
   NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
   NotifyChannel.send(req.body.commits[0].message)
-  NotifyChannel.send("Check it out at http://74.58.124.137:8888/")
+  NotifyChannel.send("Check it out at http://108.61.78.227:8888/")
   res.send({message:"we received webhook"});
 })
 
