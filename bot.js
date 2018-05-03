@@ -251,7 +251,7 @@ Bot.on("message", (message) => {
            userHash[key]=0;	  				
          }
          pts.givepoints(key,points);
-         message.channel.send(message.author+" has now "+userHash[key]+" points.");
+         message.channel.send(key+" has now "+userHash[key]+" points.");
          return
        }
 	  		//roll dices commands like !roll 2d6
