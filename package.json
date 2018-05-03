@@ -6,6 +6,7 @@
   "author": "Marc Laliberte",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cumberbatch-name": "^1.2.0",
     "dictionary-en-us": "^2.0.0",
     "discord.io": "^2.5.2",
     "discord.js": "^11.2.1",

@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
-
+var cumberbatch = require('cumberbatch-name');
 //const from other modules
 const music = require('discord.js-music-v11');
 const calc = require('./calc.js');
@@ -220,7 +220,9 @@ Bot.on("message", (message) => {
       case "!getR6Kd":
       launchR6Crawler(message.author.username)
       break; 
-
+      case "!benedict":
+      message.channel.send(cumberbatch());
+      break
       case "!languages":
       var result=""
       var it=0
@@ -231,7 +233,6 @@ Bot.on("message", (message) => {
           break;
         }
       }
-      //console.log(result);
       message.channel.send(result);		
       break;
   		//to call different functions, more complicated
