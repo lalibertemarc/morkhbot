@@ -3,6 +3,7 @@ const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
 var cumberbatch = require('cumberbatch-name');
+const { exec } = require('child_process');
 //const from other modules
 const music = require('discord.js-music-v11');
 const calc = require('./calc.js');
@@ -70,17 +71,32 @@ Bot.on('ready', () => {
 
 //fortnite webhook
 app.post('/webhook', function (req, res) {
-
-  NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
-  NotifyChannel.send(req.body.commits[0].message)
-  NotifyChannel.send("Check it out at http://108.61.78.227:8888/")
+  exec('git pull https://gitlab.com/marclaliberte/fortnite-stat-checker.git', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
+  exec('pm2 update', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
+  //NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
+  //NotifyChannel.send(req.body.commits[0].message)
+  //NotifyChannel.send("Check it out at http://108.61.78.227:8888/")
   res.send({message:"we received webhook"});
 })
 
 //morkh bot webhook
 app.post('/webhook2', function (req, res) {
-  NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
-  NotifyChannel.send(req.body.commits[0].message)
+  //NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
+  //NotifyChannel.send(req.body.commits[0].message)
   res.send({message:"we received webhook"});
 })
 
@@ -237,23 +253,23 @@ Bot.on("message", (message) => {
       break;
   		//to call different functions, more complicated
   		default :
-	  			//user will give specified user points !give username 10
-         if(message.content.startsWith(prefix+"give ")){
-          console.log(key)
-          var string = message.content.split(" ");
-          if(string.length>3){
-           message.channel.send("Invalid command");
-           return;
-         } 
-         var key = string[1];
-         var points = +string[string.length-1]; 
-         if(userHash[key]==null || userHash[key]==null)	{
-           userHash[key]=0;	  				
-         }
-         pts.givepoints(key,points);
-         message.channel.send(key+" has now "+userHash[key]+" points.");
-         return
-       }
+	  	//user will give specified user points !give username 10
+     if(message.content.startsWith(prefix+"give ")){
+      console.log(key)
+      var string = message.content.split(" ");
+      if(string.length>3){
+       message.channel.send("Invalid command");
+       return;
+     } 
+     var key = string[1];
+     var points = +string[string.length-1]; 
+     if(userHash[key]==null || userHash[key]==null)	{
+       userHash[key]=0;	  				
+     }
+     pts.givepoints(key,points);
+     message.channel.send(key+" has now "+userHash[key]+" points.");
+     return
+   }
 	  		//roll dices commands like !roll 2d6
 	  		if(message.content.startsWith(prefix+"roll ")){	
 	  			var string = message.content.split(" ");
@@ -292,7 +308,7 @@ Bot.on("message", (message) => {
             }).catch(err => {
               console.error(err);
             });        
-        }
+          }
 
 	  		//duel fonctions	
 	  		if(message.content.startsWith(prefix+"challengeDuel ")){
