@@ -71,6 +71,15 @@ Bot.on('ready', () => {
 
 //fortnite webhook
 app.post('/webhook', function (req, res) {
+   exec('cd ..', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
+
   exec('git pull https://gitlab.com/marclaliberte/fortnite-stat-checker.git', (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
