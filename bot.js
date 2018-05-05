@@ -20,7 +20,7 @@ const translate = require('google-translate-api');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express()
-
+const { exec } = require('child_process');
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json('application/json'));
@@ -70,6 +70,9 @@ Bot.on('ready', () => {
 
 //fortnite webhook
 app.post('/webhook', function (req, res) {
+  exec("cd /root/fortnite-stat-checker");
+  exec("git pull https://gitlab.com/marclaliberte/fortnite-stat-checker.git");
+  exec("pm2 update");
   NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
   NotifyChannel.send(req.body.commits[0].message)
   NotifyChannel.send("Check it out at http://108.61.78.227:8888/")
