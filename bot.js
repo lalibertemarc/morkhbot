@@ -8,7 +8,7 @@ const music = require('discord.js-music-v11');
 const calc = require('./calc.js');
 const launcher = require('./dicelauncher.js');
 const duel = require('./duel.js');
-const pts = require('./points.js');
+//const pts = require('./points.js');
 const prime = require('./prime.js')
 const name = require('./randomName.js');
 const fortnite = require('./fortnite.js');
@@ -17,11 +17,11 @@ const translate = require('google-translate-api');
 
 const { Pool, Client } = require('pg');
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'morkhbot',
-  password: 'admin',
-  port: 5432,
+	user: 'postgres',
+	host: 'localhost',
+	database: 'morkhbot',
+	password: 'admin',
+	port: 5432,
 })
 
 //server
@@ -46,7 +46,7 @@ var generalChannel;
 var NotifyChannel;
 
 //var from other modules
-var userHash;
+//var userHash;
 var help;
 
 var fs = require("fs");
@@ -64,7 +64,7 @@ keypress(process.stdin);
 //activate bot
 Bot.on('ready', () => {
 	console.log(`[Start] ${new Date()}`);
-	userHash = pts.userHash;
+	//userHash = pts.userHash;
 	initUsers();
     //init variables for channels
     var channel = Bot.channels.find("id", "353747084819693570");
@@ -87,17 +87,39 @@ app.post('/webhook', function (req, res) {
 
 app.listen(8000, () => console.log('Now listening to 8000'));
 
+
 //iterate overs users to initate them in userhash
 function initUsers(){
-	for(user of Bot.users){		
-		points = userHash[user[1].username]
-		if (points==null || points==undefined){
-			userHash[user[1].username]=0
+
+	request="select name from userpoints;";
+	var allUserDB=[]
+
+	pool.query(request, (err, response) => {
+		if(response){
+			allUserDB = parseRows(response);
+			//console.log(allUserDB)			
 		}
+
+	}) 
+	//console.log(allUserDB);
+	for(user of Bot.users){		
+		if(arrayContains(user[1].username,allUserDB)){
+			
+			request="insert into userpoints values ('"+user[1].username+"',0)";
+
+			pool.query(request, (err, response) => {
+				if(response){
+					console.log(user[1].username+" has been added to database.")
+				}
+			}) 	
+		}
+		
 	}
-	pts.userHash=userHash
-	pts.saveUserPoints();
-	console.log(userHash);	
+}
+
+function arrayContains(val, array)
+{
+	return (array.indexOf(val) > -1);
 }
 
 //bot will join general voice chat
@@ -117,7 +139,7 @@ function generateShitPost(text){
 	var result=""
 	for(var j=1;j<text.length;j++){
 		for(var i=0;i<text[j].length;i++){
-		result+=":regional_indicator_"+text[j].charAt(i)+": "
+			result+=":regional_indicator_"+text[j].charAt(i)+": "
 		}
 		result+='\r\n';
 	}
@@ -126,17 +148,17 @@ function generateShitPost(text){
 }
 
 function getRandomfromArray(array){
-    return array[Math.floor(Math.random()*array.length)]
+	return array[Math.floor(Math.random()*array.length)]
 }
 
 function parseRows(array){
 	var result=[];
 	for(var i=0;i<array.rows.length;i++){      
-        for (var key in array.rows[i]){
-        	result.push(array.rows[i][key]);
- 
-        }
-    }
+		for (var key in array.rows[i]){
+			result.push(array.rows[i][key]);
+
+		}
+	}
 	return result;
 }
 
@@ -155,60 +177,65 @@ Bot.on("message", (message) => {
   		case "!roll":
   		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
   		break;
+
     	//bot will leave or join general channel	
     	case "!joinGeneral":!
     	joinGeneralChannel();
     	break;
+
     	case "!leaveGeneral":
     	leaveGeneralChannel();
     	break;
+
     	case "!leaveCurrent": 
     	joinGeneralChannel();
     	leaveGeneralChannel();
     	break;
+
     	case "!changeName":
     	var newName = name.getRandomName()
     	message.channel.send("New name is "+newName)
     	message.member.setNickname(newName)
     	.catch(console.error);
     	break;
+
     	case "!resetName":
     	message.channel.send("Name is back to normal")
     	message.member.setNickname("")
     	.catch(console.error);
     	break;
+
     	case "!landingZone":
     	message.channel.send(fortnite.getLandingZone());
     	break;
     	//point system commands
     	case "!points":
     	var key =  message.author.username;
-    	if(userHash[key]==undefined || userHash[key]==null){
-    		pts.givepoint(key);
-    	}
-    	if(!userHash[key]){
-    		message.channel.send(message.author+" has 0 points. RIP");
-    	}else{
-    		message.channel.send(message.author+" has "+userHash[key]+" points.");
-    	}
+    	request="select points from userpoints where name='"+key+"'";
+
+    	pool.query(request, (err, response) => {
+    		if(response){
+    			message.channel.send(key+" has "+response.rows[0]['points']+" points.")
+    		}
+
+    	}) 
+
+
+
     	break; 	
 
-    	case "!gimmePoint":
-    	var key =  message.author.username;
-    	pts.givepoint(key);
-    	message.channel.send(message.author+" has now "+userHash[key]+" points.");
+    	case "!allPoints":
+
+    	request='select * from userpoints'
+    	pool.query(request, (err, response) => {
+    		if(response){
+    			message.channel.send(parseRows(response));
+    		}
+
+    	})
+    	
     	break;
 
-    	case "!allPoints":
-    	message.channel.send(JSON.stringify(userHash));
-    	break;
-    	case "!resetPoints":
-    	if(message.author.username=="Morkh"){
-    		pts.resetPoints();
-    		message.channel.send(userHash);  
-    	}else{
-    		message.channel.send("You don't have the permission to do that");
-    	}
     	case "!help":
     	message.channel.send(help);
     	break;
@@ -216,6 +243,7 @@ Bot.on("message", (message) => {
     	case "!benedict":
     	message.channel.send(cumberbatch());
     	break
+    	
     	case "!languages":
     	var result=""
     	var it=0
@@ -231,59 +259,70 @@ Bot.on("message", (message) => {
     	case "!allGames":
     	request='select * from games'
     	pool.query(request, (err, response) => {
-    		console.log(response.rows);
     		if(response){
     			message.channel.send(parseRows(response))
     		}
-			
-		}) 
-		break;
-		case "!rollGames":
+
+    	}) 
+    	break;
+    	case "!rollGames":
     	request='select * from games'
     	pool.query(request, (err, response) => {
-    		console.log(response.rows);
     		if(response){
     			message.channel.send(getRandomfromArray(parseRows(response)))
     		}
-			
-		}) 
-		break;
+
+    	}) 
+    	break;
 
 
 
   		//to call different functions, more complicated
   		default :
+
 	  	//user will give specified user points !give username 10
 	  	if(message.content.startsWith(prefix+"give ")){
-	  		console.log(key)
+	  		//console.log(key)
 	  		var string = message.content.split(" ");
 	  		if(string.length>3){
 	  			message.channel.send("Invalid command");
 	  			return;
 	  		} 
+	  		//key ==user 
 	  		var key = string[1];
 	  		var points = +string[string.length-1]; 
-	  		if(userHash[key]==null || userHash[key]==null)	{
-	  			userHash[key]=0;	  				
-	  		}
-	  		pts.givepoints(key,points);
-	  		message.channel.send(key+" has now "+userHash[key]+" points.");
+
+	  		request="update userpoints set points=(select points from userpoints where name='"+key+"')+"+points+" where name='"+key+"'";
+
+	  		pool.query(request, (err, response) => {
+	  			if(response){
+	  				request="select points from userpoints where name='"+key+"'";
+	  				pool.query(request, (err, response) => {
+	  					if(response){
+	  						message.channel.send(key+" has now " +response.rows[0]['points']+" points");
+	  					}
+	  				}) 
+
+	  			}
+
+	  		}) 
+
 	  		return
 	  	}
+
 	  	if(message.content.startsWith(prefix+"addGame ")){	
 	  		var string = message.content.split(" ");
 	  		var newGame=string[1];
 
 	  		request='INSERT INTO games VALUES'+"('"+newGame+"');"
-	  		console.log(request);
+	  		//console.log(request);
 
-    		pool.query(request, (err, response) => {
-    			console.log(response);
-    			if(response){
-    				message.channel.send("New Game was added to database.")
-    			}
-				
-			}) 
+	  		pool.query(request, (err, response) => {
+	  			if(response){
+	  				message.channel.send("New Game was added to database.")
+	  			}
+
+	  		}) 
 
 	  	}
 
