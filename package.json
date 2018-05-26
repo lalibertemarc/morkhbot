@@ -16,9 +16,11 @@
     "node-gitlab-webhook": "^1.0.5",
     "node-soundcloud": "0.0.6",
     "opusscript": "0.0.3",
+    "pg": "^7.4.3",
     "pubg-api-redis": "^3.6.0",
     "soundcloud": "^3.2.2",
     "soundcloudr": "^1.1.0",
+    "steam-api": "^1.1.3",
     "thesaurus-com": "^1.1.3"
   }
 }

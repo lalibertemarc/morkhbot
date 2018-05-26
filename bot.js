@@ -13,8 +13,16 @@ const prime = require('./prime.js')
 const name = require('./randomName.js');
 const fortnite = require('./fortnite.js');
 
-
 const translate = require('google-translate-api');
+
+const { Pool, Client } = require('pg');
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'morkhbot',
+  password: 'admin',
+  port: 5432,
+})
 
 //server
 const express = require('express');
@@ -76,12 +84,6 @@ app.post('/webhook', function (req, res) {
 	res.send({message:"we received webhook"});
 })
 
-//morkh bot webhook
-app.post('/webhook2', function (req, res) {
-	NotifyChannel.send(req.body.user_name+ ' has pushed a new commit for '+req.body.project.name+".")
-	NotifyChannel.send(req.body.commits[0].message)
-	res.send({message:"we received webhook"});
-})
 
 app.listen(8000, () => console.log('Now listening to 8000'));
 
@@ -122,35 +124,20 @@ function generateShitPost(text){
 	
 	return result;
 }
-//R6 web crawler
-var r6 = new Crawler({
-	maxConnections : 10,
-    // This will be called for each crawled page 
-    callback : function (error, result, $) {
 
-    	if(error){
-    		console.log(error);
-    	}else{
-    		value = $( "div.value" ).text().split("\n");
-    		console.log(value[5])
-    		NotifyChannel.send("You have a Kill/Death ratio of " + value[5]) ;
-    	}
+function getRandomfromArray(array){
+    return array[Math.floor(Math.random()*array.length)]
+}
+
+function parseRows(array){
+	var result=[];
+	for(var i=0;i<array.rows.length;i++){      
+        for (var key in array.rows[i]){
+        	result.push(array.rows[i][key]);
+ 
+        }
     }
-});
-
-//launch R6 web crawler
-function launchR6Crawler(author){
-	switch (author){
-		case "Morkh":
-		r6.queue('https://r6stats.com/stats/uplay/morkh1436');
-		break;
-		case "chipchocolate":
-		r6.queue('https://r6stats.com/stats/uplay/chipchocolate7');
-		break;
-		default:
-		"Your username is not initialized in the bot code, ask your Discord server admin.";
-		break;
-	}
+	return result;
 }
 
 
@@ -226,9 +213,6 @@ Bot.on("message", (message) => {
     	message.channel.send(help);
     	break;
 
-    	case "!getR6Kd":
-    	launchR6Crawler(message.author.username)
-    	break; 
     	case "!benedict":
     	message.channel.send(cumberbatch());
     	break
@@ -244,6 +228,29 @@ Bot.on("message", (message) => {
     	}
     	message.channel.send(result);		
     	break;
+    	case "!allGames":
+    	request='select * from games'
+    	pool.query(request, (err, response) => {
+    		console.log(response.rows);
+    		if(response){
+    			message.channel.send(parseRows(response))
+    		}
+			
+		}) 
+		break;
+		case "!rollGames":
+    	request='select * from games'
+    	pool.query(request, (err, response) => {
+    		console.log(response.rows);
+    		if(response){
+    			message.channel.send(getRandomfromArray(parseRows(response)))
+    		}
+			
+		}) 
+		break;
+
+
+
   		//to call different functions, more complicated
   		default :
 	  	//user will give specified user points !give username 10
@@ -263,6 +270,25 @@ Bot.on("message", (message) => {
 	  		message.channel.send(key+" has now "+userHash[key]+" points.");
 	  		return
 	  	}
+	  	if(message.content.startsWith(prefix+"addGame ")){	
+	  		var string = message.content.split(" ");
+	  		var newGame=string[1];
+
+	  		request='INSERT INTO games VALUES'+"('"+newGame+"');"
+	  		console.log(request);
+
+    		pool.query(request, (err, response) => {
+    			console.log(response);
+    			if(response){
+    				message.channel.send("New Game was added to database.")
+    			}
+				
+			}) 
+
+	  	}
+
+
+
 	  	if(message.content.startsWith(prefix+"shitPost ")){	
 	  		var string = message.content.split(" ");
 	  		message.channel.send(generateShitPost(string));
