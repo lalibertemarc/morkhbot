@@ -330,7 +330,10 @@ Bot.on("message", (message) => {
 	  		pool.query(request, (err, response) => {
 	  			if(response){
 	  				message.channel.send("New Game was added to database.")
+	  			}else{
+	  				message.channel.send("No response from database. Maybe you have a ' in the name of your game.")
 	  			}
+	  			
 
 	  		})
 
