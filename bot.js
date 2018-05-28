@@ -8,7 +8,6 @@ const music = require('discord.js-music-v11');
 const calc = require('./calc.js');
 const launcher = require('./dicelauncher.js');
 const duel = require('./duel.js');
-//const pts = require('./points.js');
 const prime = require('./prime.js')
 const name = require('./randomName.js');
 const fortnite = require('./fortnite.js');
@@ -46,7 +45,6 @@ var generalChannel;
 var NotifyChannel;
 
 //var from other modules
-//var userHash;
 var help;
 
 var fs = require("fs");
@@ -64,8 +62,8 @@ keypress(process.stdin);
 //activate bot
 Bot.on('ready', () => {
 	console.log(`[Start] ${new Date()}`);
-	//userHash = pts.userHash;
 	initUsers();
+
     //init variables for channels
     var channel = Bot.channels.find("id", "353747084819693570");
     NotifyChannel=channel;
@@ -96,12 +94,11 @@ function initUsers(){
 
 	pool.query(request, (err, response) => {
 		if(response){
-			allUserDB = parseRows(response);
-			//console.log(allUserDB)			
+			allUserDB = parseRows(response);			
 		}
 
 	}) 
-	//console.log(allUserDB);
+
 	for(user of Bot.users){		
 		if(arrayContains(user[1].username,allUserDB)){
 			
@@ -157,6 +154,17 @@ function parseRows(array){
 		for (var key in array.rows[i]){
 			result.push(array.rows[i][key]);
 
+		}
+	}
+	return result;
+}
+
+function parseGame(array){
+	var result="";
+	for (var i=1;i<array.length;i++){
+		result+=array[i]
+		if(i!=array.length-1){
+			result+=" ";
 		}
 	}
 	return result;
@@ -312,8 +320,10 @@ Bot.on("message", (message) => {
 
 	  	if(message.content.startsWith(prefix+"addGame ")){	
 	  		var string = message.content.split(" ");
-	  		var newGame=string[1];
-
+	  		//var newGame=string[1];
+	  		var newGame = parseGame(string);
+	  		//console.log(newGame);
+	  		
 	  		request='INSERT INTO games VALUES'+"('"+newGame+"');"
 	  		//console.log(request);
 
@@ -322,7 +332,7 @@ Bot.on("message", (message) => {
 	  				message.channel.send("New Game was added to database.")
 	  			}
 
-	  		}) 
+	  		})
 
 	  	}
 
