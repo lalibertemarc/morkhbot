@@ -4,8 +4,8 @@ const auth = require('./auth.json');
 const token = auth.token;
 Bot.login(token);
 
-
 var cumberbatch = require('cumberbatch-name');
+
 //const from other modules
 const music = require('discord.js-music-v11');
 const calc = require('./calc.js');
@@ -203,6 +203,7 @@ Bot.on("message", (message) => {
   		case "!roll":
   		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
   		break;
+
     	//bot will leave or join general channel	
     	case "!joinGeneral":
     	joinGeneralChannel();
