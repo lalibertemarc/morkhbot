@@ -2,6 +2,9 @@ const Discord = require('discord.js');
 const Bot = new Discord.Client();
 const auth = require('./auth.json');
 const token = auth.token;
+Bot.login(token);
+
+
 var cumberbatch = require('cumberbatch-name');
 //const from other modules
 const music = require('discord.js-music-v11');
@@ -44,6 +47,9 @@ var generalChannel;
 //to send message without using message object
 var NotifyChannel;
 
+
+var botTestChannel;
+
 //var from other modules
 var help;
 
@@ -53,7 +59,7 @@ help = JSON.parse(helpcontent);
 
 music(Bot);
 
-Bot.login(token);
+
 
 //key press var and begin process
 var keypress = require('keypress'); 
@@ -70,6 +76,9 @@ Bot.on('ready', () => {
 
     var channel2 = Bot.channels.get("353747084819693571");
     generalChannel=channel2;
+
+    var channel3= Bot.channels.find("id", "391706259923140618")
+    botTestChannel=channel3;
     //Bot.user.setActivity("Node.js")
 
 });
@@ -170,6 +179,15 @@ function parseGame(array){
 	return result;
 }
 
+Bot.on('messageReactionAdd', (reaction, user) => {
+	//console.log(reaction)
+	var yourChannel = Bot.channels.find("id", reaction.message.channel.id);
+	var reactionAuthor;
+	for(user of reaction.users){
+		reactionAuthor=user[1].username;
+	}
+    yourChannel.send(reactionAuthor+" reacted to "+ reaction.message.author+" with "+reaction._emoji.name);
+});
 
 //chat commands
 let prefix = "!";
