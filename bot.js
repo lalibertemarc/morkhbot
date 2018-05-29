@@ -203,11 +203,6 @@ Bot.on("message", (message) => {
   		case "!roll":
   		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
   		break;
-
-  		case "!test2":
-  		message.channel.send('ca marche');
-  		break
-
     	//bot will leave or join general channel	
     	case "!joinGeneral":
     	joinGeneralChannel();
