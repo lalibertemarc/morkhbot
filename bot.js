@@ -204,7 +204,7 @@ Bot.on("message", (message) => {
   		message.channel.send(message.author.username+" has rolled "+(Math.floor(Math.random() * 100) + 1)  +"!");
   		break;
 
-  		case '!test2':
+  		case "!test2":
   		message.channe.send('ca marche');
   		break
 
