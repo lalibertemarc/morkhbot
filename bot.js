@@ -205,7 +205,7 @@ Bot.on("message", (message) => {
   		break;
 
   		case "!test2":
-  		message.channe.send('ca marche');
+  		message.channel.send('ca marche');
   		break
 
     	//bot will leave or join general channel	
