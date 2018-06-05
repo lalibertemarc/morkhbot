@@ -83,7 +83,7 @@ app.post('/webhook', function(req, res) {
 
 app.listen(8000, () => console.log('Now listening to 8000'));
 
-//iterate overs users to initate them in userhash
+//iterate overs users to initate them in DB
 function initUsers() {
 	request = 'select name from userpoints;';
 	var allUserDB = [];
@@ -111,6 +111,10 @@ function arrayContains(val, array) {
 	return array.indexOf(val) > -1;
 }
 
+function getRandomfromArray(array) {
+	return array[Math.floor(Math.random() * array.length)];
+}
+
 //bot will join general voice chat
 function joinGeneralChannel() {
 	generalChannel
@@ -125,6 +129,7 @@ function leaveGeneralChannel() {
 	console.log('Disconnected');
 }
 
+//shitPost function
 function generateShitPost(text) {
 	var result = '';
 	for (var j = 1; j < text.length; j++) {
@@ -137,10 +142,7 @@ function generateShitPost(text) {
 	return result;
 }
 
-function getRandomfromArray(array) {
-	return array[Math.floor(Math.random() * array.length)];
-}
-
+//parse Rows response from DB
 function parseRows(array) {
 	var result = [];
 	for (var i = 0; i < array.rows.length; i++) {
@@ -151,6 +153,7 @@ function parseRows(array) {
 	return result;
 }
 
+//parse Rows response from DB for table games
 function parseGame(array) {
 	var result = '';
 	for (var i = 1; i < array.length; i++) {
@@ -175,6 +178,7 @@ function parseLanguages() {
 	return result;
 }
 
+//Reaction handler
 Bot.on('messageReactionAdd', (reaction, user) => {
 	var yourChannel = Bot.channels.find(channel => channel.id === reaction.message.channel.id);
 	var reactionAuthor;
