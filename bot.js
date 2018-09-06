@@ -176,8 +176,7 @@ function parseLanguages() {
 }
 
 Bot.on('messageReactionAdd', (reaction, user) => {
-	//console.log(reaction)
-	var yourChannel = Bot.channels.find('id', reaction.message.channel.id);
+	var yourChannel = Bot.channels.find(channel => channel.id === reaction.message.channel.id);
 	var reactionAuthor;
 	for (user of reaction.users) {
 		reactionAuthor = user[1].username;
