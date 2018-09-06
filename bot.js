@@ -180,9 +180,8 @@ function parseLanguages() {
 
 //Reaction handler
 Bot.on('messageReactionAdd', (reaction, user) => {
-	let channel = client.channels.find(channel => channel.id === reaction.message.channel.id);
-	channel.send(
-		reaction.users.last().username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name
+	reaction.message.channel.send(
+		user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name
 	);
 });
 
