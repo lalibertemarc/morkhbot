@@ -176,7 +176,7 @@ function parseLanguages() {
 }
 
 Bot.on('messageReactionAdd', (reaction, user) => {
-	generalChannel.send(user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name);
+	reaction.message.channel.send(user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name);
 });
 
 //chat commands
