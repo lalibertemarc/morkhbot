@@ -176,12 +176,7 @@ function parseLanguages() {
 }
 
 Bot.on('messageReactionAdd', (reaction, user) => {
-	var yourChannel = Bot.channels.find(channel => channel.id === reaction.message.channel.id);
-	var reactionAuthor;
-	for (user of reaction.users) {
-		reactionAuthor = user[1].username;
-	}
-	yourChannel.send(reactionAuthor + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name);
+	generalChannel.send(user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name);
 });
 
 //chat commands
