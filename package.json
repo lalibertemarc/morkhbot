@@ -1,5 +1,5 @@
 {
-  "name": "Morkh Bot",
+  "name": "morkhbot",
   "version": "1.0.0",
   "description": "My 1st Discord bot",
   "main": "bot.js",

@@ -62,15 +62,9 @@ Bot.on('ready', () => {
 	initUsers();
 
 	//init variables for channels
-	var channel = Bot.channels.find('id', '353747084819693570');
-	NotifyChannel = channel;
-
-	var channel2 = Bot.channels.get('353747084819693571');
-	generalChannel = channel2;
-
-	var channel3 = Bot.channels.find('id', '391706259923140618');
-	botTestChannel = channel3;
-	//Bot.user.setActivity("Node.js")
+	NotifyChannel =  Bot.channels.get('353747084819693570');
+	generalChannel = Bot.channels.get('353747084819693571');
+	botTestChannel = Bot.channels.get('391706259923140618');
 });
 
 //fortnite webhook
@@ -95,8 +89,9 @@ function initUsers() {
 	});
 
 	for (user of Bot.users) {
-		if (arrayContains(user[1].username, allUserDB)) {
-			request = "insert into userpoints values ('" + user[1].username + "',0)";
+		var name = user[1].username;
+		if (arrayContains(name, allUserDB)) {
+			request = `insert into userpoints values (${name},0)`;
 
 			pool.query(request, (err, response) => {
 				if (response) {
@@ -183,8 +178,6 @@ Bot.on('messageReactionAdd', (reaction, user) => {
 let prefix = '!';
 Bot.on('message', message => {
 	if (message.author.id === Bot.user.id || message.author.bot) return;
-	let args = message.content.split(' ').slice(1);
-
 	//huge switch case, seems to be faster than if then else
 	if (message.content.startsWith(prefix)) {
 		var cmd = message.content;
@@ -212,7 +205,7 @@ Bot.on('message', message => {
 
 			case '!changeName':
 				var newName = name.getRandomName();
-				message.channel.send('New name is ' + newName);
+				message.channel.send(`New name is ${newName}`);
 				message.member.setNickname(newName).catch(console.error);
 				break;
 
@@ -227,7 +220,7 @@ Bot.on('message', message => {
 			//point system commands
 			case '!points':
 				var key = message.author.username;
-				request = "select points from userpoints where name='" + key + "'";
+				request = `select points from userpoints where name='${key}'`;
 
 				pool.query(request, (err, response) => {
 					if (response) {
@@ -290,20 +283,14 @@ Bot.on('message', message => {
 					var points = +string[string.length - 1];
 
 					request =
-						"update userpoints set points=(select points from userpoints where name='" +
-						key +
-						"')+" +
-						points +
-						" where name='" +
-						key +
-						"'";
-
+						`update userpoints set points=(select points from userpoints where name='${key}') + ${points} where name='${key} '`;
 					pool.query(request, (err, response) => {
 						if (response) {
-							request = "select points from userpoints where name='" + key + "'";
+							request = `select points from userpoints where name='${key}'`;
 							pool.query(request, (err, response) => {
 								if (response) {
-									message.channel.send(key + ' has now ' + response.rows[0]['points'] + ' points');
+									points = response.rows[0]['points'];
+									message.channel.send(`${key} has now ${points} points`);
 								}
 							});
 						}
@@ -318,7 +305,7 @@ Bot.on('message', message => {
 					var newGame = parseGame(string);
 					//console.log(newGame);
 
-					request = 'INSERT INTO games VALUES' + "('" + newGame + "');";
+					request = `INSERT INTO games VALUES ('${newGame}')`;
 					//console.log(request);
 
 					pool.query(request, (err, response) => {
@@ -389,7 +376,7 @@ Bot.on('message', message => {
 						return;
 					}
 					duel.initiateDuel(initiator, target);
-					message.channel.send(target + ' you have been challenge in a duel by ' + initiator + '.');
+					message.channel.send(`${target} you have been challenge in a duel by ${initiator}.`);
 					message.channel.send("Type !acceptDuel if you accept or !refuseDuel if you're too affraid.");
 				}
 				if (message.content.startsWith(prefix + 'acceptDuel')) {
