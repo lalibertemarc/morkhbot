@@ -7,7 +7,6 @@ Bot.login(token);
 var cumberbatch = require('cumberbatch-name');
 
 //const from other modules
-const music = require('discord.js-music-v11');
 const calc = require('./calc.js');
 const launcher = require('./dicelauncher.js');
 const duel = require('./duel.js');
@@ -54,7 +53,6 @@ var fs = require('fs');
 var helpcontent = fs.readFileSync('help.json');
 help = JSON.parse(helpcontent);
 
-music(Bot);
 
 //activate bot
 Bot.on('ready', () => {
