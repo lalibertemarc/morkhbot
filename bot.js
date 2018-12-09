@@ -13,6 +13,7 @@ const duel = require('./duel.js');
 const prime = require('./prime.js');
 const name = require('./randomName.js');
 const fortnite = require('./fortnite.js');
+const converter = require('./convert.js')
 
 const translate = require('google-translate-api');
 
@@ -35,7 +36,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json('application/json'));
 
 // web crawler related
-var Crawler = require('node-webcrawler');
 var url = require('url');
 
 //to join or disconnect the bot from channel
@@ -395,6 +395,21 @@ Bot.on('message', message => {
 				if (message.content.startsWith(prefix + 'refuseDuel')) {
 					duel.clearDuelData();
 					message.channel.send('Duel is ready to be initiated again.');
+				}
+				if(message.content.startsWith(prefix + 'dec2Bin '))
+				{
+					var args = message.content.split(" ");
+					message.channel.send(converter.dec2Bin(+args[1]));
+				}
+				if(message.content.startsWith(prefix + 'bin2Dec '))
+				{
+					var args = message.content.split(" ");
+					if(!args[1].includes("1") || !args[1].includes("0"))
+					{
+						message.channel.send("Argument is not binary");
+						return;
+					}
+					message.channel.send(converter.bin2Dec(args[1]));
 				}
 		}
 	}
