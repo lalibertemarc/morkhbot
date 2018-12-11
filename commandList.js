@@ -63,19 +63,19 @@ var isPrime = new Command('!isPrime', "Is the given number a prime number?", fun
 	return commandResponse
 })
 
-var nPrime = new Command('!nPrime', 'Will give all the n first prime numbers.' ,function(message){
+var nPrime = new Command('!nPrime', 'Gives all the n first prime numbers.' ,function(message){
     var string = message.content.split(' ');
     var commandResponse = prime.nPrime(+string[1]);
     return commandResponse
 })
 
-var gcd = new Command('!gcd', "Give the greater common diviser between the 2 given arguments", function(message){
+var gcd = new Command('!gcd', "Gives the greater common diviser between the 2 given arguments", function(message){
     var string = message.content.split(' ');
     var commandResponse = prime.gcd(+string[1], +string[2]);
     return commandResponse
 })
 
-var primeRange = new Command('!primeRange', 'Will give all the prime numbers in the given argument range', function(message){
+var primeRange = new Command('!primeRange', 'Gives all the prime numbers in the given argument range', function(message){
     var string = message.content.split(' ');
     var commandResponse = prime.primeRange(+string[1], +string[2]);
     return commandResponse
@@ -86,7 +86,7 @@ commandList['isPrime'] = isPrime;
 commandList['primeRange'] = primeRange;
 
 //Random Name commands
-var changeName = new Command('!changeName', 'The bot will give a random name', function(message){
+var changeName = new Command('!changeName', 'The bot will give you a random name', function(message){
     var newName = name.getRandomName();
     message.member.setNickname(newName).catch(err)
     var commandResponse = `Your new name is ${newName}`
@@ -144,7 +144,7 @@ commandList['refuseDuel'] = refuseDuel;
 
 
 //random commands
-var benedict = new Command('!benedict', "Give a random Benedict Cumberbatch name", function(message){
+var benedict = new Command('!benedict', "Gives a random Benedict Cumberbatch name", function(message){
 	try{
 		var ben = cumberbatch();
 	}catch(err)
@@ -166,9 +166,17 @@ var landingZone = new Command('!landingZone', 'Gives you a random location to dr
     return commandResponse
 })
 
+var help = new Command('!help', 'Gives a list of all available command', function(message){
+    var commandResponse=''
+    for(command in commandList)
+        commandResponse += commandList[command].name + " : " + commandList[command].description + "\n"
+    return commandResponse;
+})
+
 commandList['benedict'] = benedict;
 commandList['shitPost'] = shitPost
 commandList['landingZone'] = landingZone;
+commandList['help'] = help;
 
 module.exports = {
     commandList: commandList

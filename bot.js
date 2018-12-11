@@ -4,7 +4,6 @@ const auth = require('./auth.json');
 const token = auth.token;
 Bot.login(token);
 
-
 //const from other modules
 const commands =require('./commandList.js');
 var commandList = commands.commandList;
@@ -33,14 +32,6 @@ app.use(bodyParser.json('application/json'));
 
 //to send message without using message object
 var NotifyChannel;
-
-//var from other modules
-var help;
-
-var fs = require('fs');
-var helpcontent = fs.readFileSync('help.json');
-help = JSON.parse(helpcontent);
-
 
 //activate bot
 Bot.on('ready', () => {
@@ -188,10 +179,6 @@ Bot.on('message', message => {
 					}
 				});
 
-				break;
-
-			case '!help':
-				message.channel.send(help);
 				break;
 
 
