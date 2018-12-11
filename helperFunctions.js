@@ -10,8 +10,6 @@ function generateShitPost(text) {
 	return result;
 }
 
-
-
 function getNextColor(int) {
 	const CYCLE = 12; // Number of colors before the cycle repeats
 	const SATURATION = [64, 64, 64]; // Hue; 0 = greyscale, 127 = high saturation

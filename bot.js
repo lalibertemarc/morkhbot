@@ -8,6 +8,7 @@ Bot.login(token);
 //const from other modules
 const commands =require('./commandList.js');
 var commandList = commands.commandList;
+const helpers = require('./helperFunctions.js')
 
 const translate = require('google-translate-api');
 
@@ -29,16 +30,9 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json('application/json'));
 
-// web crawler related
-var url = require('url');
-
-//to join or disconnect the bot from channel
-var generalChannel;
 
 //to send message without using message object
 var NotifyChannel;
-
-var botTestChannel;
 
 //var from other modules
 var help;
@@ -137,10 +131,21 @@ function parseLanguages() {
 	return result;
 }
 
+let reqCount = 0;
+function botResponse(title,description, footer)
+{
+    const embedColor = helpers.getNextColor(reqCount++);
+    return new Discord.RichEmbed()
+    .setColor(embedColor)
+    .setTitle(title)
+    .setDescription(description)
+    .setFooter(footer)
+}
 
 
 Bot.on('messageReactionAdd', (reaction, user) => {
-	reaction.message.channel.send(user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name);
+	var commandResonse = user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name
+	reaction.message.channel.send(botResponse("Emoji Reaction!", commandResonse,""));
 });
 
 //chat commands
@@ -154,9 +159,11 @@ Bot.on('message', message => {
 		var command = array[0].substring(1, array[0].length);
 
 		if(command in commandList)
-			message.channel.send(commandList[command].handler(message))
+			message.channel.send(botResponse(commandList[command].name, 
+											commandList[command].handler(message), 
+											commandList[command].description));
 		else
-			message.channel.send("Invalid command");
+			message.channel.send(botResponse("Invalid Command", "Please use !help command", ""));
 
 		switch (cmd) {
 
