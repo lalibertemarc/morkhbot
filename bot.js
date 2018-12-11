@@ -4,16 +4,10 @@ const auth = require('./auth.json');
 const token = auth.token;
 Bot.login(token);
 
-var cumberbatch = require('cumberbatch-name');
 
 //const from other modules
-const calc = require('./calc.js');
-const launcher = require('./dicelauncher.js');
-const duel = require('./duel.js');
-const prime = require('./prime.js');
-const name = require('./randomName.js');
-const fortnite = require('./fortnite.js');
-const converter = require('./convert.js')
+const commands =require('./commandList.js');
+var commandList = commands.commandList;
 
 const translate = require('google-translate-api');
 
@@ -104,31 +98,6 @@ function arrayContains(val, array) {
 	return array.indexOf(val) > -1;
 }
 
-//bot will join general voice chat
-function joinGeneralChannel() {
-	generalChannel
-		.join()
-		.then(connection => console.log('Connected'))
-		.catch(console.error);
-}
-
-//bot will leave general voice chat
-function leaveGeneralChannel() {
-	generalChannel.leave();
-	console.log('Disconnected');
-}
-
-function generateShitPost(text) {
-	var result = '';
-	for (var j = 1; j < text.length; j++) {
-		for (var i = 0; i < text[j].length; i++) {
-			result += ':regional_indicator_' + text[j].charAt(i) + ': ';
-		}
-		result += '\r\n';
-	}
-
-	return result;
-}
 
 function getRandomfromArray(array) {
 	return array[Math.floor(Math.random() * array.length)];
@@ -168,6 +137,8 @@ function parseLanguages() {
 	return result;
 }
 
+
+
 Bot.on('messageReactionAdd', (reaction, user) => {
 	reaction.message.channel.send(user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name);
 });
@@ -178,43 +149,17 @@ Bot.on('message', message => {
 	if (message.author.id === Bot.user.id || message.author.bot) return;
 	//huge switch case, seems to be faster than if then else
 	if (message.content.startsWith(prefix)) {
-		var cmd = message.content;
+		var cmd = message.content
+		var array = cmd.split(' ')
+		var command = array[0].substring(1, array[0].length);
+
+		if(command in commandList)
+			message.channel.send(commandList[command].handler(message))
+		else
+			message.channel.send("Invalid command");
 
 		switch (cmd) {
-			case '!roll':
-				message.channel.send(
-					message.author.username + ' has rolled ' + (Math.floor(Math.random() * 100) + 1) + '!'
-				);
-				break;
 
-			//bot will leave or join general channel
-			case '!joinGeneral':
-				joinGeneralChannel();
-				break;
-
-			case '!leaveGeneral':
-				leaveGeneralChannel();
-				break;
-
-			case '!leaveCurrent':
-				joinGeneralChannel();
-				leaveGeneralChannel();
-				break;
-
-			case '!changeName':
-				var newName = name.getRandomName();
-				message.channel.send(`New name is ${newName}`);
-				message.member.setNickname(newName).catch(console.error);
-				break;
-
-			case '!resetName':
-				message.channel.send('Name is back to normal');
-				message.member.setNickname('').catch(console.error);
-				break;
-
-			case '!landingZone':
-				message.channel.send(fortnite.getLandingZone());
-				break;
 			//point system commands
 			case '!points':
 				var key = message.author.username;
@@ -242,9 +187,6 @@ Bot.on('message', message => {
 				message.channel.send(help);
 				break;
 
-			case '!benedict':
-				message.channel.send(cumberbatch());
-				break;
 
 			case '!languages':
 				message.channel.send(parseLanguages());
@@ -317,38 +259,6 @@ Bot.on('message', message => {
 					});
 				}
 
-				if (message.content.startsWith(prefix + 'shitPost ')) {
-					var string = message.content.split(' ');
-					message.channel.send(generateShitPost(string));
-				}
-
-				//roll dices commands like !roll 2d6
-				if (message.content.startsWith(prefix + 'roll ')) {
-					var string = message.content.split(' ');
-					message.channel.send(launcher.launcher(string[1]));
-				}
-				//calculator functions
-				if (message.content.startsWith(prefix + 'calc ')) {
-					var string = message.content.split(' ');
-					message.channel.send(calc.interpreter(string[1]));
-				}
-				//prime numbers function
-				if (message.content.startsWith(prefix + 'isPrime ')) {
-					var string = message.content.split(' ');
-					message.channel.send(prime.isPrime(+string[1], [1]));
-				}
-				if (message.content.startsWith(prefix + 'nPrime ')) {
-					var string = message.content.split(' ');
-					message.channel.send(prime.nPrime(+string[1]));
-				} //throw in gcd, why not
-				if (message.content.startsWith(prefix + 'gcd ')) {
-					var string = message.content.split(' ');
-					message.channel.send(prime.gcd(+string[1], +string[2]));
-				}
-				if (message.content.startsWith(prefix + 'primeRange ')) {
-					var string = message.content.split(' ');
-					message.channel.send(prime.primeRange(+string[1], +string[2]));
-				}
 				//translate
 				if (message.content.startsWith(prefix + 'translate/')) {
 					var string = message.content.split('/');
@@ -362,55 +272,7 @@ Bot.on('message', message => {
 						.catch(err => {
 							console.error(err);
 						});
-				}
-
-				//duel fonctions
-				if (message.content.startsWith(prefix + 'challengeDuel ')) {
-					var initiator = message.author.username;
-					var string = message.content.split(' ');
-					var target = string[1];
-					if (initiator == target) {
-						message.channel.send('You have won over yourself, congratz!');
-						return;
-					}
-					duel.initiateDuel(initiator, target);
-					message.channel.send(`${target} you have been challenge in a duel by ${initiator}.`);
-					message.channel.send("Type !acceptDuel if you accept or !refuseDuel if you're too affraid.");
-				}
-				if (message.content.startsWith(prefix + 'acceptDuel')) {
-					duel.acceptDuel(message.author.username);
-					message.channel.send('Duel is starting, in 3-2-1 GO!');
-					message.channel.send('Type !duelRoll <typeRoll>, like !duelRoll 1d20 or whatever.');
-				}
-				if (message.content.startsWith(prefix + 'duelRoll ')) {
-					var typeRoll = message.content.split(' ');
-					message.channel.send(duel.duelRoll(message.author.username, typeRoll[1]));
-				}
-				if (message.content.startsWith(prefix + 'endDuel')) {
-					message.channel.send(duel.endDuel());
-				}
-				if (message.content.startsWith(prefix + 'clearDuel')) {
-					duel.clearDuelData();
-				}
-				if (message.content.startsWith(prefix + 'refuseDuel')) {
-					duel.clearDuelData();
-					message.channel.send('Duel is ready to be initiated again.');
-				}
-				if(message.content.startsWith(prefix + 'dec2Bin '))
-				{
-					var args = message.content.split(" ");
-					message.channel.send(converter.dec2Bin(+args[1]));
-				}
-				if(message.content.startsWith(prefix + 'bin2Dec '))
-				{
-					var args = message.content.split(" ");
-					if(!args[1].includes("1") || !args[1].includes("0"))
-					{
-						message.channel.send("Argument is not binary");
-						return;
-					}
-					message.channel.send(converter.bin2Dec(args[1]));
-				}
+				}	
 		}
 	}
 });

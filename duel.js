@@ -2,21 +2,36 @@ var duelData ={'armed': false, "initiator": "", "target": "", "initiatorRoll": 0
 var launcher = require('./dicelauncher.js')
 
 
-function initiateDuel(initatorName, targetName){
-	if(typeof initatorName !='string' || typeof targetName !='string'){
-		return
-	}
-
-	duelData['initiator']=initatorName
+function initiateDuel(initiatorName, targetName){
+	if(typeof initiatorName !='string' || typeof targetName !='string') return
+	if (initiatorName == targetName) {
+        return 'You have won over yourself, congratz!'
+    }
+	duelData['initiator']=initiatorName
 	duelData['target']= targetName
-	console.log(duelData)
+	
+	return `${targetName} you have been challenge in a duel by ${initiatorName}.
+Type !acceptDuel if you accept or !refuseDuel if you're too affraid.`
 }
 
 function acceptDuel(targetName){
-	if(targetName==duelData['target']){
+	if(duelData['armed']==false)
+		return "There is no duel right now."
+	if(targetName==duelData['target'])
 		duelData['armed']=true
+	return `Duel is starting, in 3-2-1 GO!
+Type !duelRoll <typeRoll>, like !duelRoll 1d20 or whatever.`
+}
+
+function refuseDuel(){
+	if(duelData['armed']==false) 
+		return "There is no duel right now."
+	else
+	{
+		clearDuelData();
+		return 'Duel is ready to be initiated again'
 	}
-	console.log(duelData)
+		
 }
 
 function clearDuelData(){
@@ -26,8 +41,6 @@ function clearDuelData(){
 	duelData["initiatorRoll"]=0;
 	duelData['targetRoll']=0;
 	duelData['typeRoll']="";
-	console.log(duelData);
-	console.log("duelData cleared");
 }
 
 function duelRoll(name, d){
@@ -51,7 +64,6 @@ function rollCheck(rollerName, roll){
 	else if(rollerName==duelData['target']){
 		duelData['targetRoll']=roll
 	}
-	console.log(duelData)
 }
 
 function endDuel(){
@@ -74,5 +86,6 @@ module.exports={
 	initiateDuel : initiateDuel,
 	acceptDuel : acceptDuel,
 	clearDuelData : clearDuelData,
-	endDuel : endDuel
+	endDuel : endDuel,
+	refuseDuel : refuseDuel
 }
