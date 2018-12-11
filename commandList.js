@@ -7,6 +7,9 @@ const converter = require('./convert.js')
 const name = require('./randomName.js');
 const fortnite = require('./fortnite.js');
 const duel = require('./duel.js');
+const Discord = require('discord.js');
+
+let reqCount = 0;
 
 var commandList = {};
 function Command(name, desc, hand){
@@ -15,32 +18,48 @@ function Command(name, desc, hand){
 	this.handler = hand
 }
 
+function botResponse(title,description, footer)
+{
+    const embedColor = helpers.getNextColor(reqCount++);
+    return new Discord.RichEmbed()
+    .setColor(embedColor)
+    .setTitle(title)
+    .setDescription(description)
+    .setFooter(footer)
+}
+
 //Roll and calc commands
 var roll = new Command('!roll', "Roll a random number between 1 and 100 or roll nDk dice", function(message){
     var string = message.content.split(' ');
     if(string.length==1){
         var random = Math.floor(Math.random() * 100) + 1;
-	    return `${message.author.username} has rolled ${random}! `
+        var commandResponse = `${message.author.username} has rolled ${random}! `   
     }
-    else
-	    return launcher.launcher(string[1]);
+    else{
+        var commandResponse = launcher.launcher(string[1])
+
+    }
+    return botResponse(this.name, commandResponse,this.description)
 	
 })
 commandList['roll'] = roll;
 
 var calc = new Command('!calc', "Calculator function, used also for math with dices.", function(message){
     var string = message.content.split(' ');
-	return calculator.interpreter(string[1]);
+    var commandResponse = calculator.interpreter(string[1]);
+	return botResponse(this.name, commandResponse,this.description)
 })
 
 var bin2Dec = new Command('!bin2Dec', 'Converts binary string into decimal number', function(message){
     var args = message.content.split(" ");
-	return converter.bin2Dec(args[1]);
+    var commandResponse = converter.bin2Dec(args[1]);
+	return botResponse(this.name, commandResponse,this.description)
 })
 
 var dec2Bin = new Command('!dec2Bin', 'Converts a number into a binary string', function(message){
     var args = message.content.split(" ");
-	return converter.dec2Bin(+args[1]);
+    var commandResponse = converter.dec2Bin(+args[1]);
+	return botResponse(this.name, commandResponse,this.description)
 })
 commandList['calc'] = calc;
 commandList['bin2Dec'] = bin2Dec;
@@ -50,22 +69,26 @@ commandList['dec2Bin'] = dec2Bin;
 //Prime Commands
 var isPrime = new Command('!isPrime', "Is the given number a prime number?", function(message){
     var string = message.content.split(' ');
-	return prime.isPrime(+string[1], [1])
+    var commandResponse = prime.isPrime(+string[1], [1])
+	return botResponse(this.name, commandResponse,this.description)
 })
 
 var nPrime = new Command('!nPrime', 'Will give all the n first prime numbers.' ,function(message){
     var string = message.content.split(' ');
-	return prime.nPrime(+string[1]);
+    var commandResponse = prime.nPrime(+string[1]);
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var gcd = new Command('!gcd', "Give the greater common diviser between the 2 given arguments", function(message){
     var string = message.content.split(' ');
-	return prime.gcd(+string[1], +string[2]);
+    var commandResponse = prime.gcd(+string[1], +string[2]);
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var primeRange = new Command('!primeRange', 'Will give all the prime numbers in the given argument range', function(message){
     var string = message.content.split(' ');
-	return prime.primeRange(+string[1], +string[2]);
+    var commandResponse = prime.primeRange(+string[1], +string[2]);
+    return botResponse(this.name, commandResponse,this.description)
 })
 commandList['nPrime'] = nPrime;
 commandList['gcd'] = gcd;
@@ -76,16 +99,14 @@ commandList['primeRange'] = primeRange;
 var changeName = new Command('!changeName', 'The bot will give a random name', function(message){
     var newName = name.getRandomName();
     message.member.setNickname(newName).catch(err)
-    return `Your new name is ${newName}`
+    var commandResponse = `Your new name is ${newName}`
+    return botResponse(this.name, commandResponse,this.description)
 });
 
 var resetName = new Command('!resetName', 'The Bot will restore your old name', function(message){
-    message.member.setNickname('')
-    .then(console.log)
-    .catch(error =>{
-        return error.message;
-    });
-    return 'Name is back to normal';
+    message.member.setNickname('').catch(error);
+    var commandResponse =  'Name is back to normal';
+    return botResponse(this.name, commandResponse,this.description)
 })
 commandList['changeName'] = changeName;
 commandList['resetName'] = resetName;
@@ -95,28 +116,34 @@ var challengeDuel = new Command('!challengeDuel', 'Challenge a user in a game of
     var initiator = message.author.username;
     var string = message.content.split(' ');
     var target = string[1];
-    return duel.initiateDuel(initiator, target);  
+    var commandResponse = duel.initiateDuel(initiator, target);
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var acceptDuel = new Command('!acceptDuel', 'Accepts the duel your opponent sent you', function(message){
-    return  duel.acceptDuel(message.author.username);
+    var commandResponse =  duel.acceptDuel(message.author.username);
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var duelRoll = new Command('!duelRoll', 'Roll a dice when its your turn in the duel', function(message){
     var typeRoll = message.content.split(' ');
-    return duel.duelRoll(message.author.username, typeRoll[1]);
+    var commandResponse = duel.duelRoll(message.author.username, typeRoll[1]);
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var endDuel = new Command('!endDuel', 'Ends the duel', function(message){
-    return duel.endDuel();
+    var commandResponse = duel.endDuel();
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var clearDuel = new Command('!clearDuel', 'Clears the duel data in case something goes wrong', function(message){
-    return  duel.clearDuelData();
+    var commandResponse =  duel.clearDuelData();
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var refuseDuel = new Command('!refuseDuel', 'Refuse the duel your opponent just sent you', function(message){
-    return  duel.refuseDuel();
+    var commandResponse =  duel.refuseDuel();
+    return botResponse(this.name, commandResponse,this.description)
 })
 commandList['challengeDuel'] = challengeDuel;
 commandList['acceptDuel'] = acceptDuel;
@@ -134,16 +161,19 @@ var benedict = new Command('!benedict', "Give a random Benedict Cumberbatch name
 	{
 		console.log(err)
 	}
-	return ben
+    var commandResponse = ben
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var shitPost = new Command('!shitPost', 'Generate beautiful text', function(message){
     var string = message.content.split(' ');
-    return helpers.generateShitPost(string)
+    var commandResponse = helpers.generateShitPost(string)
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 var landingZone = new Command('!landingZone', 'Gives you a random location to drop in Fortnite', function(message){
-    return fortnite.getLandingZone();
+    var commandResponse = fortnite.getLandingZone();
+    return botResponse(this.name, commandResponse,this.description)
 })
 
 commandList['benedict'] = benedict;
