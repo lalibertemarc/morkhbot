@@ -8,8 +8,6 @@ const name = require('./randomName.js');
 const fortnite = require('./fortnite.js');
 const duel = require('./duel.js');
 
-
-
 var commandList = {};
 function Command(name, desc, hand){
 	this.name = name;
@@ -23,7 +21,7 @@ var roll = new Command('!roll', "Roll a random number between 1 and 100 or roll 
     var string = message.content.split(' ');
     if(string.length==1){
         var random = Math.floor(Math.random() * 100) + 1;
-        var commandResponse = `${message.author.username} has rolled ${random}! `   
+        var commandResponse = `${message.author.username} rolled ${random}! `   
     }
     else{
         var commandResponse = launcher.launcher(string[1])
@@ -155,7 +153,7 @@ var benedict = new Command('!benedict', "Gives a random Benedict Cumberbatch nam
     return commandResponse
 })
 
-var shitPost = new Command('!shitPost', 'Generate beautiful text', function(message){
+var shitPost = new Command('!shitPost', 'Generates beautiful text', function(message){
     var string = message.content.split(' ');
     var commandResponse = helpers.generateShitPost(string)
     return commandResponse

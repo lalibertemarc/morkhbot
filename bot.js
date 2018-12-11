@@ -37,11 +37,8 @@ var NotifyChannel;
 Bot.on('ready', () => {
 	console.log(`[Start] ${new Date()}`);
 	initUsers();
-
 	//init variables for channels
 	NotifyChannel =  Bot.channels.get('353747084819693570');
-	generalChannel = Bot.channels.get('353747084819693571');
-	botTestChannel = Bot.channels.get('391706259923140618');
 });
 
 //fortnite webhook
@@ -123,20 +120,22 @@ function parseLanguages() {
 }
 
 let reqCount = 0;
-function botResponse(title,description, footer)
+function botResponse(title, description, footer, avatar)
 {
     const embedColor = helpers.getNextColor(reqCount++);
     return new Discord.RichEmbed()
-    .setColor(embedColor)
-    .setTitle(title)
+	.setColor(embedColor)
+	.setTitle(title)
+	.setThumbnail(avatar)
     .setDescription(description)
-    .setFooter(footer)
+	.setFooter(footer)
+	.setTimestamp(new Date());
 }
 
 
 Bot.on('messageReactionAdd', (reaction, user) => {
-	var commandResonse = user.username + ' reacted to ' + reaction.message.author + ' with ' + reaction._emoji.name
-	reaction.message.channel.send(botResponse("Emoji Reaction!", commandResonse,""));
+	var commandResponse = `${user.username} reacted to ${reaction.message.author.username}  with  ${reaction._emoji.name}`
+	reaction.message.channel.send(botResponse(commandResponse, reaction.message.content, "Emoji reaction handler", user.avatarURL));
 });
 
 //chat commands
@@ -150,9 +149,10 @@ Bot.on('message', message => {
 		var command = array[0].substring(1, array[0].length);
 
 		if(command in commandList)
-			message.channel.send(botResponse(commandList[command].name, 
-											commandList[command].handler(message), 
-											commandList[command].description));
+			message.channel.send(botResponse(
+				`${message.author.username} asked the ${commandList[command].name} command`,
+				commandList[command].handler(message), 
+				commandList[command].description, message.author.avatarURL));
 		else
 			message.channel.send(botResponse("Invalid Command", "Please use !help command", ""));
 
