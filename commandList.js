@@ -7,6 +7,7 @@ const converter = require('./convert.js')
 const name = require('./randomName.js');
 const fortnite = require('./fortnite.js');
 const duel = require('./duel.js');
+const translate = require('google-translate-api');
 
 var commandList = {};
 function Command(name, desc, hand){
@@ -40,7 +41,12 @@ var calc = new Command('!calc', "Calculator function, used also for math with di
 
 var bin2Dec = new Command('!bin2Dec', 'Converts binary string into decimal number', function(message){
     var args = message.content.split(" ");
-    var commandResponse = converter.bin2Dec(args[1]);
+    var commandResponse = ""
+    if(args[1].includes("2") || args[1].includes("3")|| args[1].includes("4")|| args[1].includes("5")
+    || args[1].includes("6")|| args[1].includes("7")|| args[1].includes("8")|| args[1].includes("9"))
+        commandResponse = "ERROR: Argument is not binary";
+    else
+        commandResponse = converter.bin2Dec(args[1]);
 	return commandResponse
 })
 
@@ -140,6 +146,28 @@ commandList['endDuel'] = endDuel;
 commandList['clearDuel'] = clearDuel;
 commandList['refuseDuel'] = refuseDuel;
 
+
+//translator commands
+var languages = new Command('!languages', "Gives a list of all available languages", function(message){
+    return helpers.parseLanguages(translate.languages);
+})
+
+var translater = new Command('!translate', 'Will translate something for you', async function(message){
+    var string = message.content.split('/');
+    var commandResponse=""
+    var res = await translate(string[1], { from: string[2], to: string[3] })
+    commandResponse = res.text;
+    console.log(commandResponse)
+    return commandResponse;
+    // translate(string[1], { from: string[2], to: string[3] }).then(res=>{
+    //     return test(res.text);
+    // }).catch(error=>[
+    //     commandResponse = error.message
+    // ])
+        
+})
+commandList['languages'] = languages
+commandList['translate'] = translater;
 
 //random commands
 var benedict = new Command('!benedict', "Gives a random Benedict Cumberbatch name", function(message){

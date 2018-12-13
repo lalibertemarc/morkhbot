@@ -9,8 +9,6 @@ const commands =require('./commandList.js');
 var commandList = commands.commandList;
 const helpers = require('./helperFunctions.js')
 
-const translate = require('google-translate-api');
-
 const { Pool, Client } = require('pg');
 const pool = new Pool({
 	user: 'postgres',
@@ -106,18 +104,7 @@ function parseGame(array) {
 	return result;
 }
 
-function parseLanguages() {
-	var result = '';
-	var it = 0;
-	for (key in translate.languages) {
-		it++;
-		result += key + ': ' + translate.languages[key] + '\n';
-		if (it == 105) {
-			break;
-		}
-	}
-	return result;
-}
+
 
 let reqCount = 0;
 function botResponse(title, description, footer, avatar)
@@ -134,8 +121,9 @@ function botResponse(title, description, footer, avatar)
 
 
 Bot.on('messageReactionAdd', (reaction, user) => {
-	var commandResponse = `${user.username} reacted to ${reaction.message.author.username}  with  ${reaction._emoji.name}`
-	reaction.message.channel.send(botResponse(commandResponse, reaction.message.content, "Emoji reaction handler", user.avatarURL));
+	var commandResponse = `${user} reacted to ${reaction.message.author}  with  ${reaction._emoji.name}
+	${reaction.message.content}`
+	reaction.message.channel.send(botResponse("", commandResponse, "Emoji reaction handler", user.avatarURL));
 });
 
 //chat commands
@@ -146,6 +134,8 @@ Bot.on('message', message => {
 	if (message.content.startsWith(prefix)) {
 		var cmd = message.content
 		var array = cmd.split(' ')
+		if(array.length==1)
+			array = cmd.split('/')
 		var command = array[0].substring(1, array[0].length);
 
 		if(command in commandList)
@@ -154,7 +144,7 @@ Bot.on('message', message => {
 				commandList[command].handler(message), 
 				commandList[command].description, message.author.avatarURL));
 		else
-			message.channel.send(botResponse("Invalid Command", "Please use !help command", ""));
+			message.channel.send(botResponse("Invalid Command", "Please use the !help command", ""));
 
 		switch (cmd) {
 
@@ -181,10 +171,6 @@ Bot.on('message', message => {
 
 				break;
 
-
-			case '!languages':
-				message.channel.send(parseLanguages());
-				break;
 			case '!allGames':
 				request = 'select * from games';
 				pool.query(request, (err, response) => {
@@ -252,21 +238,6 @@ Bot.on('message', message => {
 						}
 					});
 				}
-
-				//translate
-				if (message.content.startsWith(prefix + 'translate/')) {
-					var string = message.content.split('/');
-					//console.log(string)
-					translate(string[1], { from: string[2], to: string[3] })
-						.then(res => {
-							message.channel.send(res.text);
-							//=> I speak English
-							//message.channel.send(res.from.text.autoCorrected);
-						})
-						.catch(err => {
-							console.error(err);
-						});
-				}	
 		}
 	}
 });

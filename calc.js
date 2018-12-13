@@ -1,11 +1,9 @@
-const launcher = require('./dicelauncher.js')
-
 function eval (a, b, c){ 
 	if((typeof a == 'string') && a.charAt(1)=='d'){
-		a=launcher.launcherNoText(a);
+		a=launcherNoText(a)
 	}
 	if((typeof c == 'string')&&c.charAt(1)=='d'){
-		c=launcher.launcherNoText(c);
+		c=launcherNoText(c)
 	}
 	if(b=='+'){
 		return a+c;
@@ -23,7 +21,26 @@ function eval (a, b, c){
 		return Math.pow(a,c);
 	}		
 }
+function launcherNoText(d){
+	var dice = d.split("d")
+	var number = +dice[0]
+	var face = +dice[1]
+	var somme=0
+	//var result=[]
+	
+	if(number<=0){return 0}
+	if (face <=0){return 0}
 
+	for(var i=0; i<number;i++){
+		var tir = Math.floor(Math.random()*face+1)
+		console.log(tir)
+		somme+=tir;
+		//result.push(tir)
+	}
+	console.log(d, somme)
+	return somme
+	
+}
 //remove element from array
 function remove (array, element) {
     const index = array.indexOf(element);

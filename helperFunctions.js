@@ -9,6 +9,18 @@ function generateShitPost(text) {
 
 	return result;
 }
+function parseLanguages(languages) {
+	var result = '';
+	var it = 0;
+	for (key in languages) {
+		it++;
+		result += key + ': ' + languages[key] + '\n';
+		if (it == 105) {
+			break;
+		}
+	}
+	return result;
+}
 
 function getNextColor(int) {
 	const CYCLE = 12; // Number of colors before the cycle repeats
@@ -22,5 +34,6 @@ function getNextColor(int) {
 
 }module.exports = {
 	generateShitPost:generateShitPost,
-	getNextColor:getNextColor
+	getNextColor:getNextColor,
+	parseLanguages:parseLanguages
 }

@@ -8,8 +8,7 @@ function dec2Bin(k){
 }
 
 function bin2Dec(k){
-	if(!k.includes("1") || !k.includes("0"))
-		return "Argument is not binary";
+
 	somme=0
 	i=k.length-1
 	j=0

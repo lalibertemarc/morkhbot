@@ -1,4 +1,3 @@
-var calc = require('./calc.js')
 
 //launche dices, needs string input like 2d6
 //output strings, mainly for the discord channel output. 
@@ -54,5 +53,5 @@ function launcherNoText(d){
 }
 module.exports={
 	launcher:launcher,
-	launcherNoText:launcherNoText
+	launcherNoText:launcherNoText,
 }
