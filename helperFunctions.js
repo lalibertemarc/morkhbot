@@ -82,6 +82,7 @@ function commandResponse(message, command, commandResponse){
 		)
 	  );
 }
+function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
 
 module.exports = {
 	generateShitPost:generateShitPost,
@@ -92,4 +93,5 @@ module.exports = {
 	parseGame:parseGame,
 	botResponse:botResponse,
 	commandResponse:commandResponse,
+	isNumber:isNumber,
 }

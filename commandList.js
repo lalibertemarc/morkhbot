@@ -26,24 +26,20 @@ function Command(name, desc, hand) {
 }
 
 //Roll and calc commands
-var roll = new Command(
-  "!roll",
-  "Roll a random number between 1 and 100 or roll nDk dice",
+var roll = new Command("!roll","Roll a random number between 1 and 100 or roll nDk dice",
   function(message) {
     var string = message.content.split(" ");
     if (string.length == 1) {
       var random = Math.floor(Math.random() * 100) + 1;
       var commandResponse = `${message.author.username} rolled ${random}! `;
     }else
-      var commandResponse = launcher.launcher(string[1]);
+      var commandResponse = launcher.launcher(string[1].replace('D', 'd'));
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 commandList["roll"] = roll;
 
-var calc = new Command(
-  "!calc",
-  "Calculator function, used also for math with dices. !calc <operation> | !calc 1d20+10",
+var calc = new Command("!calc","Calculator function, used also for math with dices. !calc <operation> | !calc 1d20+10",
   function(message) {
     var string = message.content.split(/ +/);
     var commandResponse = string[1] + " = " + calculator.interpreter(string[1]);
@@ -51,9 +47,7 @@ var calc = new Command(
   }
 );
 
-var bin2Dec = new Command(
-  "!bin2Dec",
-  "Converts binary string into decimal number",
+var bin2Dec = new Command("!bin2Dec","Converts binary string into decimal number",
   function(message) {
     var args = message.content.split(" ");
     var commandResponse = "";
@@ -78,7 +72,11 @@ var dec2Bin = new Command(
   "Converts a number into a binary string : !dec2Bin <number>",
   function(message) {
     var args = message.content.split(" ");
-    var commandResponse = converter.dec2Bin(+args[1]);
+    var commandResponse=""
+    if(helpers.isNumber(args[1]))
+      commandResponse = converter.dec2Bin(+args[1]);
+    else
+      commandResponse = 'Given argument is not a numerical.'
     helpers.commandResponse(message, this, commandResponse)
   }
 );
@@ -87,32 +85,38 @@ commandList["bin2Dec"] = bin2Dec;
 commandList["dec2Bin"] = dec2Bin;
 
 //Prime Commands
-var isPrime = new Command(
-  "!isPrime",
-  "Is the given number a prime number? !isPrime <number>",
+var isPrime = new Command("!isPrime","Is the given number a prime number? !isPrime <number>",
   function(message) {
-    var string = message.content.split(" ");
-    var commandResponse = prime.isPrime(+string[1], [1]);
+    var args = message.content.split(" ");
+    var commandResponse=""
+    if(helpers.isNumber(args[1]))
+      commandResponse = prime.isPrime(+args[1], [1]);
+    else
+      commandResponse = 'Given argument is not a numerical.'
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 
-var nPrime = new Command(
-  "!nPrime",
-  "Gives all the n first prime numbers. !nPrime <n>",
+var nPrime = new Command("!nPrime","Gives all the n first prime numbers. !nPrime <n>",
   function(message) {
-    var string = message.content.split(" ");
-    var commandResponse = prime.nPrime(+string[1]);
+    var args= message.content.split(" ");
+    var commandResponse=""
+    if(helpers.isNumber(args[1]))
+      commandResponse = prime.nPrime(+args[1]);
+    else
+      commandResponse = 'Given argument is not a numerical.'
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 
-var gcd = new Command(
-  "!gcd",
-  "Gives the greater common diviser between the 2 given arguments. !gcd <number> <number>",
+var gcd = new Command("!gcd","Gives the greater common diviser between the 2 given arguments. !gcd <number> <number>",
   function(message) {
-    var string = message.content.split(" ");
-    var commandResponse = prime.gcd(+string[1], +string[2]);
+    var args = message.content.split(" ");
+    var commandResponse=""
+    if(helpers.isNumber(args[1]) || helpers.isNumber(args[2]))
+      commandResponse = prime.gcd(+args[1], +args[2]);
+    else
+      commandResponse = 'One of the given arguments is not a numerical.'  
     helpers.commandResponse(message, this, commandResponse)
   }
 );
@@ -121,8 +125,12 @@ var primeRange = new Command(
   "!primeRange",
   "Gives all the prime numbers in the given argument range. !primeRange <lower> <upper>",
   function(message) {
-    var string = message.content.split(" ");
-    var commandResponse = prime.primeRange(+string[1], +string[2]);
+    var args = message.content.split(" ");
+    var commandResponse=""
+    if(helpers.isNumber(args[1]) || helpers.isNumber(args[2]))
+      commandResponse = prime.primeRange(+args[1], +args[2]);
+    else
+      commandResponse = 'One of the given arguments is not a numerical.' 
     helpers.commandResponse(message, this, commandResponse)
   }
 );
@@ -132,9 +140,7 @@ commandList["isPrime"] = isPrime;
 commandList["primeRange"] = primeRange;
 
 //Random Name commands
-var changeName = new Command(
-  "!changeName",
-  "The bot will give you a random name",
+var changeName = new Command("!changeName","The bot will give you a random name",
   function(message) {
     var newName = name.getRandomName();
     message.member.setNickname(newName).catch(err);
@@ -143,43 +149,53 @@ var changeName = new Command(
   }
 );
 
-var resetName = new Command(
-  "!resetName",
-  "The Bot will restore your old name",
+var randomNames = new Command('!randomNames', 'Gives a list of random Medieval names',
+  function(message){
+    var args = message.content.split(/ +/);
+    var commandResponse=""
+    if(helpers.isNumber(args[1]))
+    {
+      for(var i=0 ; i<+args[1];i++){
+        commandResponse+= name.getRandomName()+'\n'
+      }
+    }
+    else
+      commandResponse = "Given argument is not numerical."
+    
+    helpers.commandResponse(message, this, commandResponse)
+  }
+)
+
+var resetName = new Command("!resetName","The Bot will restore your old name",
   function(message) {
     message.member.setNickname("").catch(error);
     var commandResponse = "Name is back to normal";
     helpers.commandResponse(message, this, commandResponse)
   }
 );
+commandList['randomNames'] = randomNames;
 commandList["changeName"] = changeName;
 commandList["resetName"] = resetName;
 
 //duels commands
-var challengeDuel = new Command(
-  "!challengeDuel",
-  "Challenge a user in a game of dice",
+var challengeDuel = new Command("!challengeDuel","Challenge a user in a game of dice",
   function(message) {
     var initiator = message.author.username;
-    var string = message.content.split(" ");
-    var target = string[1];
+    var args= message.content.split(" ");
+    var target = args[1];
     var commandResponse = duel.initiateDuel(initiator, target);
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 
-var acceptDuel = new Command(
-  "!acceptDuel",
-  "Accepts the duel your opponent sent you",
+var acceptDuel = new Command("!acceptDuel","Accepts the duel your opponent sent you",
   function(message) {
     var commandResponse = duel.acceptDuel(message.author.username);
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 
-var duelRoll = new Command(
-  "!duelRoll",
-  "Roll a dice when its your turn in the duel. !duelRoll nDk",
+var duelRoll = new Command("!duelRoll","Roll a dice when its your turn in the duel. !duelRoll nDk",
   function(message) {
     var typeRoll = message.content.split(" ");
     var commandResponse = duel.duelRoll(message.author.username, typeRoll[1]);
@@ -192,18 +208,14 @@ var endDuel = new Command("!endDuel", "Ends the duel", function(message) {
   helpers.commandResponse(message, this, commandResponse)
 });
 
-var clearDuel = new Command(
-  "!clearDuel",
-  "Clears the duel data in case something goes wrong",
+var clearDuel = new Command("!clearDuel","Clears the duel data in case something goes wrong",
   function(message) {
     var commandResponse = duel.clearDuelData();
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 
-var refuseDuel = new Command(
-  "!refuseDuel",
-  "Refuse the duel your opponent just sent you",
+var refuseDuel = new Command(="!refuseDuel","Refuse the duel your opponent just sent you",
   function(message) {
     var commandResponse = duel.refuseDuel();
     helpers.commandResponse(message, this, commandResponse)
@@ -217,18 +229,14 @@ commandList["clearDuel"] = clearDuel;
 commandList["refuseDuel"] = refuseDuel;
 
 //translator commands
-var languages = new Command(
-  "!languages",
-  "Gives a list of all available languages",
+var languages = new Command("!languages","Gives a list of all available languages",
   function(message) {
     var commandResponse = helpers.parseLanguages(translate.languages);
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 
-var translater = new Command(
-  "!translate",
-  "Will translate something for you",
+var translater = new Command("!translate","Will translate something for you",
   async function(message) {
     var string = message.content.split("/");
     var commandResponse = "";
@@ -249,9 +257,7 @@ commandList["languages"] = languages;
 commandList["translate"] = translater;
 
 //Games Command
-var allGames = new Command(
-  "!allGames",
-  "Get all available games to roll when you dont know what to play",
+var allGames = new Command("!allGames","Get all available games to roll when you dont know what to play",
   async function(message) {
     var commandResponse = "";
     request = "select * from games";
@@ -264,9 +270,7 @@ var allGames = new Command(
   }
 );
 
-var rollGames = new Command(
-  "!rollGames",
-  "Roll a random game to play if you have no inspiration on what to play",
+var rollGames = new Command("!rollGames","Roll a random game to play if you have no inspiration on what to play",
   function(message) {
     request = "select * from games";
     pool.query(request, (err, response) => {
@@ -280,9 +284,7 @@ var rollGames = new Command(
   }
 );
 
-var addGame = new Command(
-  "!addGame",
-  "Add a game in the database to get a chance to roll it",
+var addGame = new Command("!addGame","Add a game in the database to get a chance to roll it",
   function(message) {
     var string = message.content.split(/ +/);
     var newGame = helpers.parseGame(string);
@@ -304,12 +306,9 @@ commandList["rollGames"] = rollGames;
 commandList["addGame"] = addGame;
 
 //points system
-var addMe = new Command(
-  "!addMe",
-  "Add your username in the database for the point system",
+var addMe = new Command("!addMe","Add your username in the database for the point system",
   function(message) {
     var request1 = `select * from userpoints where name = '${ message.author.username}'`;
-
     pool.query(request1, (err, response) => {
       if (response) {
         if (response.rows.length == 0) {
@@ -346,9 +345,7 @@ function(message) {
   });
 });
 
-var allPoints = new Command(
-  "!allPoints",
-  "Check the points for every users in the database",
+var allPoints = new Command("!allPoints", "Check the points for every users in the database",
   function(message) {
     var request = "select * from userpoints";
     pool.query(request, (err, response) => {
@@ -364,15 +361,15 @@ var give = new Command(
   "!give",
   "Give that user some points : !give <user> <points>",
   function(message) {
-    var string = message.content.split(/ +/);
-    if (string.length < 3) {
-      var commandResponse = "Invalid format for command";
+    var args= message.content.split(/ +/);
+    if (string.length < 3 || helpers.isNumber(args[2])) {
+      var commandResponse = "Invalid format for command.";
       helpers.commandResponse(message, this, commandResponse)
       return;
     } 
     else {
-      var user = string[1];
-      var points = string[2];
+      var user = args[1];
+      var points = args[2];
       var request1 = `select * from userpoints where name = '${user}'`;
       pool.query(request1, (err, response) => {
         if (response) {
@@ -432,18 +429,14 @@ var shitPost = new Command("!shitPost", "Generates beautiful text", function(
   helpers.commandResponse(message, this, commandResponse)
 });
 
-var landingZone = new Command(
-  "!landingZone",
-  "Gives you a random drop location in Fortnite",
+var landingZone = new Command("!landingZone","Gives you a random drop location in Fortnite",
   function(message) {
     var commandResponse = fortnite.getLandingZone();
     helpers.commandResponse(message, this, commandResponse)
   }
 );
 
-var help = new Command(
-  "!help",
-  "Gives a list of all available command",
+var help = new Command("!help","Gives a list of all available command",
   function(message) {
     var commandResponse = "";
     for (command in commandList)
