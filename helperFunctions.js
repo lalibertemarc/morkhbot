@@ -72,6 +72,16 @@ function botResponse(title, description, footer, avatar)
 	.setTimestamp(new Date());
 }
 
+function commandResponse(message, command, commandResponse){
+	message.channel.send(
+		botResponse(
+		  `${message.author.username} asked the ${command.name} command`,
+		  commandResponse,
+		  command.description,
+		  message.author.avatarURL
+		)
+	  );
+}
 
 module.exports = {
 	generateShitPost:generateShitPost,
@@ -81,4 +91,5 @@ module.exports = {
 	parseRows:parseRows,
 	parseGame:parseGame,
 	botResponse:botResponse,
+	commandResponse:commandResponse,
 }

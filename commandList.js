@@ -34,35 +34,20 @@ var roll = new Command(
     if (string.length == 1) {
       var random = Math.floor(Math.random() * 100) + 1;
       var commandResponse = `${message.author.username} rolled ${random}! `;
-    } else {
+    }else
       var commandResponse = launcher.launcher(string[1]);
-    }
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 commandList["roll"] = roll;
 
 var calc = new Command(
   "!calc",
-  "Calculator function, used also for math with dices.",
+  "Calculator function, used also for math with dices. !calc <operation> | !calc 1d20+10",
   function(message) {
     var string = message.content.split(/ +/);
     var commandResponse = string[1] + " = " + calculator.interpreter(string[1]);
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
@@ -84,33 +69,17 @@ var bin2Dec = new Command(
     )
       commandResponse = "ERROR: Argument is not binary";
     else commandResponse = converter.bin2Dec(args[1]);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
 var dec2Bin = new Command(
   "!dec2Bin",
-  "Converts a number into a binary string",
+  "Converts a number into a binary string : !dec2Bin <number>",
   function(message) {
     var args = message.content.split(" ");
     var commandResponse = converter.dec2Bin(+args[1]);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 commandList["calc"] = calc;
@@ -120,73 +89,41 @@ commandList["dec2Bin"] = dec2Bin;
 //Prime Commands
 var isPrime = new Command(
   "!isPrime",
-  "Is the given number a prime number?",
+  "Is the given number a prime number? !isPrime <number>",
   function(message) {
     var string = message.content.split(" ");
     var commandResponse = prime.isPrime(+string[1], [1]);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
 var nPrime = new Command(
   "!nPrime",
-  "Gives all the n first prime numbers.",
+  "Gives all the n first prime numbers. !nPrime <n>",
   function(message) {
     var string = message.content.split(" ");
     var commandResponse = prime.nPrime(+string[1]);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
 var gcd = new Command(
   "!gcd",
-  "Gives the greater common diviser between the 2 given arguments",
+  "Gives the greater common diviser between the 2 given arguments. !gcd <number> <number>",
   function(message) {
     var string = message.content.split(" ");
     var commandResponse = prime.gcd(+string[1], +string[2]);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
 var primeRange = new Command(
   "!primeRange",
-  "Gives all the prime numbers in the given argument range",
+  "Gives all the prime numbers in the given argument range. !primeRange <lower> <upper>",
   function(message) {
     var string = message.content.split(" ");
     var commandResponse = prime.primeRange(+string[1], +string[2]);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 commandList["nPrime"] = nPrime;
@@ -202,15 +139,7 @@ var changeName = new Command(
     var newName = name.getRandomName();
     message.member.setNickname(newName).catch(err);
     var commandResponse = `Your new name is ${newName}`;
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
@@ -220,15 +149,7 @@ var resetName = new Command(
   function(message) {
     message.member.setNickname("").catch(error);
     var commandResponse = "Name is back to normal";
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 commandList["changeName"] = changeName;
@@ -243,15 +164,7 @@ var challengeDuel = new Command(
     var string = message.content.split(" ");
     var target = string[1];
     var commandResponse = duel.initiateDuel(initiator, target);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
@@ -260,39 +173,23 @@ var acceptDuel = new Command(
   "Accepts the duel your opponent sent you",
   function(message) {
     var commandResponse = duel.acceptDuel(message.author.username);
-    return commandResponse;
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
 var duelRoll = new Command(
   "!duelRoll",
-  "Roll a dice when its your turn in the duel",
+  "Roll a dice when its your turn in the duel. !duelRoll nDk",
   function(message) {
     var typeRoll = message.content.split(" ");
     var commandResponse = duel.duelRoll(message.author.username, typeRoll[1]);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
 var endDuel = new Command("!endDuel", "Ends the duel", function(message) {
   var commandResponse = duel.endDuel();
-
-  message.channel.send(
-    helpers.botResponse(
-      `${message.author.username} asked the ${this.name} command`,
-      commandResponse,
-      this.description,
-      message.author.avatarURL
-    )
-  );
+  helpers.commandResponse(message, this, commandResponse)
 });
 
 var clearDuel = new Command(
@@ -300,15 +197,7 @@ var clearDuel = new Command(
   "Clears the duel data in case something goes wrong",
   function(message) {
     var commandResponse = duel.clearDuelData();
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
@@ -317,15 +206,7 @@ var refuseDuel = new Command(
   "Refuse the duel your opponent just sent you",
   function(message) {
     var commandResponse = duel.refuseDuel();
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 commandList["challengeDuel"] = challengeDuel;
@@ -341,15 +222,7 @@ var languages = new Command(
   "Gives a list of all available languages",
   function(message) {
     var commandResponse = helpers.parseLanguages(translate.languages);
-
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
@@ -369,14 +242,7 @@ var translater = new Command(
     }
 
     commandResponse = commandResponse.text;
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 commandList["languages"] = languages;
@@ -392,14 +258,7 @@ var allGames = new Command(
     pool.query(request, (err, response) => {
       if (response) {
         commandResponse = helpers.parseRows(response);
-        message.channel.send(
-          helpers.botResponse(
-            `${message.author.username} asked the ${this.name} command`,
-            commandResponse,
-            this.description,
-            message.author.avatarURL
-          )
-        );
+        helpers.commandResponse(message, this, commandResponse)
       }
     });
   }
@@ -415,14 +274,7 @@ var rollGames = new Command(
         var commandResponse = helpers.getRandomfromArray(
           helpers.parseRows(response)
         );
-        message.channel.send(
-          helpers.botResponse(
-            `${message.author.username} asked the ${this.name} command`,
-            commandResponse,
-            this.description,
-            message.author.avatarURL
-          )
-        );
+        helpers.commandResponse(message, this, commandResponse)
       }
     });
   }
@@ -438,25 +290,10 @@ var addGame = new Command(
     pool.query(request, (err, response) => {
       if (response) {
         var commandResponse = "New Game was added to database.";
-        message.channel.send(
-          helpers.botResponse(
-            `${message.author.username} asked the ${this.name} command`,
-            commandResponse,
-            this.description,
-            message.author.avatarURL
-          )
-        );
+        helpers.commandResponse(message, this, commandResponse)
       } else {
-        var commandResponse =
-          "No response from database. Maybe you have a ' in the name of your game.";
-        message.channel.send(
-          helpers.botResponse(
-            `${message.author.username} asked the ${this.name} command`,
-            commandResponse,
-            this.description,
-            message.author.avatarURL
-          )
-        );
+        var commandResponse = "No response from database. Maybe you have a ' in the name of your game.";
+        helpers.commandResponse(message, this, commandResponse)
       }
     });
   }
@@ -471,77 +308,39 @@ var addMe = new Command(
   "!addMe",
   "Add your username in the database for the point system",
   function(message) {
-    var request1 = `select * from userpoints where name = '${
-      message.author.username
-    }'`;
+    var request1 = `select * from userpoints where name = '${ message.author.username}'`;
 
     pool.query(request1, (err, response) => {
       if (response) {
         if (response.rows.length == 0) {
           //insert only if name is not present
-          var request2 = `INSERT INTO userpoints VALUES ('${
-            message.author.username
-          }', 0)`;
+          var request2 = `INSERT INTO userpoints VALUES ('${message.author.username}', 0)`;
           pool.query(request2, (err, response) => {
             if (response) {
-              var commandResponse = `${
-                message.author.username
-              } was succesfully added to the database`;
-              message.channel.send(
-                helpers.botResponse(
-                  `${message.author.username} asked the ${this.name} command`,
-                  commandResponse,
-                  this.description,
-                  message.author.avatarURL
-                )
-              );
+              var commandResponse = `${message.author.username} was succesfully added to the database`;
+              helpers.commandResponse(message, this, commandResponse)
             }
           });
         } else {
-          var commandResponse = `${
-            message.author.username
-          } is already in the database`;
-          message.channel.send(
-            helpers.botResponse(
-              `${message.author.username} asked the ${this.name} command`,
-              commandResponse,
-              this.description,
-              message.author.avatarURL
-            )
-          );
+          var commandResponse = `${message.author.username} is already in the database`;
+          helpers.commandResponse(message, this, commandResponse)
         }
       }
     });
   }
 );
 
-var points = new Command("!points", "Check how many points you have.", function(
-  message
-) {
+var points = new Command("!points", "Check how many points you have.", 
+function(message) {
   request = `select points from userpoints where name='${ message.author.username}'`;
-
   pool.query(request, (err, response) => {
     if (response) {
       if (response.rows[0] != undefined) {
         var commandResponse = `${message.author.username} has  ${response.rows[0]["points"]} points.`;
-        message.channel.send(
-          helpers.botResponse(
-            `${message.author.username} asked the ${this.name} command`,
-            commandResponse,
-            this.description,
-            message.author.avatarURL
-          )
-        );
+        helpers.commandResponse(message, this, commandResponse)
       } else {
         var commandResponse = `${message.author.username} is not in database, please use the !addMe command`;
-        message.channel.send(
-          helpers.botResponse(
-            `${message.author.username} asked the ${this.name} command`,
-            commandResponse,
-            this.description,
-            message.author.avatarURL
-          )
-        );
+        helpers.commandResponse(message, this, commandResponse)
       }
     }
   });
@@ -555,14 +354,7 @@ var allPoints = new Command(
     pool.query(request, (err, response) => {
       if (response) {
         var commandResponse = helpers.parseRows(response);
-        message.channel.send(
-          helpers.botResponse(
-            `${message.author.username} asked the ${this.name} command`,
-            commandResponse,
-            this.description,
-            message.author.avatarURL
-          )
-        );
+        helpers.commandResponse(message, this, commandResponse)
       }
     });
   }
@@ -575,16 +367,10 @@ var give = new Command(
     var string = message.content.split(/ +/);
     if (string.length < 3) {
       var commandResponse = "Invalid format for command";
-      message.channel.send(
-        helpers.botResponse(
-          `${message.author.username} asked the ${this.name} command`,
-          commandResponse,
-          this.description,
-          message.author.avatarURL
-        )
-      );
+      helpers.commandResponse(message, this, commandResponse)
       return;
-    } else {
+    } 
+    else {
       var user = string[1];
       var points = string[2];
       var request1 = `select * from userpoints where name = '${user}'`;
@@ -596,17 +382,11 @@ var give = new Command(
             pool.query(request2, (err, response) => {
               if (response) {
                 var commandResponse = `${user} has now ${points} points.`;
-                message.channel.send(
-                  helpers.botResponse(
-                    `${message.author.username} asked the ${this.name} command`,
-                    commandResponse,
-                    this.description,
-                    message.author.avatarURL
-                  )
-                );
+                helpers.commandResponse(message, this, commandResponse)
               }
             });
           } else {
+            //add points to current user points.
             request3 = `update userpoints set points=(select points from userpoints where name='${user}') + ${points} where name='${user}'`;
             pool.query(request3, (err, response) => {
               if (response) {
@@ -615,14 +395,7 @@ var give = new Command(
                   if (response) {
                     points = response.rows[0]["points"];
                     var commandResponse = `${user} has now ${points} points`;
-                    message.channel.send(
-                      helpers.botResponse(
-                        `${message.author.username} asked the ${this.name} command`,
-                        commandResponse,
-                        this.description,
-                        message.author.avatarURL
-                      )
-                    );
+                    helpers.commandResponse(message, this, commandResponse)
                   }
                 });
               }
@@ -639,9 +412,7 @@ commandList["points"] = points;
 commandList["allPoints"] = allPoints;
 commandList["give"] = give;
 //random commands
-var benedict = new Command(
-  "!benedict",
-  "Gives a random Benedict Cumberbatch name",
+var benedict = new Command("!benedict","Gives a random Benedict Cumberbatch name",
   function(message) {
     try {
       var ben = cumberbatch();
@@ -649,14 +420,7 @@ var benedict = new Command(
       console.log(err);
     }
     var commandResponse = ben;
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
@@ -665,14 +429,7 @@ var shitPost = new Command("!shitPost", "Generates beautiful text", function(
 ) {
   var string = message.content.split(" ");
   var commandResponse = helpers.generateShitPost(string);
-  message.channel.send(
-    helpers.botResponse(
-      `${message.author.username} asked the ${this.name} command`,
-      commandResponse,
-      this.description,
-      message.author.avatarURL
-    )
-  );
+  helpers.commandResponse(message, this, commandResponse)
 });
 
 var landingZone = new Command(
@@ -680,14 +437,7 @@ var landingZone = new Command(
   "Gives you a random drop location in Fortnite",
   function(message) {
     var commandResponse = fortnite.getLandingZone();
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+    helpers.commandResponse(message, this, commandResponse)
   }
 );
 
@@ -702,14 +452,7 @@ var help = new Command(
         " : " +
         commandList[command].description +
         "\n";
-    message.channel.send(
-      helpers.botResponse(
-        `${message.author.username} asked the ${this.name} command`,
-        commandResponse,
-        this.description,
-        message.author.avatarURL
-      )
-    );
+        helpers.commandResponse(message, this, commandResponse)
   }
 );
 
