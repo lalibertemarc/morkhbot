@@ -1,3 +1,5 @@
+const Discord = require('discord.js');
+
 function generateShitPost(text) {
 	var result = '';
 	for (var j = 1; j < text.length; j++) {
@@ -22,6 +24,30 @@ function parseLanguages(languages) {
 	return result;
 }
 
+function getRandomfromArray(array) {
+	return array[Math.floor(Math.random() * array.length)];
+}
+
+function parseRows(array) {
+	var result = [];
+	for (var i = 0; i < array.rows.length; i++) {
+		for (var key in array.rows[i]) {
+			result.push(array.rows[i][key]);
+		}
+	}
+	return result;
+}
+
+function parseGame(array) {
+	var result = '';
+	for (var i = 1; i < array.length; i++) {
+		result += array[i];
+		if (i != array.length - 1) {
+			result += ' ';
+		}
+	}
+	return result;
+}
 function getNextColor(int) {
 	const CYCLE = 12; // Number of colors before the cycle repeats
 	const SATURATION = [64, 64, 64]; // Hue; 0 = greyscale, 127 = high saturation
@@ -32,8 +58,27 @@ function getNextColor(int) {
 	const b = Math.floor(Math.sin((Math.PI / CYCLE) * 2 * int + (Math.PI * 4) / 3) * SATURATION[2]) + BRIGHTNESS[2];
 	return r * 65536 + g * 256 + b;
 
-}module.exports = {
+}
+let reqCount = 0;
+function botResponse(title, description, footer, avatar)
+{
+    const embedColor = getNextColor(reqCount++);
+    return new Discord.RichEmbed()
+	.setColor(embedColor)
+	.setTitle(title)
+	.setThumbnail(avatar)
+    .setDescription(description)
+	.setFooter(footer)
+	.setTimestamp(new Date());
+}
+
+
+module.exports = {
 	generateShitPost:generateShitPost,
 	getNextColor:getNextColor,
-	parseLanguages:parseLanguages
+	parseLanguages:parseLanguages,
+	getRandomfromArray:getRandomfromArray,
+	parseRows:parseRows,
+	parseGame:parseGame,
+	botResponse:botResponse,
 }

@@ -21,6 +21,7 @@ function eval (a, b, c){
 		return Math.pow(a,c);
 	}		
 }
+
 function launcherNoText(d){
 	var dice = d.split("d")
 	var number = +dice[0]
@@ -33,11 +34,9 @@ function launcherNoText(d){
 
 	for(var i=0; i<number;i++){
 		var tir = Math.floor(Math.random()*face+1)
-		console.log(tir)
 		somme+=tir;
 		//result.push(tir)
 	}
-	console.log(d, somme)
 	return somme
 	
 }
@@ -139,7 +138,6 @@ function parenthesis(exp){
 }
 
 function interpreter (exp){
-	console.log(exp);
 	exp=toArray(exp);
 	exp = parenthesis(exp);
 	exp = prodDivPower(exp);
