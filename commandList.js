@@ -215,7 +215,7 @@ var clearDuel = new Command("!clearDuel","Clears the duel data in case something
   }
 );
 
-var refuseDuel = new Command(="!refuseDuel","Refuse the duel your opponent just sent you",
+var refuseDuel = new Command("!refuseDuel","Refuse the duel your opponent just sent you",
   function(message) {
     var commandResponse = duel.refuseDuel();
     helpers.commandResponse(message, this, commandResponse)
