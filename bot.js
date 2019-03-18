@@ -39,9 +39,7 @@ app.post('/webhook', function(req, res) {
 app.listen(8000, () => console.log('Now listening to 8000'));
 
 Bot.on('messageReactionAdd', (reaction, user) => {
-	var commandResponse = `${user} reacted to ${reaction.message.author}  with  ${reaction._emoji.name}
-	${reaction.message.content}`
-	reaction.message.channel.send(helpers.botResponse("", commandResponse, "Emoji reaction handler", user.avatarURL));
+	reaction.message.channel.send(`${user} reacted to ${reaction.message.author}  with  ${reaction._emoji.name}`);
 });
 
 //chat commands
