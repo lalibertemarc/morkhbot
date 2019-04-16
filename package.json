@@ -16,6 +16,7 @@
     "opusscript": "0.0.3",
     "pg": "^7.4.3",
     "pubg-api-redis": "^3.6.0",
+    "request": "^2.81.0",
     "soundcloud": "^3.2.2",
     "soundcloudr": "^1.1.0",
     "steam-api": "^1.1.3",
