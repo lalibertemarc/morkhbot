@@ -368,7 +368,6 @@ var help = new Command("!help", "Gives a list of all available command", functio
 commandList["benedict"] = benedict;
 commandList["shitPost"] = shitPost;
 commandList["landingZone"] = landingZone;
-commandList["help"] = help;
 
 var movies = new Command("!movies", "Will query OMDb api for a movie request", message => {
     var args = message.content.split(/ +/);
@@ -391,7 +390,6 @@ var movies = new Command("!movies", "Will query OMDb api for a movie request", m
         var description = `Released : ${body.Released}\n`;
         description += `Director : ${body.Director}\n`;
         description += `Writer : ${body.Writer}\n`;
-
         description += `Actors : ${body.Actors}\n`;
         description += `Awards : ${body.Awards}\n`;
         description += `Plot : ${body.Plot}\n`;
@@ -403,6 +401,32 @@ var movies = new Command("!movies", "Will query OMDb api for a movie request", m
 });
 
 commandList["movies"] = movies;
+
+var weather = new Command("!weather", "Will give the current weather for the asked city", function(message) {
+    var args = message.content.split(/ +/);
+    var city = args[1];
+    var url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=3a91dafd0698ffa38eb48d03f29b9d0c`;
+    request(url, { json: true }, (err, res, body) => {
+        if (err) {
+            return console.log(err);
+        }
+        if (body.Error) {
+            helpers.commandResponse(message, this, body.Error);
+            return;
+        }
+        var commandResponse = `Weather for ${body.name}: \n`;
+        commandResponse += `Currently : ${body.weather[0].description}\n`;
+        commandResponse += `Temp : ${body.main.temp} °C\n`;
+        commandResponse += `Min : ${body.main.temp_min} °C\n`;
+        commandResponse += `Max : ${body.main.temp_max} °C\n`;
+        commandResponse += `Wind : ${body.wind.speed} km/h to ${helpers.getCardinal(body.wind.deg)}`;
+        if (body.rain) commandResponse += `Rain : ${body.rain["3h"]}\n`;
+
+        helpers.commandResponse(message, this, commandResponse);
+    });
+});
+commandList["weather"] = weather;
+commandList["help"] = help;
 module.exports = {
     commandList: commandList
 };
