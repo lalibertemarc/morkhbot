@@ -387,7 +387,8 @@ var movies = new Command("!movies", "Will query OMDb api for a movie request", m
         for (var i = 0; i < body.Ratings.length; i++) {
             ratings += `${body.Ratings[i].Source} : ${body.Ratings[i].Value} `;
         }
-        var description = `Released : ${body.Released}\n`;
+        var description = "";
+        description += `Released : ${body.Released}\n`;
         description += `Director : ${body.Director}\n`;
         description += `Writer : ${body.Writer}\n`;
         description += `Actors : ${body.Actors}\n`;
@@ -414,7 +415,8 @@ var weather = new Command("!weather", "Will give the current weather for the ask
             helpers.commandResponse(message, this, body.Error);
             return;
         }
-        var commandResponse = `Weather for ${body.name}: \n`;
+        var commandResponse = "";
+        commandResponse += `Weather for ${body.name}: \n`;
         commandResponse += `Currently : ${body.weather[0].description}\n`;
         commandResponse += `Temp : ${body.main.temp} °C\n`;
         commandResponse += `Min : ${body.main.temp_min} °C\n`;
