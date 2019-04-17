@@ -30,7 +30,7 @@ Bot.on("ready", () => {
 
 //fortnite webhook
 app.post("/webhook", function(req, res) {
-    NotifyChannel.send(req.body.user_name + " has pushed a new commit for " + req.body.project.name + ".");
+    NotifyChannel.send(req.body.user_name + " pushed a new commit for " + req.body.project.name + ".");
     NotifyChannel.send(req.body.commits[0].message);
     NotifyChannel.send("Check it out at http://108.61.78.227:8888/");
     res.send({ message: "we received webhook" });
@@ -40,7 +40,7 @@ app.get("/api/send/:channelId/:message", (req, res) => {
     let channelId = req.params.channelId;
     let message = req.params.message;
     let channel = Bot.channels.find("id", channelId);
-    channel.send(helpers.botResponse("MorkhBot is saying : ", message, "This is blood magic!"));
+    channel.send(helpers.botResponse("Morkh Bot is saying : ", message, "This is blood magic!"));
     res.send(`${message} was transmitted to the ${channel.name} channel`);
 });
 
