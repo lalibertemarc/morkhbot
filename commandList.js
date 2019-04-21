@@ -421,7 +421,7 @@ var weather = new Command("!weather", "Will give the current weather for the ask
         commandResponse += `Temp : ${body.main.temp} °C\n`;
         commandResponse += `Min : ${body.main.temp_min} °C\n`;
         commandResponse += `Max : ${body.main.temp_max} °C\n`;
-        commandResponse += `Wind : ${body.wind.speed} km/h to ${helpers.getCardinal(body.wind.deg)}`;
+        commandResponse += `Wind : ${body.wind.speed * 3.6} km/h to ${helpers.getCardinal(body.wind.deg)}`;
         if (body.rain) commandResponse += `Rain : ${body.rain["3h"]}\n`;
 
         helpers.commandResponse(message, this, commandResponse);
