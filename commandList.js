@@ -429,6 +429,32 @@ var weather = new Command("!weather", "Will give the current weather for the ask
 });
 commandList["weather"] = weather;
 commandList["help"] = help;
+
+let voisine = new Command("!voisine", "Will display all the annoying noise complaints Morkh's neighbor give him", message => {
+    let request = `select * from voisine;`;
+    pool.query(request, (error, response) => {
+        if (response) {
+            commandResponse = helpers.parseRows(response);
+            helpers.commandResponse(message, this, commandResponse);
+        }
+    });
+});
+
+let voisineNew = new Command("!voisineNew", "Will record a new noise complaint from Morkhs neighbors", message => {
+    var args = message.content.split(/ +/);
+    let description = args[1];
+    let date = new Date();
+    let request = `insert into voisine (description, date) values ('${decription}', '${date}')`;
+    pool.query(request, (error, response) => {
+        if (response) {
+            commandResponse = "Noise complaint saved";
+            helpers.commandResponse(message, this, commandResponse);
+        }
+    });
+});
+commandList["voisine"] = voisine;
+commandList["voisineNew"] = voisineNew;
+
 module.exports = {
     commandList: commandList
 };
