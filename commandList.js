@@ -443,12 +443,15 @@ let voisine = new Command("!voisine", "Will display all the annoying noise compl
 let voisineNew = new Command("!voisineNew", "Will record a new noise complaint from Morkhs neighbors", function(message) {
     var args = message.content.split(/ +/);
     let description = args[1];
-    let date = new Date();
-    let request = `insert into voisine (description, date) values ('${description}', '${date}')`;
+    let request = `insert into voisine (description, date) values ('${description}', NOW())`;
+    console.log(request);
     pool.query(request, (error, response) => {
         if (response) {
             commandResponse = "Noise complaint saved";
             helpers.commandResponse(message, this, commandResponse);
+        }
+        if (error) {
+            console.log(error);
         }
     });
 });
