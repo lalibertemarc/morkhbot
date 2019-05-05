@@ -430,8 +430,8 @@ var weather = new Command("!weather", "Will give the current weather for the ask
 commandList["weather"] = weather;
 commandList["help"] = help;
 
-let voisine = new Command("!voisine", "Will display all the annoying noise complaints Morkh's neighbor give him", message => {
-    let request = `select * from voisine;`;
+let voisine = new Command("!voisine", "Will display all the annoying noise complaints Morkh's neighbor give him", function(message) {
+    let request = `select description,to_char( date, 'DD-MON-YYYY HH24:MI')as date from voisine;`;
     pool.query(request, (error, response) => {
         if (response) {
             commandResponse = helpers.parseRows(response);
@@ -440,7 +440,7 @@ let voisine = new Command("!voisine", "Will display all the annoying noise compl
     });
 });
 
-let voisineNew = new Command("!voisineNew", "Will record a new noise complaint from Morkhs neighbors", message => {
+let voisineNew = new Command("!voisineNew", "Will record a new noise complaint from Morkhs neighbors", function(message) {
     var args = message.content.split(/ +/);
     let description = args[1];
     let date = new Date();
