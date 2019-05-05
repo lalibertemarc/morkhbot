@@ -444,7 +444,7 @@ let voisineNew = new Command("!voisineNew", "Will record a new noise complaint f
     var args = message.content.split(/ +/);
     let description = args[1];
     let date = new Date();
-    let request = `insert into voisine (description, date) values ('${decription}', '${date}')`;
+    let request = `insert into voisine (description, date) values ('${description}', '${date}')`;
     pool.query(request, (error, response) => {
         if (response) {
             commandResponse = "Noise complaint saved";
