@@ -227,7 +227,7 @@ var rollGames = new Command("!rollGames", "Roll a random game to play if you hav
 
 var addGame = new Command("!addGame", "Add a game in the database to get a chance to roll it", function(message) {
     var string = message.content.split(/ +/);
-    var newGame = helpers.parseGame(string);
+    var newGame = helpers.parseArgs(string);
     request = `INSERT INTO games VALUES ('${newGame}')`;
     pool.query(request, (err, response) => {
         if (response) {
@@ -442,9 +442,8 @@ let voisine = new Command("!voisine", "Will display all the annoying noise compl
 
 let voisineNew = new Command("!voisineNew", "Will record a new noise complaint from Morkhs neighbors", function(message) {
     var args = message.content.split(/ +/);
-    let description = args[1];
+    let description = helpers.parse(args);
     let request = `insert into voisine (description, date) values ('${description}', NOW())`;
-    console.log(request);
     pool.query(request, (error, response) => {
         if (response) {
             commandResponse = "Noise complaint saved";

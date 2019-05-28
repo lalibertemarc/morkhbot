@@ -38,7 +38,7 @@ function parseRows(array) {
     return result;
 }
 
-function parseGame(array) {
+function parseArgs(array) {
     var result = "";
     for (var i = 1; i < array.length; i++) {
         result += array[i];
@@ -106,7 +106,7 @@ module.exports = {
     parseLanguages: parseLanguages,
     getRandomfromArray: getRandomfromArray,
     parseRows: parseRows,
-    parseGame: parseGame,
+    parseArgs: parseArgs,
     botResponse: botResponse,
     movieResponse: movieResponse,
     getCardinal: getCardinal,
