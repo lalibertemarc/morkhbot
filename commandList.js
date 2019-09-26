@@ -359,12 +359,6 @@ var landingZone = new Command("!landingZone", "Gives you a random drop location 
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var help = new Command("!help", "Gives a list of all available command", function(message) {
-    var commandResponse = "";
-    for (command in commandList) commandResponse += commandList[command].name + " : " + commandList[command].description + "\n";
-    helpers.commandResponse(message, this, commandResponse);
-});
-
 commandList["benedict"] = benedict;
 commandList["shitPost"] = shitPost;
 commandList["landingZone"] = landingZone;
@@ -428,7 +422,6 @@ var weather = new Command("!weather", "Will give the current weather for the ask
     });
 });
 commandList["weather"] = weather;
-commandList["help"] = help;
 
 let voisine = new Command("!voisine", "Will display all the annoying noise complaints Morkh's neighbor give him", function(message) {
     let request = `select description,to_char( date, 'DD-MON-YYYY HH24:MI')as date from voisine;`;
@@ -457,6 +450,13 @@ let voisineNew = new Command("!voisineNew", "Will record a new noise complaint f
 commandList["voisine"] = voisine;
 commandList["voisineNew"] = voisineNew;
 
+var help = new Command("!help", "Gives a list of all available command", function(message) {
+    var commandResponse = "";
+    for (command in commandList) commandResponse += commandList[command].name + " : " + commandList[command].description + "\n";
+    helpers.commandResponse(message, this, commandResponse);
+});
+
+commandList["help"] = help;
 module.exports = {
     commandList: commandList
 };
