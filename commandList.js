@@ -450,13 +450,13 @@ let voisineNew = new Command("!voisineNew", "Will record a new noise complaint f
 commandList["voisine"] = voisine;
 commandList["voisineNew"] = voisineNew;
 
-var help = new Command("!help", "Gives a list of all available command", function(message) {
-    var commandResponse = "";
-    for (command in commandList) commandResponse += commandList[command].name + " : " + commandList[command].description + "\n";
-    helpers.commandResponse(message, this, commandResponse);
-});
+// var help = new Command("!help", "Gives a list of all available command", function(message) {
+//     var commandResponse = "";
+//     for (command in commandList) commandResponse += commandList[command].name + " : " + commandList[command].description + "\n";
+//     helpers.commandResponse(message, this, commandResponse);
+// });
 
-commandList["help"] = help;
+// commandList["help"] = help;
 module.exports = {
     commandList: commandList
 };
