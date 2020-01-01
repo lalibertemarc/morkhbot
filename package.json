@@ -5,6 +5,7 @@
   "main": "bot.js",
   "author": "Marc Laliberte",
   "dependencies": {
+    "axios": "^0.19.0",
     "body-parser": "^1.18.3",
     "cumberbatch-name": "^1.2.1",
     "dictionary-en-us": "^2.0.0",

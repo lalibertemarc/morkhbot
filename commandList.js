@@ -8,7 +8,7 @@ const name = require("./randomName.js");
 const fortnite = require("./fortnite.js");
 const duel = require("./duel.js");
 const translate = require("google-translate-api");
-const request = require("request");
+const webResquestHelper = require("./webRequesterHelper.js");
 
 const { Pool, Client } = require("pg");
 const pool = new Pool({
@@ -206,7 +206,7 @@ commandList["translate"] = translater;
 //Games Command
 var allGames = new Command("!allGames", "Get all available games to roll when you dont know what to play", async function(message) {
     var commandResponse = "";
-    request = "select * from games";
+    let request = "select * from games";
     pool.query(request, (err, response) => {
         if (response) {
             commandResponse = helpers.parseRows(response);
@@ -216,7 +216,7 @@ var allGames = new Command("!allGames", "Get all available games to roll when yo
 });
 
 var rollGames = new Command("!rollGames", "Roll a random game to play if you have no inspiration on what to play", function(message) {
-    request = "select * from games";
+    let request = "select * from games";
     pool.query(request, (err, response) => {
         if (response) {
             var commandResponse = helpers.getRandomfromArray(helpers.parseRows(response));
@@ -228,7 +228,7 @@ var rollGames = new Command("!rollGames", "Roll a random game to play if you hav
 var addGame = new Command("!addGame", "Add a game in the database to get a chance to roll it", function(message) {
     var string = message.content.split(/ +/);
     var newGame = helpers.parseArgs(string);
-    request = `INSERT INTO games VALUES ('${newGame}')`;
+    let request = `INSERT INTO games VALUES ('${newGame}')`;
     pool.query(request, (err, response) => {
         if (response) {
             var commandResponse = "New Game was added to database.";
@@ -246,7 +246,7 @@ commandList["addGame"] = addGame;
 
 //points system
 var addMe = new Command("!addMe", "Add your username in the database for the point system", function(message) {
-    var request1 = `select * from userpoints where name = '${message.author.username}'`;
+    let request1 = `select * from userpoints where name = '${message.author.username}'`;
     pool.query(request1, (err, response) => {
         if (response) {
             if (response.rows.length == 0) {
@@ -267,7 +267,7 @@ var addMe = new Command("!addMe", "Add your username in the database for the poi
 });
 
 var points = new Command("!points", "Check how many points you have.", function(message) {
-    request = `select points from userpoints where name='${message.author.username}'`;
+    let request = `select points from userpoints where name='${message.author.username}'`;
     pool.query(request, (err, response) => {
         if (response) {
             if (response.rows[0] != undefined) {
@@ -282,7 +282,7 @@ var points = new Command("!points", "Check how many points you have.", function(
 });
 
 var allPoints = new Command("!allPoints", "Check the points for every users in the database", function(message) {
-    var request = "select * from userpoints";
+    let request = "select * from userpoints";
     pool.query(request, (err, response) => {
         if (response) {
             var commandResponse = helpers.parseRows(response);
@@ -363,20 +363,15 @@ commandList["benedict"] = benedict;
 commandList["shitPost"] = shitPost;
 commandList["landingZone"] = landingZone;
 
-var movies = new Command("!movies", "Will query OMDb api for a movie request", message => {
+var movies = new Command("!movies", "Will query OMDb api for a movie request", async message => {
     var args = message.content.split(/ +/);
     args.shift();
     title = args.join(" ");
     var url = `http://www.omdbapi.com/?t=${title}&apikey=f7ee9808`;
-    request(url, { json: true }, (err, res, body) => {
-        if (err) {
-            return console.log(err);
-        }
-        if (body.Error) {
-            helpers.commandResponse(message, this, body.Error);
-            return;
-        }
 
+    try {
+        let movieRequest = await webResquestHelper.getAsync(url, 3000, { json: true });
+        let body = movieRequest.data;
         var ratings = "";
         for (var i = 0; i < body.Ratings.length; i++) {
             ratings += `${body.Ratings[i].Source} : ${body.Ratings[i].Value} `;
@@ -392,23 +387,21 @@ var movies = new Command("!movies", "Will query OMDb api for a movie request", m
         description += `Country : ${body.Country}\n`;
 
         helpers.movieResponse(message, body.Title, description, ratings, body.Poster);
-    });
+    } catch (exception) {
+        helpers.commandResponse(message, this, exception);
+    }
 });
 
 commandList["movies"] = movies;
 
-var weather = new Command("!weather", "Will give the current weather for the asked city", function(message) {
+var weather = new Command("!weather", "Will give the current weather for the asked city", async function(message) {
     var args = message.content.split(/ +/);
     var city = args[1];
     var url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=3a91dafd0698ffa38eb48d03f29b9d0c`;
-    request(url, { json: true }, (err, res, body) => {
-        if (err) {
-            return console.log(err);
-        }
-        if (body.Error) {
-            helpers.commandResponse(message, this, body.Error);
-            return;
-        }
+
+    try {
+        let weatherResponse = await webResquestHelper.getAsync(url, 3000, { json: true });
+        let body = weatherResponse.data;
         var commandResponse = "";
         commandResponse += `Weather for ${body.name}: \n`;
         commandResponse += `Currently : ${body.weather[0].description}\n`;
@@ -419,7 +412,9 @@ var weather = new Command("!weather", "Will give the current weather for the ask
         if (body.rain) commandResponse += `Rain : ${body.rain["3h"]}\n`;
 
         helpers.commandResponse(message, this, commandResponse);
-    });
+    } catch (error) {
+        helpers.commandResponse(message, this, error);
+    }
 });
 commandList["weather"] = weather;
 
