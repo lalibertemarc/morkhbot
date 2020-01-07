@@ -81,7 +81,7 @@ function minecraftResponse(message, uuid, name) {
     let response = new Discord.RichEmbed()
         .setColor(embedColor)
         .setTitle("Minecraft UUID")
-        .setThumbnail(`https://crafatar.com/renders/body/${uuid}`)
+        .setThumbnail(`https://crafatar.com/avatars/${uuid}`)
         .addField("User name :", name)
         .addField("UUID:", uuid)
         .setTimestamp(new Date());
