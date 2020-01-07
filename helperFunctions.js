@@ -76,6 +76,18 @@ function commandResponse(message, command, commandResponse) {
     );
 }
 
+function minecraftResponse(message, uuid, name, skinUrl) {
+    const embedColor = getNextColor(reqCount++);
+    let response = new Discord.RichEmbed()
+        .setColor(embedColor)
+        .setTitle("Minecraft UUID")
+        .setThumbnail(skinUrl)
+        .addField("User name :", name)
+        .addField("UUID:", uuid)
+        .setTimestamp(new Date());
+    message.channel.send(response);
+}
+
 function movieResponse(message, title, description, footer, avatar) {
     message.channel.send(botResponse(title, description, footer, avatar));
 }
@@ -111,5 +123,6 @@ module.exports = {
     movieResponse: movieResponse,
     getCardinal: getCardinal,
     commandResponse: commandResponse,
-    isNumber: isNumber
+    isNumber: isNumber,
+    minecraftResponse: minecraftResponse
 };

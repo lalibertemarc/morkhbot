@@ -9,6 +9,7 @@ const fortnite = require("./fortnite.js");
 const duel = require("./duel.js");
 const translate = require("google-translate-api");
 const webResquestHelper = require("./webRequesterHelper.js");
+const minecraftService = require("./minecraftService.js");
 
 const { Pool, Client } = require("pg");
 const pool = new Pool({
@@ -445,6 +446,20 @@ let voisineNew = new Command("!voisineNew", "Will record a new noise complaint f
 commandList["voisine"] = voisine;
 commandList["voisineNew"] = voisineNew;
 
+let getMinecraftUUID = new Command("!mcUUID", "Get player UUID", async function(message) {
+    let args = message.content.split(/ +/);
+    let userName = args[1];
+    try {
+        let UUID = await minecraftService.getUserUUID(userName);
+        let officialName = await minecraftService.getOfficialName(userName);
+        let skinUrl = await minecraftService.getUserSkinURL(UUID);
+        helpers.minecraftResponse(message, UUID, officialName, skinUrl);
+    } catch (error) {
+        helpers.commandResponse(message, this, error);
+    }
+});
+
+commandList["mcUUID"] = getMinecraftUUID;
 // var help = new Command("!help", "Gives a list of all available command", function(message) {
 //     var commandResponse = "";
 //     for (command in commandList) commandResponse += commandList[command].name + " : " + commandList[command].description + "\n";
