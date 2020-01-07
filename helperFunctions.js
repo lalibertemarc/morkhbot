@@ -76,12 +76,12 @@ function commandResponse(message, command, commandResponse) {
     );
 }
 
-function minecraftResponse(message, uuid, name, skinUrl) {
+function minecraftResponse(message, uuid, name) {
     const embedColor = getNextColor(reqCount++);
     let response = new Discord.RichEmbed()
         .setColor(embedColor)
         .setTitle("Minecraft UUID")
-        .setThumbnail(skinUrl)
+        .setThumbnail(`https://crafatar.com/renders/body/${uuid}`)
         .addField("User name :", name)
         .addField("UUID:", uuid)
         .setTimestamp(new Date());

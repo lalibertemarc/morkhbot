@@ -8,7 +8,6 @@ async function getUserUUID(userName) {
     let request;
     try {
         request = await webResquestHelper.getAsync(url, 3000, { JSON: true });
-        console.log(request.data.id);
         return request.data.id;
     } catch (error) {
         console.log(error);

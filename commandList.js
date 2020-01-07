@@ -419,41 +419,14 @@ var weather = new Command("!weather", "Will give the current weather for the ask
 });
 commandList["weather"] = weather;
 
-let voisine = new Command("!voisine", "Will display all the annoying noise complaints Morkh's neighbor give him", function(message) {
-    let request = `select description,to_char( date, 'DD-MON-YYYY HH24:MI')as date from voisine;`;
-    pool.query(request, (error, response) => {
-        if (response) {
-            commandResponse = helpers.parseRows(response);
-            helpers.commandResponse(message, this, commandResponse);
-        }
-    });
-});
-
-let voisineNew = new Command("!voisineNew", "Will record a new noise complaint from Morkhs neighbors", function(message) {
-    var args = message.content.split(/ +/);
-    let description = helpers.parse(args);
-    let request = `insert into voisine (description, date) values ('${description}', NOW())`;
-    pool.query(request, (error, response) => {
-        if (response) {
-            commandResponse = "Noise complaint saved";
-            helpers.commandResponse(message, this, commandResponse);
-        }
-        if (error) {
-            console.log(error);
-        }
-    });
-});
-commandList["voisine"] = voisine;
-commandList["voisineNew"] = voisineNew;
-
 let getMinecraftUUID = new Command("!mcUUID", "Get player UUID", async function(message) {
     let args = message.content.split(/ +/);
     let userName = args[1];
     try {
         let UUID = await minecraftService.getUserUUID(userName);
         let officialName = await minecraftService.getOfficialName(userName);
-        let skinUrl = await minecraftService.getUserSkinURL(UUID);
-        helpers.minecraftResponse(message, UUID, officialName, skinUrl);
+        // let skinUrl = await minecraftService.getUserSkinURL(UUID);
+        helpers.minecraftResponse(message, UUID, officialName);
     } catch (error) {
         helpers.commandResponse(message, this, error);
     }
