@@ -425,14 +425,20 @@ let getMinecraftUUID = new Command("!mcUUID", "Get player UUID", async function(
     try {
         let UUID = await minecraftService.getUserUUID(userName);
         let officialName = await minecraftService.getOfficialName(userName);
-        // let skinUrl = await minecraftService.getUserSkinURL(UUID);
         helpers.minecraftResponse(message, UUID, officialName);
     } catch (error) {
         helpers.commandResponse(message, this, error);
     }
 });
-
 commandList["mcUUID"] = getMinecraftUUID;
+
+let minecraftNetherCoord = new Command("!mcNetherCoord", "Get Nether Coordinates", function(message) {
+    let args = message.content.split(/ +/);
+    let coords = minecraftService.getNethercoord(+args[1], +args[2]);
+    helpers.commandResponse(message, this, coords);
+});
+commandList["mcNetherCoord"] = minecraftNetherCoord;
+
 // var help = new Command("!help", "Gives a list of all available command", function(message) {
 //     var commandResponse = "";
 //     for (command in commandList) commandResponse += commandList[command].name + " : " + commandList[command].description + "\n";

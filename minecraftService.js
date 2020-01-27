@@ -44,8 +44,17 @@ function convertBase64(data) {
     return object.textures.SKIN.url;
 }
 
+function getNethercoord(x, z) {
+    if (!Number.isInteger(x) || !Number.isInteger(z)) {
+        return "Please enter integers.";
+    }
+
+    return `Nether coords are X = ${x / 8}, Z = ${z / 8}`;
+}
+
 module.exports = {
     getUserUUID: getUserUUID,
     getUserSkinURL: getUserSkinURL,
-    getOfficialName: getOfficialName
+    getOfficialName: getOfficialName,
+    getNethercoord: getNethercoord
 };
