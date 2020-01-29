@@ -1,15 +1,15 @@
 var cumberbatch = require("cumberbatch-name");
-const helpers = require("./helperFunctions.js");
-const launcher = require("./dicelauncher.js");
-const calculator = require("./calc.js");
-const prime = require("./prime.js");
-const converter = require("./convert.js");
-const name = require("./randomName.js");
-const fortnite = require("./fortnite.js");
-const duel = require("./duel.js");
+const helpers = require(".services/helperFunctions.js");
+const launcher = require(".services/dicelauncher.js");
+const calculator = require(".services/calc.js");
+const prime = require(".services/prime.js");
+const converter = require(".services/convert.js");
+const name = require(".services/randomName.js");
+const fortnite = require(".services/fortnite.js");
+const duel = require(".services/duel.js");
 const translate = require("google-translate-api");
-const webResquestHelper = require("./webRequesterHelper.js");
-const minecraftService = require("./minecraftService.js");
+const webResquestHelper = require(".services/webRequesterHelper.js");
+const minecraftService = require(".services/minecraftService.js");
 
 const { Pool, Client } = require("pg");
 const pool = new Pool({
@@ -355,14 +355,8 @@ var shitPost = new Command("!shitPost", "Generates beautiful text", function(mes
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var landingZone = new Command("!landingZone", "Gives you a random drop location in Fortnite", function(message) {
-    var commandResponse = fortnite.getLandingZone();
-    helpers.commandResponse(message, this, commandResponse);
-});
-
 commandList["benedict"] = benedict;
 commandList["shitPost"] = shitPost;
-commandList["landingZone"] = landingZone;
 
 var movies = new Command("!movies", "Will query OMDb api for a movie request", async message => {
     var args = message.content.split(/ +/);
