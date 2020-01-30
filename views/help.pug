@@ -1,0 +1,10 @@
+
+extends layout
+
+block content
+    h1= title
+    p Welcome #{title} help page
+    div(class="wrapper")
+        ul
+            each i in list
+                li= i

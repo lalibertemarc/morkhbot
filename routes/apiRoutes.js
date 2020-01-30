@@ -13,16 +13,15 @@ router.get("/send/:channelId/:message", (req, res) => {
 });
 
 router.get("/help", (req, res, next) => {
-    var commandResponse = "<ul>";
+    var commandResponse = [];
 
     for (var key in commandList) {
         var command = commandList[key];
-        commandResponse += `<li>${command.name}   : ${command.description} </li>`;
+        commandResponse.push(`${command.name}   : ${command.description}`);
     }
-    commandResponse += "</ul>";
-    res.render("index", {
+    res.render("help", {
         title: "Morkhbot",
-        realContent: commandResponse
+        list: commandResponse
     });
 });
 module.exports = router;
