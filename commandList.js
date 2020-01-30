@@ -1,15 +1,14 @@
 var cumberbatch = require("cumberbatch-name");
-const helpers = require(".services/helperFunctions.js");
-const launcher = require(".services/dicelauncher.js");
-const calculator = require(".services/calc.js");
-const prime = require(".services/prime.js");
-const converter = require(".services/convert.js");
-const name = require(".services/randomName.js");
-const fortnite = require(".services/fortnite.js");
-const duel = require(".services/duel.js");
+const helpers = require("./services/helperFunctions.js");
+const launcher = require("./services/dicelauncher.js");
+const calculator = require("./services/calc.js");
+const prime = require("./services/prime.js");
+const converter = require("./services/convert.js");
+const name = require("./services/randomName.js");
+const duel = require("./services/duel.js");
 const translate = require("google-translate-api");
-const webResquestHelper = require(".services/webRequesterHelper.js");
-const minecraftService = require(".services/minecraftService.js");
+const webResquestHelper = require("./services/webRequesterHelper.js");
+const minecraftService = require("./services/minecraftService.js");
 
 const { Pool, Client } = require("pg");
 const pool = new Pool({

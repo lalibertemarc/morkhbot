@@ -1,13 +1,14 @@
 const Discord = require("discord.js");
 const Bot = new Discord.Client();
-const auth = require("./auth.json");
-const token = auth.token;
+// const auth = require("./auth.json");
+require("dotenv").config();
+const token = process.env.DISCORDTOKEN;
 Bot.login(token);
 
 //const from other modules
 const commands = require("./commandList.js");
 var commandList = commands.commandList;
-const helpers = require("./helperFunctions.js");
+const helpers = require("./services/helperFunctions.js");
 
 //server
 const express = require("express");
