@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Bot = require("./../bot.js").Bot;
+const commandList = require("./../commandList.js").commandList;
 const helpers = require("./../services/helperFunctions.js");
 
 router.get("/send/:channelId/:message", (req, res) => {
@@ -9,5 +10,19 @@ router.get("/send/:channelId/:message", (req, res) => {
     let channel = Bot.channels.find("id", channelId);
     channel.send(helpers.botResponse("Morkh Bot is saying : ", message, "This is blood magic!"));
     res.send(`${message} was transmitted to the ${channel.name} channel`);
+});
+
+router.get("/help", (req, res, next) => {
+    var commandResponse = "<ul>";
+
+    for (var key in commandList) {
+        var command = commandList[key];
+        commandResponse += `<li>${command.name}   : ${command.description} </li>`;
+    }
+    commandResponse += "</ul>";
+    res.render("index", {
+        title: "Morkhbot",
+        realContent: commandResponse
+    });
 });
 module.exports = router;

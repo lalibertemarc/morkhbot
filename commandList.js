@@ -432,13 +432,6 @@ let minecraftNetherCoord = new Command("!mcNetherCoord", "Get Nether Coordinates
 });
 commandList["mcNetherCoord"] = minecraftNetherCoord;
 
-// var help = new Command("!help", "Gives a list of all available command", function(message) {
-//     var commandResponse = "";
-//     for (command in commandList) commandResponse += commandList[command].name + " : " + commandList[command].description + "\n";
-//     helpers.commandResponse(message, this, commandResponse);
-// });
-
-// commandList["help"] = help;
 module.exports = {
     commandList: commandList
 };
