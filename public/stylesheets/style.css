@@ -1,0 +1,9 @@
+.wrapper{
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.header{
+    background-color: black;
+    height: 60px;
+}
