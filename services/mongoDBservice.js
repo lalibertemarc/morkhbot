@@ -11,7 +11,7 @@ async function selectAllFromCollectionAsync(collectionName){
         client.close();
         return collection;
     } catch (e) {
-        console.error(e);
+        return e
     }
 }
 
@@ -23,7 +23,7 @@ async function selectFromCollectionAsync(collectionName, query){
         client.close();
         return item;
     } catch (e) {
-        console.error(e);
+       return e
     }
 }
 
@@ -34,8 +34,10 @@ async function insertOneInCollectionAsync(collectionName, itemToInsert){
         const db = client.db(process.env.DBNAME);
         const response = await db.collection(collectionName).insertOne(itemToInsert)
         client.close(); 
+        return response;
+        
     } catch (e) {
-        console.error(e);
+        return e
     }
 }
 
@@ -45,6 +47,19 @@ async function deleteOneFromCollectionAsync(collectionName, itemToDelete){
         const db = client.db(process.env.DBNAME);
         const response = await db.collection(collectionName).deleteOne(itemToDelete)
         client.close(); 
+        return response;
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function replaceOneFromCollectionAsync(collectionName, itemToUpate, newContent){
+    try{
+        const client = await MongoClient.connect(uri);
+        const db = client.db(process.env.DBNAME);
+        const response = await db.collection(collectionName).replaceOne(itemToUpate,newContent);
+        client.close(); 
+        return response;
     } catch (e) {
         console.error(e);
     }
@@ -54,7 +69,8 @@ module.exports={
     selectAllFromCollectionAsync:selectAllFromCollectionAsync,
     selectFromCollectionAsync:selectFromCollectionAsync,
     insertOneInCollectionAsync:insertOneInCollectionAsync,
-    deleteOneFromCollectionAsync:deleteOneFromCollectionAsync
+    deleteOneFromCollectionAsync:deleteOneFromCollectionAsync,
+    replaceOneFromCollectionAsync:replaceOneFromCollectionAsync
 }
 
 

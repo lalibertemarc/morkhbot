@@ -1,5 +1,16 @@
 const Discord = require("discord.js");
 
+function getCommand(string){
+    let array = string.split(/ +/);
+    return array[0].substring(1, array[0].length)
+}
+
+function getArgs(message){
+    let array = message.split(/ +/);
+    array.shift()
+    return array;
+}
+
 function generateShitPost(text) {
     var result = "";
     for (var j = 1; j < text.length; j++) {
@@ -11,24 +22,14 @@ function generateShitPost(text) {
 
     return result;
 }
-function parseLanguages(languages) {
-    var result = "";
-    var it = 0;
-    for (key in languages) {
-        it++;
-        result += key + ": " + languages[key] + "\n";
-        if (it == 105) {
-            break;
-        }
-    }
-    return result;
-}
 
 function getRandomfromArray(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
 function parseRows(array) {
+
+    console.log(array)
     var result = [];
     for (var i = 0; i < array.rows.length; i++) {
         for (var key in array.rows[i]) {
@@ -38,9 +39,25 @@ function parseRows(array) {
     return result;
 }
 
+function parseGames(array){
+    let output=""
+    array.forEach(game=>{
+        output+=game.name+"\n"
+    })
+    return output
+}   
+
+function parsePoints(array){
+    let output =""
+    array.forEach(player=>{
+        output+= `${player.name} : ${player.points}\n`;
+    })
+    return output;
+}
+
 function parseArgs(array) {
     var result = "";
-    for (var i = 1; i < array.length; i++) {
+    for (var i = 0; i < array.length; i++) {
         result += array[i];
         if (i != array.length - 1) {
             result += " ";
@@ -113,11 +130,14 @@ function getCardinal(angle) {
     return "N";
 }
 module.exports = {
+    getCommand:getCommand,
+    getArgs:getArgs,
     generateShitPost: generateShitPost,
     getNextColor: getNextColor,
-    parseLanguages: parseLanguages,
     getRandomfromArray: getRandomfromArray,
     parseRows: parseRows,
+    parseGames:parseGames,
+    parsePoints:parsePoints,
     parseArgs: parseArgs,
     botResponse: botResponse,
     movieResponse: movieResponse,

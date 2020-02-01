@@ -27,7 +27,6 @@ function launcherNoText(d){
 	var number = +dice[0]
 	var face = +dice[1]
 	var somme=0
-	//var result=[]
 	
 	if(number<=0){return 0}
 	if (face <=0){return 0}
@@ -35,7 +34,6 @@ function launcherNoText(d){
 	for(var i=0; i<number;i++){
 		var tir = Math.floor(Math.random()*face+1)
 		somme+=tir;
-		//result.push(tir)
 	}
 	return somme
 	
@@ -50,23 +48,23 @@ function remove (array, element) {
     return array;
 }
 
-function toArray (exp){
-	if(Array.isArray(exp)){
-		return exp;
+function toArray (expression){
+	if(Array.isArray(expression)){
+		return expression;
 	}
 	var result =[]
 	var string=""
-	for (var i=0; i<=exp.length;i++){
-		if(exp.charAt(i)=='+'||exp.charAt(i)=='-'
-			||exp.charAt(i)=='*' ||exp.charAt(i)=='/'||exp.charAt(i)=='^'
-			||exp.charAt(i)=='(' ||exp.charAt(i)==')'){		
+	for (var i=0; i<=expression.length;i++){
+		if(expression.charAt(i)=='+'||expression.charAt(i)=='-'
+			||expression.charAt(i)=='*' ||expression.charAt(i)=='/'||expression.charAt(i)=='^'
+			||expression.charAt(i)=='(' ||expression.charAt(i)==')'){		
 			result.push(string);
-			result.push(exp.charAt(i));
+			result.push(expression.charAt(i));
 			string="";
 			continue;
 		}
-		string+=exp.charAt(i);
-		if(i==exp.length-1){
+		string+=expression.charAt(i);
+		if(i==expression.length-1){
 			result.push(string);
 		}
 		

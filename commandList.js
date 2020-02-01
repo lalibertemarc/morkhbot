@@ -1,103 +1,79 @@
-var cumberbatch = require("cumberbatch-name");
+const cumberbatch = require("cumberbatch-name");
 const helpers = require("./services/helperFunctions.js");
-const launcher = require("./services/dicelauncher.js");
+const rollService = require("./services/rollService.js");
 const calculator = require("./services/calc.js");
 const prime = require("./services/prime.js");
 const converter = require("./services/convert.js");
 const name = require("./services/randomName.js");
 const duel = require("./services/duel.js");
-const translate = require("google-translate-api");
 const webResquestHelper = require("./services/webRequesterHelper.js");
 const minecraftService = require("./services/minecraftService.js");
+const mongoService = require("./services/mongoDBservice.js");
+const Command = require("./command.js");
 
-const { Pool, Client } = require("pg");
-const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "morkhbot",
-    password: "admin",
-    port: 5432
-});
+let commandList = {};
 
-var commandList = {};
-function Command(name, desc, hand) {
-    this.name = name;
-    this.description = desc;
-    this.handler = hand;
-}
+const help = new Command("!help", "Get the url to see a list of all commands", function (message, args){
+    let commandResponse = `Please visit http://${process.env.HOST}:${process.env.PORT}/api/help to see the available commands`
+    helpers.commandResponse(message, this, commandResponse);
+})
+
+commandList["help"]=help;
 
 //Roll and calc commands
-var roll = new Command("!roll", "Roll a random number between 1 and 100 or roll nDk dice", function(message) {
-    var string = message.content.split(" ");
-    if (string.length == 1) {
-        var random = Math.floor(Math.random() * 100) + 1;
-        var commandResponse = `${message.author.username} rolled ${random}! `;
-    } else var commandResponse = launcher.launcher(string[1].replace("D", "d"));
+const roll = new Command("!roll", "Roll a random number between 1 and 100 or roll nDk dice", function(message, args) {
+    let commandResponse = rollService.roll(args[0], message.author.username );
     helpers.commandResponse(message, this, commandResponse);
 });
 commandList["roll"] = roll;
 
-var calc = new Command("!calc", "Calculator function, used also for math with dices. !calc <operation> | !calc 1d20+10", function(message) {
-    var string = message.content.split(/ +/);
-    var commandResponse = string[1] + " = " + calculator.interpreter(string[1]);
+
+//TODO: fix calc command returning NaN if user inputs a negative number
+/* calc service something i did in college out of boredom in classes
+    using eval is the simple choice here but I kind wanna keep it for legacy sake.
+*/ 
+const calc = new Command("!calc", "Calculator function, also used for math with dices. !calc <operation> | !calc 1d20+10", function(message, args) {
+    let commandResponse = args[0] + " = " + calculator.interpreter(args[0]);
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var bin2Dec = new Command("!bin2Dec", "Converts binary string into decimal number", function(message) {
-    var args = message.content.split(" ");
-    var commandResponse = "";
-    if (
-        args[1].includes("2") ||
-        args[1].includes("3") ||
-        args[1].includes("4") ||
-        args[1].includes("5") ||
-        args[1].includes("6") ||
-        args[1].includes("7") ||
-        args[1].includes("8") ||
-        args[1].includes("9")
-    )
-        commandResponse = "ERROR: Argument is not binary";
-    else commandResponse = converter.bin2Dec(args[1]);
+const bin2Dec = new Command("!bin2Dec", "Converts binary string into decimal number", function(message,args) {
+    commandResponse = converter.bin2Dec(args[0]);
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var dec2Bin = new Command("!dec2Bin", "Converts a number into a binary string : !dec2Bin <number>", function(message) {
-    var args = message.content.split(" ");
-    var commandResponse = "";
-    if (helpers.isNumber(args[1])) commandResponse = converter.dec2Bin(+args[1]);
-    else commandResponse = "Given argument is not a numerical.";
+const dec2Bin = new Command("!dec2Bin", "Converts a number into a binary string : !dec2Bin <number>", function(message, args) {;
+    let commandResponse = converter.dec2Bin(+args[0]);
     helpers.commandResponse(message, this, commandResponse);
 });
+
 commandList["calc"] = calc;
 commandList["bin2Dec"] = bin2Dec;
 commandList["dec2Bin"] = dec2Bin;
 
 //Prime Commands
-var isPrime = new Command("!isPrime", "Is the given number a prime number? !isPrime <number>", function(message) {
-    var args = message.content.split(" ");
-    var commandResponse = "";
-    if (helpers.isNumber(args[1])) commandResponse = prime.isPrime(+args[1], [1]);
+const isPrime = new Command("!isPrime", "Is the given number a prime number? !isPrime <number>", function(message, args) {
+    let commandResponse = "";
+    if (helpers.isNumber(args[0])) commandResponse = prime.isPrime(+args[0], [1]);
     else commandResponse = "Given argument is not a numerical.";
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var nPrime = new Command("!nPrime", "Gives all the n first prime numbers. !nPrime <n>", function(message) {
-    var args = message.content.split(" ");
-    var commandResponse = "";
-    if (helpers.isNumber(args[1])) commandResponse = prime.nPrime(+args[1]);
+const nPrime = new Command("!nPrime", "Gives all the n first prime numbers. !nPrime <n>", function(message, args) {
+    let commandResponse = "";
+    if (helpers.isNumber(args[0])) commandResponse = prime.nPrime(+args[0]);
     else commandResponse = "Given argument is not a numerical.";
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var gcd = new Command("!gcd", "Gives the greater common diviser between the 2 given arguments. !gcd <number> <number>", function(message) {
-    var args = message.content.split(" ");
+const gcd = new Command("!gcd", "Gives the greater common diviser between the 2 given arguments. !gcd <number> <number>", function(message, args) {
     var commandResponse = "";
-    if (helpers.isNumber(args[1]) || helpers.isNumber(args[2])) commandResponse = prime.gcd(+args[1], +args[2]);
+    if (helpers.isNumber(args[0]) || helpers.isNumber(args[1])) commandResponse = prime.gcd(+args[0], +args[1]);
     else commandResponse = "One of the given arguments is not a numerical.";
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var primeRange = new Command("!primeRange", "Gives all the prime numbers in the given argument range. !primeRange <lower> <upper>", function(message) {
+const primeRange = new Command("!primeRange", "Gives all the prime numbers in the given argument range. !primeRange <lower> <upper>", function(message, args) {
     var args = message.content.split(" ");
     var commandResponse = "";
     if (helpers.isNumber(args[1]) || helpers.isNumber(args[2])) commandResponse = prime.primeRange(+args[1], +args[2]);
@@ -110,18 +86,17 @@ commandList["isPrime"] = isPrime;
 commandList["primeRange"] = primeRange;
 
 //Random Name commands
-var changeName = new Command("!changeName", "The bot will give you a random name", function(message) {
-    var newName = name.getRandomName();
+const changeName = new Command("!changeName", "The bot will give you a random name", function(message, args) {
+    let newName = name.getRandomName();
     message.member.setNickname(newName).catch(err);
-    var commandResponse = `Your new name is ${newName}`;
+    let commandResponse = `Your new name is ${newName}`;
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var randomNames = new Command("!randomNames", "Gives a list of random Medieval names", function(message) {
-    var args = message.content.split(/ +/);
-    var commandResponse = "";
-    if (helpers.isNumber(args[1])) {
-        for (var i = 0; i < +args[1]; i++) {
+const randomNames = new Command("!randomNames", "Gives a list of random Medieval names", function(message, args) {
+    let commandResponse = "";
+    if (helpers.isNumber(args[0])) {
+        for (let i = 0; i < +args[0]; i++) {
             commandResponse += name.getRandomName() + "\n";
         }
     } else commandResponse = "Given argument is not numerical.";
@@ -129,7 +104,7 @@ var randomNames = new Command("!randomNames", "Gives a list of random Medieval n
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var resetName = new Command("!resetName", "The Bot will restore your old name", function(message) {
+const resetName = new Command("!resetName", "The Bot will restore your old name", function(message, args) {
     message.member.setNickname("").catch(error);
     var commandResponse = "Name is back to normal";
     helpers.commandResponse(message, this, commandResponse);
@@ -139,7 +114,7 @@ commandList["changeName"] = changeName;
 commandList["resetName"] = resetName;
 
 //duels commands
-var challengeDuel = new Command("!challengeDuel", "Challenge a user in a game of dice", function(message) {
+const challengeDuel = new Command("!challengeDuel", "Challenge a user in a game of dice", function(message, args) {
     var initiator = message.author.username;
     var args = message.content.split(" ");
     var target = args[1];
@@ -147,28 +122,28 @@ var challengeDuel = new Command("!challengeDuel", "Challenge a user in a game of
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var acceptDuel = new Command("!acceptDuel", "Accepts the duel your opponent sent you", function(message) {
+const acceptDuel = new Command("!acceptDuel", "Accepts the duel your opponent sent you", function(message, args) {
     var commandResponse = duel.acceptDuel(message.author.username);
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var duelRoll = new Command("!duelRoll", "Roll a dice when its your turn in the duel. !duelRoll nDk", function(message) {
+const duelRoll = new Command("!duelRoll", "Roll a dice when its your turn in the duel. !duelRoll nDk", function(message, args) {
     var typeRoll = message.content.split(" ");
     var commandResponse = duel.duelRoll(message.author.username, typeRoll[1]);
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var endDuel = new Command("!endDuel", "Ends the duel", function(message) {
+const endDuel = new Command("!endDuel", "Ends the duel", function(message, args) {
     var commandResponse = duel.endDuel();
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var clearDuel = new Command("!clearDuel", "Clears the duel data in case something goes wrong", function(message) {
+const clearDuel = new Command("!clearDuel", "Clears the duel data in case something goes wrong", function(message, args) {
     var commandResponse = duel.clearDuelData();
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var refuseDuel = new Command("!refuseDuel", "Refuse the duel your opponent just sent you", function(message) {
+const refuseDuel = new Command("!refuseDuel", "Refuse the duel your opponent just sent you", function(message, args) {
     var commandResponse = duel.refuseDuel();
     helpers.commandResponse(message, this, commandResponse);
 });
@@ -179,65 +154,45 @@ commandList["endDuel"] = endDuel;
 commandList["clearDuel"] = clearDuel;
 commandList["refuseDuel"] = refuseDuel;
 
-//translator commands
-var languages = new Command("!languages", "Gives a list of all available languages", function(message) {
-    var commandResponse = helpers.parseLanguages(translate.languages);
-    helpers.commandResponse(message, this, commandResponse);
-});
-
-var translater = new Command("!translate", "Will translate something for you", async function(message) {
-    var string = message.content.split("/");
-    var commandResponse = "";
-    try {
-        commandResponse = await translate(string[1], {
-            from: string[2],
-            to: string[3]
-        });
-    } catch (error) {
-        console.log(error.message);
-    }
-
-    commandResponse = commandResponse.text;
-    helpers.commandResponse(message, this, commandResponse);
-});
-commandList["languages"] = languages;
-commandList["translate"] = translater;
 
 //Games Command
-var allGames = new Command("!allGames", "Get all available games to roll when you dont know what to play", async function(message) {
-    var commandResponse = "";
-    let request = "select * from games";
-    pool.query(request, (err, response) => {
-        if (response) {
-            commandResponse = helpers.parseRows(response);
-            helpers.commandResponse(message, this, commandResponse);
-        }
-    });
+var allGames = new Command("!allGames", "Get all available games to roll when you dont know what to play", async function(message, args) {
+    let commandResponse="";
+    try{
+        let response = await mongoService.selectAllFromCollectionAsync("games");
+        commandResponse = helpers.parseGames(response);
+    }catch(error){
+        commandResponse = "Unexpected Error, please retry";
+    }
+    helpers.commandResponse(message, this, commandResponse);
+ 
 });
 
-var rollGames = new Command("!rollGames", "Roll a random game to play if you have no inspiration on what to play", function(message) {
-    let request = "select * from games";
-    pool.query(request, (err, response) => {
-        if (response) {
-            var commandResponse = helpers.getRandomfromArray(helpers.parseRows(response));
-            helpers.commandResponse(message, this, commandResponse);
-        }
-    });
+var rollGames = new Command("!rollGames", "Roll a random game to play if you have no inspiration on what to play", async function(message, args) {
+    let commandResponse="";
+    try{
+        let response = await mongoService.selectAllFromCollectionAsync("games");
+        commandResponse = helpers.getRandomfromArray(response).name;
+        helpers.commandResponse(message, this, commandResponse);
+    }catch(error){
+        commandResponse = "Unexpected Error, please retry";
+    }
+    helpers.commandResponse(message, this, commandResponse);
 });
 
-var addGame = new Command("!addGame", "Add a game in the database to get a chance to roll it", function(message) {
-    var string = message.content.split(/ +/);
-    var newGame = helpers.parseArgs(string);
-    let request = `INSERT INTO games VALUES ('${newGame}')`;
-    pool.query(request, (err, response) => {
-        if (response) {
-            var commandResponse = "New Game was added to database.";
-            helpers.commandResponse(message, this, commandResponse);
-        } else {
-            var commandResponse = "No response from database. Maybe you have a ' in the name of your game.";
-            helpers.commandResponse(message, this, commandResponse);
-        }
-    });
+var addGame = new Command("!addGame", "Add a game in the database to get a chance to roll it", async function(message,args) {
+    let commandResponse="";
+    try{
+        let newGame = helpers.parseArgs(args);
+        let response = await mongoService.insertOneInCollectionAsync("games", {name:newGame});
+        if(response.insertedCount == 1)
+            commandResponse = `${newGame} was added to database.`;
+        else
+            commandResponse = "Unexpected Error, please retry";
+    }catch(error){
+        commandResponse = "Unexpected Error, please retry";
+    }
+    helpers.commandResponse(message, this, commandResponse);
 });
 
 commandList["allGames"] = allGames;
@@ -245,96 +200,92 @@ commandList["rollGames"] = rollGames;
 commandList["addGame"] = addGame;
 
 //points system
-var addMe = new Command("!addMe", "Add your username in the database for the point system", function(message) {
-    let request1 = `select * from userpoints where name = '${message.author.username}'`;
-    pool.query(request1, (err, response) => {
-        if (response) {
-            if (response.rows.length == 0) {
-                //insert only if name is not present
-                var request2 = `INSERT INTO userpoints VALUES ('${message.author.username}', 0)`;
-                pool.query(request2, (err, response) => {
-                    if (response) {
-                        var commandResponse = `${message.author.username} was succesfully added to the database`;
-                        helpers.commandResponse(message, this, commandResponse);
-                    }
-                });
-            } else {
-                var commandResponse = `${message.author.username} is already in the database`;
-                helpers.commandResponse(message, this, commandResponse);
-            }
+var addMe = new Command("!addMe", "Add your username in the database for the point system", async function(message, args) {
+    let commandResponse="";
+    try{
+        let existsResponse = await mongoService.selectFromCollectionAsync("points",{name:message.author.username})
+        if(existsResponse.length==0){
+            let response = await mongoService.insertOneInCollectionAsync("points", {name:message.author.username, points:0})
+            if(response.insertedCount == 1)
+                commandResponse = `${message.author.username} was added to database.`;
+            else
+                commandResponse = "Unexpected Error, please retry";
         }
-    });
-});
-
-var points = new Command("!points", "Check how many points you have.", function(message) {
-    let request = `select points from userpoints where name='${message.author.username}'`;
-    pool.query(request, (err, response) => {
-        if (response) {
-            if (response.rows[0] != undefined) {
-                var commandResponse = `${message.author.username} has  ${response.rows[0]["points"]} points.`;
-                helpers.commandResponse(message, this, commandResponse);
-            } else {
-                var commandResponse = `${message.author.username} is not in database, please use the !addMe command`;
-                helpers.commandResponse(message, this, commandResponse);
-            }
-        }
-    });
-});
-
-var allPoints = new Command("!allPoints", "Check the points for every users in the database", function(message) {
-    let request = "select * from userpoints";
-    pool.query(request, (err, response) => {
-        if (response) {
-            var commandResponse = helpers.parseRows(response);
-            helpers.commandResponse(message, this, commandResponse);
-        }
-    });
-});
-
-var give = new Command("!give", "Give that user some points : !give <user> <points>", function(message) {
-    var args = message.content.split(/ +/);
-    if (string.length < 3 || helpers.isNumber(args[2])) {
-        var commandResponse = "Invalid format for command.";
-        helpers.commandResponse(message, this, commandResponse);
-        return;
-    } else {
-        var user = args[1];
-        var points = args[2];
-        var request1 = `select * from userpoints where name = '${user}'`;
-        pool.query(request1, (err, response) => {
-            if (response) {
-                if (response.rows.length == 0) {
-                    //insert only if name is not present
-                    var request2 = `INSERT INTO userpoints VALUES ('${user}', ${points})`;
-                    pool.query(request2, (err, response) => {
-                        if (response) {
-                            var commandResponse = `${user} has now ${points} points.`;
-                            helpers.commandResponse(message, this, commandResponse);
-                        }
-                    });
-                } else {
-                    //add points to current user points.
-                    request3 = `update userpoints set points=(select points from userpoints where name='${user}') + ${points} where name='${user}'`;
-                    pool.query(request3, (err, response) => {
-                        if (response) {
-                            var request4 = `select points from userpoints where name='${user}'`;
-                            pool.query(request4, (err, response) => {
-                                if (response) {
-                                    points = response.rows[0]["points"];
-                                    var commandResponse = `${user} has now ${points} points`;
-                                    helpers.commandResponse(message, this, commandResponse);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
+        else
+            commandResponse=`${message.author.username} is already in database` 
+    }catch(error){
+        commandResponse = "Unexpected Error, please retry";
     }
+    helpers.commandResponse(message, this, commandResponse);
+});
+
+var points = new Command("!myPoints", "Check how many points you have.", async function(message, args) {
+    let commandResponse=""
+    try{
+        let existsResponse = await mongoService.selectFromCollectionAsync("points", {name:message.author.username});
+        if(existsResponse.length == 0){
+            let insertResponse = await mongoService.insertOneInCollectionAsync("points", {name:message.author.username, points:0})
+            if(insertResponse.insertedCount == 1)
+                commandResponse = `${message.author.username} was added to database and has 0 point.`;
+            else
+                commandResponse = "Unexpected Error, please retry";
+        }else
+            commandResponse = `${existsResponse[0].name} has ${existsResponse[0].points} ${existsResponse[0].points == 0 || existsResponse[0].points ==1 ? "point" : "points"}.`
+
+    }catch(error){
+        commandResponse = "Unexpected Error, please retry";
+    }
+    helpers.commandResponse(message, this, commandResponse);
+});
+
+var allPoints = new Command("!allPoints", "Check the points for every users in the database", async function(message, args) {
+    let commandResponse="";
+    try{
+        let response = await mongoService.selectAllFromCollectionAsync("points");
+        commandResponse = helpers.parsePoints(response);
+    }catch(error){
+        commandResponse = "Unexpected Error, please retry";
+    }
+    helpers.commandResponse(message, this, commandResponse);
+});
+
+var give = new Command("!give", "Give that user some points : !give <user> <points>", async function(message, args) {
+    let commandResponse = ""
+
+    if(args.length != 2 || !helpers.isNumber(args[1]))
+        commandResponse = "Invalid format for command.";
+    else{
+        let user = args[0];
+        let points = +args[1];
+
+        try{
+            let existsResponse = await mongoService.selectFromCollectionAsync("points",{name:user})
+            if(existsResponse.length==0){
+                let insertResponse = await mongoService.insertOneInCollectionAsync("points", {name:user, points:points})
+                if(insertResponse.insertedCount == 1)
+                    commandResponse = `${user} was added to database and you have ${points} points`;
+                else
+                    commandResponse = "Unexpected Error, please retry";
+            }else{
+                let pointResponse = await mongoService.selectFromCollectionAsync("points", {name:user});
+                let pointsToUpdate = +pointResponse[0].points+points;
+                let updateResponse = await mongoService.replaceOneFromCollectionAsync("points", {name:user}, {name:user, points:pointsToUpdate})
+                if(updateResponse.modifiedCount==1)
+                    commandResponse = `${user} has now ${pointsToUpdate} points`;
+                else
+                    commandResponse = "Unexpected Error, please retry";
+            }
+
+        }catch(error){
+            commandResponse = "Unexpected Error, please retry";
+        }
+    }
+       
+    helpers.commandResponse(message, this, commandResponse);
 });
 
 commandList["addMe"] = addMe;
-commandList["points"] = points;
+commandList["myPoints"] = points;
 commandList["allPoints"] = allPoints;
 commandList["give"] = give;
 //random commands

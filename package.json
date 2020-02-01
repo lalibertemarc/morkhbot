@@ -17,7 +17,6 @@
     "mongodb": "^3.5.2",
     "node-soundcloud": "0.0.6",
     "opusscript": "0.0.3",
-    "pg": "^7.4.3",
     "pubg-api-redis": "^3.6.0",
     "pug": "^2.0.4",
     "request": "^2.81.0",

@@ -38,12 +38,9 @@ let prefix = "!";
 Bot.on("message", message => {
     if (message.author.id === Bot.user.id || message.author.bot) return;
     if (message.content.startsWith(prefix)) {
-        let array = message.content.split(/ +/);
-        if (array.length == 1) array = message.content.split("/");
-        let command = array[0].substring(1, array[0].length);
-
+        let command = helpers.getCommand(message.content);
         if (command in commandList) {
-            commandList[command].handler(message);
+            commandList[command].handler(message, helpers.getArgs(message.content));
         } else
             message.channel.send(
                 helpers.botResponse("Invalid Command", `Please visit http://${process.env.HOST}:${process.env.PORT}/api/help to see the available commands`, "")
