@@ -76,7 +76,7 @@ const gcd = new Command("!gcd", "Gives the greater common diviser between the 2 
 const primeRange = new Command("!primeRange", "Gives all the prime numbers in the given argument range. !primeRange <lower> <upper>", function(message, args) {
     var args = message.content.split(" ");
     var commandResponse = "";
-    if (helpers.isNumber(args[1]) || helpers.isNumber(args[2])) commandResponse = prime.primeRange(+args[1], +args[2]);
+    if (helpers.isNumber(args[0]) || helpers.isNumber(args[1])) commandResponse = prime.primeRange(+args[0], +args[1]);
     else commandResponse = "One of the given arguments is not a numerical.";
     helpers.commandResponse(message, this, commandResponse);
 });
@@ -173,7 +173,6 @@ var rollGames = new Command("!rollGames", "Roll a random game to play if you hav
     try{
         let response = await mongoService.selectAllFromCollectionAsync("games");
         commandResponse = helpers.getRandomfromArray(response).name;
-        helpers.commandResponse(message, this, commandResponse);
     }catch(error){
         commandResponse = "Unexpected Error, please retry";
     }
