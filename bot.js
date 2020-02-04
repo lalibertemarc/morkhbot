@@ -24,7 +24,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json("application/json"));
 app.use("/api", apiRoutes);
 
-app.listen(process.env.PORT, () => console.log(`Now listening to ${process.env.PORT}`));
+const port = process.env.PORT || 8888;
+
+app.listen(port, () => console.log(`Now listening to ${port}`));
 
 //activate bot
 Bot.on("ready", () => console.log(`[Start] ${new Date()}`));
