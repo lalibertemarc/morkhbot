@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const apiRoutes = require("./routes/apiRoutes.js");
 var path = require("path");
 require("dotenv").config();
+process.chdir(__dirname);
 const Bot = new Discord.Client();
 
 Bot.login(process.env.DISCORDTOKEN);
