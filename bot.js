@@ -46,10 +46,7 @@ Bot.on("message", message => {
         let command = helpers.getCommand(message.content);
         if (command in commandList) {
             commandList[command].handler(message, helpers.getArgs(message.content));
-        } else
-            message.channel.send(
-                helpers.botResponse("Invalid Command", `Please visit http://${process.env.HOST}:${process.env.PORT}/api/help to see the available commands`, "")
-            );
+        } else commandList["help"].handler(message, helpers.getArgs(message.content));
     }
 });
 

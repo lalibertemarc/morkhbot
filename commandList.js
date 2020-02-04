@@ -13,36 +13,35 @@ const Command = require("./command.js");
 
 let commandList = {};
 
-const help = new Command("!help", "Get the url to see a list of all commands", function (message, args){
-    let commandResponse = `Please visit http://${process.env.HOST}:${process.env.PORT}/api/help to see the available commands`
+const help = new Command("!help", "Get the url to see a list of all commands", function(message, args) {
+    let commandResponse = `Please visit http://${process.env.HOST}/api/help to see the available commands`;
     helpers.commandResponse(message, this, commandResponse);
-})
+});
 
-commandList["help"]=help;
+commandList["help"] = help;
 
 //Roll and calc commands
 const roll = new Command("!roll", "Roll a random number between 1 and 100 or roll nDk dice", function(message, args) {
-    let commandResponse = rollService.roll(args[0], message.author.username );
+    let commandResponse = rollService.roll(args[0], message.author.username);
     helpers.commandResponse(message, this, commandResponse);
 });
 commandList["roll"] = roll;
 
-
 //TODO: fix calc command returning NaN if user inputs a negative number
 /* calc service something i did in college out of boredom in classes
     using eval is the simple choice here but I kind wanna keep it for legacy sake.
-*/ 
+*/
 const calc = new Command("!calc", "Calculator function, also used for math with dices. !calc <operation> | !calc 1d20+10", function(message, args) {
     let commandResponse = args[0] + " = " + calculator.interpreter(args[0]);
     helpers.commandResponse(message, this, commandResponse);
 });
 
-const bin2Dec = new Command("!bin2Dec", "Converts binary string into decimal number", function(message,args) {
+const bin2Dec = new Command("!bin2Dec", "Converts binary string into decimal number", function(message, args) {
     commandResponse = converter.bin2Dec(args[0]);
     helpers.commandResponse(message, this, commandResponse);
 });
 
-const dec2Bin = new Command("!dec2Bin", "Converts a number into a binary string : !dec2Bin <number>", function(message, args) {;
+const dec2Bin = new Command("!dec2Bin", "Converts a number into a binary string : !dec2Bin <number>", function(message, args) {
     let commandResponse = converter.dec2Bin(+args[0]);
     helpers.commandResponse(message, this, commandResponse);
 });
@@ -154,41 +153,37 @@ commandList["endDuel"] = endDuel;
 commandList["clearDuel"] = clearDuel;
 commandList["refuseDuel"] = refuseDuel;
 
-
 //Games Command
 var allGames = new Command("!allGames", "Get all available games to roll when you dont know what to play", async function(message, args) {
-    let commandResponse="";
-    try{
+    let commandResponse = "";
+    try {
         let response = await mongoService.selectAllFromCollectionAsync("games");
         commandResponse = helpers.parseGames(response);
-    }catch(error){
+    } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
     helpers.commandResponse(message, this, commandResponse);
- 
 });
 
 var rollGames = new Command("!rollGames", "Roll a random game to play if you have no inspiration on what to play", async function(message, args) {
-    let commandResponse="";
-    try{
+    let commandResponse = "";
+    try {
         let response = await mongoService.selectAllFromCollectionAsync("games");
         commandResponse = helpers.getRandomfromArray(response).name;
-    }catch(error){
+    } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
     helpers.commandResponse(message, this, commandResponse);
 });
 
-var addGame = new Command("!addGame", "Add a game in the database to get a chance to roll it", async function(message,args) {
-    let commandResponse="";
-    try{
+var addGame = new Command("!addGame", "Add a game in the database to get a chance to roll it", async function(message, args) {
+    let commandResponse = "";
+    try {
         let newGame = helpers.parseArgs(args);
-        let response = await mongoService.insertOneInCollectionAsync("games", {name:newGame});
-        if(response.insertedCount == 1)
-            commandResponse = `${newGame} was added to database.`;
-        else
-            commandResponse = "Unexpected Error, please retry";
-    }catch(error){
+        let response = await mongoService.insertOneInCollectionAsync("games", { name: newGame });
+        if (response.insertedCount == 1) commandResponse = `${newGame} was added to database.`;
+        else commandResponse = "Unexpected Error, please retry";
+    } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
     helpers.commandResponse(message, this, commandResponse);
@@ -200,86 +195,72 @@ commandList["addGame"] = addGame;
 
 //points system
 var addMe = new Command("!addMe", "Add your username in the database for the point system", async function(message, args) {
-    let commandResponse="";
-    try{
-        let existsResponse = await mongoService.selectFromCollectionAsync("points",{name:message.author.username})
-        if(existsResponse.length==0){
-            let response = await mongoService.insertOneInCollectionAsync("points", {name:message.author.username, points:0})
-            if(response.insertedCount == 1)
-                commandResponse = `${message.author.username} was added to database.`;
-            else
-                commandResponse = "Unexpected Error, please retry";
-        }
-        else
-            commandResponse=`${message.author.username} is already in database` 
-    }catch(error){
+    let commandResponse = "";
+    try {
+        let existsResponse = await mongoService.selectFromCollectionAsync("points", { name: message.author.username });
+        if (existsResponse.length == 0) {
+            let response = await mongoService.insertOneInCollectionAsync("points", { name: message.author.username, points: 0 });
+            if (response.insertedCount == 1) commandResponse = `${message.author.username} was added to database.`;
+            else commandResponse = "Unexpected Error, please retry";
+        } else commandResponse = `${message.author.username} is already in database`;
+    } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
     helpers.commandResponse(message, this, commandResponse);
 });
 
 var points = new Command("!myPoints", "Check how many points you have.", async function(message, args) {
-    let commandResponse=""
-    try{
-        let existsResponse = await mongoService.selectFromCollectionAsync("points", {name:message.author.username});
-        if(existsResponse.length == 0){
-            let insertResponse = await mongoService.insertOneInCollectionAsync("points", {name:message.author.username, points:0})
-            if(insertResponse.insertedCount == 1)
-                commandResponse = `${message.author.username} was added to database and has 0 point.`;
-            else
-                commandResponse = "Unexpected Error, please retry";
-        }else
-            commandResponse = `${existsResponse[0].name} has ${existsResponse[0].points} ${existsResponse[0].points == 0 || existsResponse[0].points ==1 ? "point" : "points"}.`
-
-    }catch(error){
+    let commandResponse = "";
+    try {
+        let existsResponse = await mongoService.selectFromCollectionAsync("points", { name: message.author.username });
+        if (existsResponse.length == 0) {
+            let insertResponse = await mongoService.insertOneInCollectionAsync("points", { name: message.author.username, points: 0 });
+            if (insertResponse.insertedCount == 1) commandResponse = `${message.author.username} was added to database and has 0 point.`;
+            else commandResponse = "Unexpected Error, please retry";
+        } else commandResponse = `${existsResponse[0].name} has ${existsResponse[0].points} ${existsResponse[0].points == 0 || existsResponse[0].points == 1 ? "point" : "points"}.`;
+    } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
     helpers.commandResponse(message, this, commandResponse);
 });
 
 var allPoints = new Command("!allPoints", "Check the points for every users in the database", async function(message, args) {
-    let commandResponse="";
-    try{
+    let commandResponse = "";
+    try {
         let response = await mongoService.selectAllFromCollectionAsync("points");
         commandResponse = helpers.parsePoints(response);
-    }catch(error){
+    } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
     helpers.commandResponse(message, this, commandResponse);
 });
 
 var give = new Command("!give", "Give that user some points : !give <user> <points>", async function(message, args) {
-    let commandResponse = ""
+    let commandResponse = "";
 
-    if(args.length != 2 || !helpers.isNumber(args[1]))
-        commandResponse = "Invalid format for command.";
-    else{
+    if (args.length != 2 || !helpers.isNumber(args[1])) commandResponse = "Invalid format for command.";
+    else {
         let user = args[0];
         let points = +args[1];
 
-        try{
-            let existsResponse = await mongoService.selectFromCollectionAsync("points",{name:user})
-            if(existsResponse.length==0){
-                let insertResponse = await mongoService.insertOneInCollectionAsync("points", {name:user, points:points})
-                if(insertResponse.insertedCount == 1)
-                    commandResponse = `${user} was added to database and you have ${points} points`;
-                else
-                    commandResponse = "Unexpected Error, please retry";
-            }else{
-                let pointResponse = await mongoService.selectFromCollectionAsync("points", {name:user});
-                let pointsToUpdate = +pointResponse[0].points+points;
-                let updateResponse = await mongoService.replaceOneFromCollectionAsync("points", {name:user}, {name:user, points:pointsToUpdate})
-                if(updateResponse.modifiedCount==1)
-                    commandResponse = `${user} has now ${pointsToUpdate} points`;
-                else
-                    commandResponse = "Unexpected Error, please retry";
+        try {
+            let existsResponse = await mongoService.selectFromCollectionAsync("points", { name: user });
+            if (existsResponse.length == 0) {
+                let insertResponse = await mongoService.insertOneInCollectionAsync("points", { name: user, points: points });
+                if (insertResponse.insertedCount == 1) commandResponse = `${user} was added to database and you have ${points} points`;
+                else commandResponse = "Unexpected Error, please retry";
+            } else {
+                let pointResponse = await mongoService.selectFromCollectionAsync("points", { name: user });
+                let pointsToUpdate = +pointResponse[0].points + points;
+                let updateResponse = await mongoService.replaceOneFromCollectionAsync("points", { name: user }, { name: user, points: pointsToUpdate });
+                if (updateResponse.modifiedCount == 1) commandResponse = `${user} has now ${pointsToUpdate} points`;
+                else commandResponse = "Unexpected Error, please retry";
             }
-
-        }catch(error){
+        } catch (error) {
             commandResponse = "Unexpected Error, please retry";
         }
     }
-       
+
     helpers.commandResponse(message, this, commandResponse);
 });
 
