@@ -14,7 +14,7 @@ const Command = require("./command.js");
 let commandList = {};
 
 const help = new Command("!help", "Get the url to see a list of all commands", function(message, args) {
-    let commandResponse = `Please visit http://${process.env.HOST}/api/help to see the available commands`;
+    let commandResponse = `Please visit https://${process.env.HOST}/api/help to see the available commands`;
     helpers.commandResponse(message, this, commandResponse);
 });
 
@@ -37,7 +37,7 @@ const calc = new Command("!calc", "Calculator function, also used for math with 
 });
 
 const bin2Dec = new Command("!bin2Dec", "Converts binary string into decimal number", function(message, args) {
-    commandResponse = converter.bin2Dec(args[0]);
+    let commandResponse = converter.bin2Dec(args[0]);
     helpers.commandResponse(message, this, commandResponse);
 });
 
