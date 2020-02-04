@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Bot = require("./../bot.js").Bot;
+const Bot = require("../server.js").Bot;
 const commandList = require("./../commandList.js").commandList;
 const helpers = require("./../services/helperFunctions.js");
 
