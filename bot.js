@@ -33,6 +33,10 @@ Bot.on("messageReactionAdd", (reaction, user) => {
     reaction.message.channel.send(`${user} reacted to ${reaction.message.author}  with  ${reaction._emoji.name}`);
 });
 
+app.get("/", (req, res, next) => {
+    res.send("Working");
+});
+
 //chat commands
 let prefix = "!";
 Bot.on("message", message => {
