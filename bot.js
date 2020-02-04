@@ -36,7 +36,7 @@ Bot.on("messageReactionAdd", (reaction, user) => {
 });
 
 app.get("/", (req, res, next) => {
-    res.send("Working");
+    res.send(200);
 });
 
 //chat commands
