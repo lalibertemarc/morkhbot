@@ -32,7 +32,7 @@ module.exports = {
             ref: "origin/master",
             repo: "https://github.com/lalibertemarc/morkhbot.git",
             path: "/home/ubuntu/morkhbot",
-            "pre-deploy-local" : "scp -i ~/.ssh/simaudio_report_bug_node_agent -P 41022 ./deploy_production/.env ubuntu@ec2-18-222-60-80.us-east-2.compute.amazonaws.com:/home/ubuntu/morkhbot/",      
+            "pre-deploy-local" : "ssh -i C:/Users/Marc/.ssh/mlaliberte.pem ubuntu@ec2-18-222-60-80.us-east-2.compute.amazonaws.com ./deploy_production/.env ubuntu@ec2-18-222-60-80.us-east-2.compute.amazonaws.com:/home/ubuntu/morkhbot/",      
             "post-deploy": "mv /home/ubuntu/morkhbot/.env ./.env && export PATH=$PATH:/home/ubuntu/morkhbot/ && npm install && pm2 startOrRestart ecosystem.config.js --env production && pm2 update"
         }
     }
