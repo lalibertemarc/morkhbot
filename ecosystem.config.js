@@ -30,10 +30,9 @@ module.exports = {
             user: "ubuntu",
             host: "ec2-18-222-60-80.us-east-2.compute.amazonaws.com",
             ref: "origin/master",
-            repo: "https://github.com/lalibertemarc/morkhbot.git",
-            path: "/home/ubuntu/morkhbot",
-            "pre-deploy-local" : "ssh -i C:/Users/Marc/.ssh/mlaliberte.pem ubuntu@ec2-18-222-60-80.us-east-2.compute.amazonaws.com ./deploy_production/.env ubuntu@ec2-18-222-60-80.us-east-2.compute.amazonaws.com:/home/ubuntu/morkhbot/",      
-            "post-deploy": "mv /home/ubuntu/morkhbot/.env ./.env && export PATH=$PATH:/home/ubuntu/morkhbot/ && npm install && pm2 startOrRestart ecosystem.config.js --env production && pm2 update"
+            repo: "git@github.com:lalibertemarc/morkhbot.git",
+            path: "/home/ubuntu/morkhbot/",
+            "post-deploy": "npm install && pm2 startOrRestart ecosystem.config.js --env production && pm2 update"
         }
     }
 };
