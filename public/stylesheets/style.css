@@ -1,9 +1,33 @@
+:root {
+	--primary-color: #0274be;
+	--light-primary-color: #00abdf;
+	--very-light-blue: #cce5ff;
+	--dark-primary-color: #001933;
+	--very-dark-primary-color: #001933;
+	--broken-white: #f5f8fa;
+	--main-grey-body:#666666;
+	--sec-light-grey:#7a7a7a;
+	--background-color:#171717;
+	--redish-bg:#443a3a;
+}
+
+body{
+    background-color: var(--broken-white);
+}
+
 .wrapper{
     width: 70%;
     margin-left: auto;
     margin-right: auto;
 }
-.header{
-    background-color: black;
-    height: 60px;
+
+.navbar{
+    background-color: var(--background-color);
+}
+
+.smallImage{
+    width:50px;
+}
+.white-text{
+    color: var(--broken-white);
 }

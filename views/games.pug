@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    div(class="wrapper")
+        h1 All Games available to roll
+        div(id="tableContainer")
+        script.
+            $(document).ready(()=>{
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/games',
+                    success: function(result) {
+                        $('#tableContainer').html(parseGames(result));
+                    }
+                });
+            })
+
+

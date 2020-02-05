@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    div(class="wrapper")
+        h1 All Points on the server
+        div(id="tableContainer")
+        script.
+            $(document).ready(()=>{
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/points',
+                    success: function(result) {
+                        $('#tableContainer').html(parsePoints(result));
+                    }
+                });
+            })
+
+
