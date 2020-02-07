@@ -1,9 +1,32 @@
 extends layout
 
 block content
+
     div(class="wrapper")
         h1 All saved locations on Morkh's minecraft server
         p The server ip is 192.99.17.129:25577
+        form(method="POST" action="/api/saveLocation")
+            fieldset
+                legend Save a new location
+                    div(class="row")
+                        div(class="col")
+                            div(class="form-group")
+                                input(type="text" class="form-control" name="nameInput" placeholder="Enter location name")
+                        div(class="col")  
+                            input(type="radio" name="dimension" value="overworld" checked) 
+                            | Overworld
+                        div(class="col")
+                            input(type="radio" name="dimension" value="nether")
+                            | Nether
+                    br
+                    div(class="row")
+                        div(class="col")
+                            input(type="number" class="form-control" name="xInput" placeholder="Enter X coord")
+                        div(class="col")
+                            input(type="number" class="form-control" name="yInput" placeholder="Enter y coord")
+                        div(class="col")
+                            input(type="number" class="form-control" name="zInput" placeholder="Enter z coord")
+                    button(type="submit" class="btn btn-primary") Submit
         div(id="tableContainer")
         script.
             $(document).ready(()=>{
