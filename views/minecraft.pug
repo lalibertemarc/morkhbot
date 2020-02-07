@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    div(class="wrapper")
+        h1 All saved locations on Morkh's minecraft server
+        p The server ip is 192.99.17.129:25577
+        div(id="tableContainer")
+        script.
+            $(document).ready(()=>{
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/minecraft',
+                    success: function(result) {
+                        $('#tableContainer').html(parseMinecraft(result));
+                    }
+                });
+            })

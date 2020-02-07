@@ -18,18 +18,11 @@ router.get("/send/:channelId/:message", (req, res) => {
   res.send(`${message} was transmitted to the ${channel.name} channel`);
 });
 
-router.get("/points", async (req, res, next) => {
+router.get("/:collection", async (req, res, next) => {
   try {
-    let response = await mongoService.selectFromCollectionAsync("points");
-    res.send({ status: 200, payload: response });
-  } catch (error) {
-    res.send({ status: 500, message: error.message });
-  }
-});
-
-router.get("/games", async (req, res, next) => {
-  try {
-    let response = await mongoService.selectFromCollectionAsync("games");
+    let response = await mongoService.selectFromCollectionAsync(
+      req.params.collection
+    );
     res.send({ status: 200, payload: response });
   } catch (error) {
     res.send({ status: 500, message: error.message });

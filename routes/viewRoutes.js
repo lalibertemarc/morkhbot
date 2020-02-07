@@ -17,12 +17,8 @@ router.get("/help", (req, res, next) => {
   });
 });
 
-router.get("/points", (req, res, next) => {
-  res.render("points", { title: "Morkhbot" });
-});
-
-router.get("/games", (req, res, next) => {
-  res.render("games", { title: "Morkhbot" });
+router.get("/:view", (req, res, next) => {
+  res.render(req.params.view, { title: "Morkhbot" });
 });
 
 module.exports = router;
