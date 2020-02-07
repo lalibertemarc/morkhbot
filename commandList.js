@@ -440,38 +440,18 @@ commandList["shitPost"] = shitPost;
 var movies = new Command(
   "!movies",
   "Will query OMDb api for a movie request",
-  async message => {
-    var args = message.content.split(/ +/);
-    args.shift();
-    title = args.join(" ");
+  async (message, args) => {
+    let title = args.join(" ");
     var url = `http://www.omdbapi.com/?t=${title}&apikey=f7ee9808`;
 
     try {
       let movieRequest = await webResquestHelper.getAsync(url, 3000, {
         json: true
       });
-      let body = movieRequest.data;
-      var ratings = "";
-      for (var i = 0; i < body.Ratings.length; i++) {
-        ratings += `${body.Ratings[i].Source} : ${body.Ratings[i].Value} `;
-      }
-      var description = "";
-      description += `Released : ${body.Released}\n`;
-      description += `Director : ${body.Director}\n`;
-      description += `Writer : ${body.Writer}\n`;
-      description += `Actors : ${body.Actors}\n`;
-      description += `Awards : ${body.Awards}\n`;
-      description += `Plot : ${body.Plot}\n`;
-      description += `Runtime : ${body.Runtime}\n`;
-      description += `Country : ${body.Country}\n`;
 
-      helpers.movieResponse(
-        message,
-        body.Title,
-        description,
-        ratings,
-        body.Poster
-      );
+      let body = movieRequest.data;
+      if (body.Response) helpers.movieResponse(message, body);
+      else helpers.commandResponse(message, this, body.Error);
     } catch (exception) {
       helpers.commandResponse(message, this, exception);
     }
