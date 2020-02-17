@@ -21,7 +21,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 app.use(express.static("public"));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json("application/json"));
 app.use("/api", apiRoutes);
 app.use("/views", viewRoutes);
@@ -34,30 +34,27 @@ app.listen(port, () => console.log(`Now listening to ${port}`));
 Bot.on("ready", () => console.log(`[Start] ${new Date()}`));
 
 Bot.on("messageReactionAdd", (reaction, user) => {
-  reaction.message.channel.send(
-    `${user} reacted to ${reaction.message.author}  with  ${reaction._emoji.name}`
-  );
+    reaction.message.channel.send(`${user} reacted to ${reaction.message.author}  with  ${reaction._emoji.name}`);
 });
 
 app.get("/", (req, res, next) => {
-  res.render("home", {
-    title: "Morkhbot"
-  });
+    res.render("home", {
+        title: "Morkhbot"
+    });
 });
 
 //chat commands
 let prefix = "!";
 Bot.on("message", message => {
-  if (message.author.id === Bot.user.id || message.author.bot) return;
-  if (message.content.startsWith(prefix)) {
-    let command = helpers.getCommand(message.content);
-    if (command in commandList) {
-      commandList[command].handler(message, helpers.getArgs(message.content));
-    } else
-      commandList["help"].handler(message, helpers.getArgs(message.content));
-  }
+    if (message.author.id === Bot.user.id || message.author.bot) return;
+    if (message.content.startsWith(prefix)) {
+        let command = helpers.getCommand(message.content);
+        if (command in commandList) {
+            commandList[command].handler(message, helpers.getArgs(message.content));
+        } else commandList["help"].handler(message, helpers.getArgs(message.content));
+    }
 });
 
 module.exports = {
-  Bot: Bot
+    Bot: Bot
 };

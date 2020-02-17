@@ -5,7 +5,7 @@ block content
     div(class="wrapper")
         h1 All saved locations on Morkh's minecraft server
         p The server ip is 192.99.17.129:25577
-        form(method="POST" action="/api/saveLocation")
+        form(method="POST" action="/api/write/saveLocation")
             fieldset
                 legend Save a new location
                     div(class="row")
@@ -32,7 +32,7 @@ block content
             $(document).ready(()=>{
                 $.ajax({
                     type: 'GET',
-                    url: '/api/minecraft',
+                    url: '/api/read/minecraft',
                     success: function(result) {
                         $('#tableContainer').html(parseMinecraft(result));
                     }

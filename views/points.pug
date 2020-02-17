@@ -8,7 +8,7 @@ block content
             $(document).ready(()=>{
                 $.ajax({
                     type: 'GET',
-                    url: '/api/points',
+                    url: '/api/read/points',
                     success: function(result) {
                         $('#tableContainer').html(parsePoints(result));
                     }

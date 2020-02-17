@@ -8,7 +8,7 @@ block content
             $(document).ready(()=>{
                 $.ajax({
                     type: 'GET',
-                    url: '/api/games',
+                    url: '/api/read/games',
                     success: function(result) {
                         $('#tableContainer').html(parseGames(result));
                     }
