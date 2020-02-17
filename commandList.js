@@ -8,7 +8,6 @@ const name = require("./services/randomName.js");
 const duel = require("./services/duel.js");
 const webResquestHelper = require("./services/webRequesterHelper.js");
 const minecraftService = require("./services/minecraftService.js");
-const mongoService = require("./services/mongoDBservice.js");
 const Command = require("./command.js");
 
 let commandList = {};
@@ -185,8 +184,10 @@ var allGames = new Command(
     async function(message, args) {
         let commandResponse = "";
         try {
-            let response = await mongoService.selectFromCollectionAsync("games");
-            commandResponse = helpers.parseGames(response);
+            let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.READ_API}/games`;
+            let response = await webResquestHelper.getAsync(url);
+            if (response.data.status == 200) commandResponse = helpers.parseGames(response.data.payload);
+            else commandResponse = "Unexpected Error, please retry";
         } catch (error) {
             commandResponse = "Unexpected Error, please retry";
         }
@@ -200,8 +201,10 @@ var rollGames = new Command(
     async function(message, args) {
         let commandResponse = "";
         try {
-            let response = await mongoService.selectFromCollectionAsync("games");
-            commandResponse = helpers.getRandomfromArray(response).name;
+            let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.READ_API}/games`;
+            let response = await webResquestHelper.getAsync(url);
+            if (response.data.status == 200) commandResponse = helpers.getRandomfromArray(response.data.payload).name;
+            else commandResponse = "Unexpected Error, please retry";
         } catch (error) {
             commandResponse = "Unexpected Error, please retry";
         }
@@ -216,11 +219,9 @@ var addGame = new Command("!addGame", "Add a game in the database to get a chanc
     let commandResponse = "";
     try {
         let newGame = helpers.parseArgs(args);
-        let response = await mongoService.insertOneInCollectionAsync("games", {
-            name: newGame
-        });
-        if (response.insertedCount == 1) commandResponse = `${newGame} was added to database.`;
-        else commandResponse = "Unexpected Error, please retry";
+        let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.WRITE_API}/games`;
+        let response = await webResquestHelper.putAsync(url, { name: newGame });
+        commandResponse = response.data.message;
     } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
@@ -238,15 +239,10 @@ var addMe = new Command("!addMe", "Add your username in the database for the poi
 ) {
     let commandResponse = "";
     try {
-        let existsResponse = await mongoService.selectFromCollectionAsync("points", { name: message.author.username });
-        if (existsResponse.length == 0) {
-            let response = await mongoService.insertOneInCollectionAsync("points", {
-                name: message.author.username,
-                points: 0
-            });
-            if (response.insertedCount == 1) commandResponse = `${message.author.username} was added to database.`;
-            else commandResponse = "Unexpected Error, please retry";
-        } else commandResponse = `${message.author.username} is already in database`;
+        let user = message.author.username;
+        let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.WRITE_API}/points`;
+        let response = await webResquestHelper.putAsync(url, { name: user, points: 0 });
+        commandResponse = response.data.message;
     } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
@@ -256,18 +252,21 @@ var addMe = new Command("!addMe", "Add your username in the database for the poi
 var points = new Command("!myPoints", "Check how many points you have.", async function(message, args) {
     let commandResponse = "";
     try {
-        let existsResponse = await mongoService.selectFromCollectionAsync("points", { name: message.author.username });
-        if (existsResponse.length == 0) {
-            let insertResponse = await mongoService.insertOneInCollectionAsync("points", {
-                name: message.author.username,
-                points: 0
-            });
-            if (insertResponse.insertedCount == 1)
-                commandResponse = `${message.author.username} was added to database and has 0 point.`;
-            else commandResponse = "Unexpected Error, please retry";
-        } else commandResponse = `${existsResponse[0].name} has ${existsResponse[0].points} ${existsResponse[0].points == 0 || existsResponse[0].points == 1 ? "point" : "points"}.`;
+        let user = message.author.username;
+        let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.READ_API}/points?name=${user}`;
+        let response = await webResquestHelper.getAsync(url);
+        if (response.data.status == 200) {
+            let currentPoints = response.data.payload[0].points;
+            commandResponse = `${user} has ${
+                response.data.payload[0].point > 1 ? currentPoints + " points" : currentPoints + " point"
+            } .`;
+        } else if (response.data.status == 402) {
+            commandList["addMe"].handler(message, null);
+            return;
+        }
     } catch (error) {
-        commandResponse = "Unexpected Error, please retry";
+        console.log(error);
+        commandResponse = "Unexpected Error in my points, please retry";
     }
     helpers.commandResponse(message, this, commandResponse);
 });
@@ -278,8 +277,11 @@ var allPoints = new Command("!allPoints", "Check the points for every users in t
 ) {
     let commandResponse = "";
     try {
-        let response = await mongoService.selectFromCollectionAsync("points");
-        commandResponse = helpers.parsePoints(response);
+        let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.READ_API}/points?`;
+
+        let response = await webResquestHelper.getAsync(url);
+        if (response.data.status == 200) commandResponse = helpers.parsePoints(response.data.payload);
+        else commandResponse = response.data.message;
     } catch (error) {
         commandResponse = "Unexpected Error, please retry";
     }
@@ -295,27 +297,17 @@ var give = new Command("!give", "Give that user some points : !give <user> <poin
         let points = +args[1];
 
         try {
-            let existsResponse = await mongoService.selectFromCollectionAsync("points", { name: user });
-            if (existsResponse.length == 0) {
-                let insertResponse = await mongoService.insertOneInCollectionAsync("points", {
-                    name: user,
-                    points: points
-                });
-                if (insertResponse.insertedCount == 1)
-                    commandResponse = `${user} was added to the database and you have ${points} points`;
-                else commandResponse = "Unexpected Error, please retry";
-            } else {
-                let pointResponse = await mongoService.selectFromCollectionAsync("points", { name: user });
-                let pointsToUpdate = +pointResponse[0].points + points;
-                let updateResponse = await mongoService.replaceOneFromCollectionAsync(
-                    "points",
-                    { name: user },
-                    { name: user, points: pointsToUpdate }
-                );
-                if (updateResponse.modifiedCount == 1) commandResponse = `${user} has now ${pointsToUpdate} points`;
-                else commandResponse = "Unexpected Error, please retry";
+            let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.WRITE_API}/points?`;
+
+            let response = await webResquestHelper.patchAsync(url, { name: user, points: points });
+            if (response.data.status == 200) commandResponse = response.data.message;
+            else if (response.data.status == 402) {
+                let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.WRITE_API}/points`;
+                let insertResponse = await webResquestHelper.putAsync(url, { name: user, points: points });
+                commandResponse = insertResponse.data.message;
             }
         } catch (error) {
+            console.log(error);
             commandResponse = "Unexpected Error, please retry";
         }
     }
@@ -425,31 +417,13 @@ let mcGetCoords = new Command("!mcGetCoords", "Get all saved locations on Morkh'
 
 commandList["mcGetCoords"] = mcGetCoords;
 
-let mcSaveCoords = new Command(
-    "!mcSaveCoords",
-    "Save a location from Morkh's Minecraft server. Ex: !mcSaveCoords <name> <x> <y> <z>",
-    async function(message, args) {
-        let locationName = args[0];
-        let locationX = args[1];
-        let locationY = args[2];
-        let locationZ = args[3];
-        let location = {
-            name: locationName,
-            coords: { x: locationX, y: locationY, z: locationZ }
-        };
-        let commandResponse = "";
-        try {
-            let insertResponse = await mongoService.insertOneInCollectionAsync("minecraft", location);
-
-            if (insertResponse.insertedCount == 1)
-                commandResponse = `The location was added to the database.\n  Visit http://${process.env.HOST}:${process.env.PORT}/views/minecraft to see all saved locations.`;
-            else commandResponse = "Unexpected Error, please retry";
-        } catch (error) {
-            commandResponse = "Unexpected Error, please retry";
-        }
-        helpers.commandResponse(message, this, commandResponse);
-    }
-);
+let mcSaveCoords = new Command("!mcSaveCoords", "Save a location from Morkh's Minecraft server.", async function(
+    message,
+    args
+) {
+    let commandResponse = ` Visit http://${process.env.HOST}:${process.env.PORT}/views/minecraft to see all saved locations and save a new location.`;
+    helpers.commandResponse(message, this, commandResponse);
+});
 
 commandList["mcSaveCoords"] = mcSaveCoords;
 module.exports = {

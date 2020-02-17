@@ -10,10 +10,11 @@ router.put("/:collection", async (req, res, next) => {
         let existsResponse = await mongoService.selectFromCollectionAsync(collection, { name: item.name });
         if (existsResponse.length == 0) {
             let insertResponse = await mongoService.insertOneInCollectionAsync(collection, item);
-            if (insertResponse.insertedCount == 1) res.sendStatus(200);
+            if (insertResponse.insertedCount == 1)
+                res.send({ status: 200, message: `${item.name} was correctly inserted in DB.` });
             else res.send({ status: 501, message: "Item was not inserted for some reasons, please retry" });
         } else {
-            res.send({ status: 401, message: "Item is already in database, maybe use patch request instead." });
+            res.send({ status: 401, message: "Item is already in database." });
         }
     } catch (error) {
         res.send({ status: 500, message: "Unexpected error, please retry" });
@@ -37,10 +38,24 @@ router.patch("/points", async (req, res, next) => {
                 { name: user, points: pointsToUpdate }
             );
             if (updateResponse.modifiedCount == 1)
-                res.send({ status: 200, payload: `${user} has now ${pointsToUpdate} points.` });
+                res.send({ status: 200, message: `${user} has now ${pointsToUpdate} points.` });
             else commandResponse = res.sendStatus(500);
         }
     } catch (error) {
+        res.send({ status: 500, message: "Unexpected error, please retry" });
+    }
+});
+
+router.delete("/:collection", async (req, res, next) => {
+    let item = req.body;
+    let collection = req.params.collection;
+
+    try {
+        let deleteResponse = await mongoService.deleteOneFromCollectionAsync(collection, item);
+        if (deleteResponse.deletedCount == 1)
+            res.send({ status: 200, payload: `${item.name} was correctly deleted from DB` });
+        else res.send({ status: 500, payload: `There was an error in deletion, please retry.` });
+    } catch (e) {
         res.send({ status: 500, message: "Unexpected error, please retry" });
     }
 });
