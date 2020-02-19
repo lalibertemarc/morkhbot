@@ -8,7 +8,7 @@ const name = require("./services/randomName.js");
 const duel = require("./services/duel.js");
 const webResquestHelper = require("./services/webRequesterHelper.js");
 const minecraftService = require("./services/minecraftService.js");
-const Command = require("./command.js");
+const Command = require("./models/Command.js");
 
 let commandList = {};
 
@@ -297,7 +297,7 @@ var give = new Command("!give", "Give that user some points : !give <user> <poin
         let points = +args[1];
 
         try {
-            let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.WRITE_API}/points?`;
+            let url = `http://${process.env.HOST}:${process.env.PORT}/${process.env.WRITE_API}/points`;
 
             let response = await webResquestHelper.patchAsync(url, { name: user, points: points });
             if (response.data.status == 200) commandResponse = response.data.message;
