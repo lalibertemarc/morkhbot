@@ -1,6 +1,6 @@
 {
     "name": "morkhbot",
-    "version": "1.0.0",
+    "version": "3.1.0",
     "description": "My 1st Discord bot",
     "main": "bot.js",
     "author": "Marc Laliberte",
