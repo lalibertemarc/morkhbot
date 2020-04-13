@@ -2,13 +2,10 @@ const tableInit = `<table class="table table-striped table-bordered">
             <thead class="thead-dark">`;
 
 function parsePoints(response) {
-  if (response.status == 500) return `Unexpected error : ${response.message}`;
-
-  let payload = response.payload;
   let output = `${tableInit}
                         <tr><th>Player</th><th>Points</th></tr>
                     </thead>`;
-  payload.forEach(player => {
+  response.forEach(player => {
     output += `<tr><td>${player.name}</td><td>${player.points}</td><tr>`;
   });
   output += `</table>`;
@@ -17,13 +14,11 @@ function parsePoints(response) {
 }
 
 function parseGames(response) {
-  if (response.status == 500) return `Unexpected error : ${response.message}`;
 
-  let payload = response.payload;
   let output = `${tableInit}
                           <tr><th>Games</th></tr>
                       </thead>`;
-  payload.forEach(game => {
+  response.forEach(game => {
     output += `<tr><td>${game.name}</td><tr>`;
   });
   output += `</table>`;
@@ -32,10 +27,9 @@ function parseGames(response) {
 }
 
 function parseMinecraft(response) {
-  if (response.status == 500) return `Unexpected error : ${response.message}`;
-  let payload = response.payload;
+
   let output = "";
-  payload.forEach(place => {
+  response.forEach(place => {
     let x = place.coords.x;
     let y = place.coords.y;
     let z = place.coords.z;
