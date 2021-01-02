@@ -25,18 +25,9 @@ describe("isPrime", function () {
 describe("isPrime", function () {
     describe("with bad input", function () {
         it("should return error", function () {
-            assert.strictEqual(
-                primeService.isPrime("asdasd"),
-                "asdasd is not a number."
-            );
-            assert.strictEqual(
-                primeService.isPrime("asdasd123123"),
-                "asdasd123123 is not a number."
-            );
-            assert.strictEqual(
-                primeService.isPrime("123123asdasd123123"),
-                "123123asdasd123123 is not a number."
-            );
+            assert.strictEqual(primeService.isPrime("asdasd"), "asdasd is not a number.");
+            assert.strictEqual(primeService.isPrime("asdasd123123"), "asdasd123123 is not a number.");
+            assert.strictEqual(primeService.isPrime("123123asdasd123123"), "123123asdasd123123 is not a number.");
         });
     });
 });
@@ -58,34 +49,13 @@ describe("gcd", function () {
 describe("gcd", function () {
     describe("with bad input", function () {
         it("should return error", function () {
-            assert.strictEqual(
-                primeService.gcd(4, "asd"),
-                "Please enter integers."
-            );
-            assert.strictEqual(
-                primeService.gcd("asd", 4),
-                "Please enter integers."
-            );
-            assert.strictEqual(
-                primeService.gcd("asd", "asd"),
-                "Please enter integers."
-            );
-            assert.strictEqual(
-                primeService.gcd(4, ""),
-                "Please enter integers."
-            );
-            assert.strictEqual(
-                primeService.gcd(4, " "),
-                "Please enter integers."
-            );
-            assert.strictEqual(
-                primeService.gcd("", 4),
-                "Please enter integers."
-            );
-            assert.strictEqual(
-                primeService.gcd(" ", 4),
-                "Please enter integers."
-            );
+            assert.strictEqual(primeService.gcd(4, "asd"), "Please enter integers.");
+            assert.strictEqual(primeService.gcd("asd", 4), "Please enter integers.");
+            assert.strictEqual(primeService.gcd("asd", "asd"), "Please enter integers.");
+            assert.strictEqual(primeService.gcd(4, ""), "Please enter integers.");
+            assert.strictEqual(primeService.gcd(4, " "), "Please enter integers.");
+            assert.strictEqual(primeService.gcd("", 4), "Please enter integers.");
+            assert.strictEqual(primeService.gcd(" ", 4), "Please enter integers.");
         });
     });
 });
@@ -96,15 +66,7 @@ describe("nPrime", function () {
             assert.deepStrictEqual(primeService.nPrime(3), [1, 2, 3]);
             assert.deepStrictEqual(primeService.nPrime("3"), [1, 2, 3]);
             assert.deepStrictEqual(primeService.nPrime(5), [1, 2, 3, 5, 7]);
-            assert.deepStrictEqual(primeService.nPrime(7), [
-                1,
-                2,
-                3,
-                5,
-                7,
-                11,
-                13,
-            ]);
+            assert.deepStrictEqual(primeService.nPrime(7), [1, 2, 3, 5, 7, 11, 13]);
         });
     });
 });
@@ -112,22 +74,10 @@ describe("nPrime", function () {
 describe("nPrime", function () {
     describe("given bad input", function () {
         it("should return error", function () {
-            assert.deepStrictEqual(
-                primeService.nPrime(""),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.nPrime(" "),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.nPrime("asdasd"),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.nPrime("123123asdasd"),
-                "Please enter integers."
-            );
+            assert.deepStrictEqual(primeService.nPrime(""), "Please enter integers.");
+            assert.deepStrictEqual(primeService.nPrime(" "), "Please enter integers.");
+            assert.deepStrictEqual(primeService.nPrime("asdasd"), "Please enter integers.");
+            assert.deepStrictEqual(primeService.nPrime("123123asdasd"), "Please enter integers.");
         });
     });
 });
@@ -136,25 +86,12 @@ describe("primeRange", function () {
     describe("given good input", function () {
         it("should return expected value", function () {
             assert.deepStrictEqual(primeService.primeRange(3, 5), [3, 5]);
-            assert.deepStrictEqual(primeService.primeRange(2, 20), [
-                2,
-                3,
-                5,
-                7,
-                11,
-                13,
-                17,
-                19,
-            ]);
+            assert.deepStrictEqual(primeService.primeRange(2, 20), [2, 3, 5, 7, 11, 13, 17, 19]);
             assert.deepStrictEqual(primeService.primeRange(3, 9), [3, 5, 7]);
             assert.deepStrictEqual(primeService.primeRange(9, 3), [3, 5, 7]);
             assert.deepStrictEqual(primeService.primeRange(3, "9"), [3, 5, 7]);
             assert.deepStrictEqual(primeService.primeRange("3", 9), [3, 5, 7]);
-            assert.deepStrictEqual(primeService.primeRange("3", "9"), [
-                3,
-                5,
-                7,
-            ]);
+            assert.deepStrictEqual(primeService.primeRange("3", "9"), [3, 5, 7]);
         });
     });
 });
@@ -162,30 +99,12 @@ describe("primeRange", function () {
 describe("primeRange", function () {
     describe("given bad input", function () {
         it("should return error", function () {
-            assert.deepStrictEqual(
-                primeService.primeRange(3, ""),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.primeRange(3, " "),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.primeRange("", 3),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.primeRange(" ", 3),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.primeRange("", ""),
-                "Please enter integers."
-            );
-            assert.deepStrictEqual(
-                primeService.primeRange(3, "asdasdacac"),
-                "Please enter integers."
-            );
+            assert.deepStrictEqual(primeService.primeRange(3, ""), "Please enter integers.");
+            assert.deepStrictEqual(primeService.primeRange(3, " "), "Please enter integers.");
+            assert.deepStrictEqual(primeService.primeRange("", 3), "Please enter integers.");
+            assert.deepStrictEqual(primeService.primeRange(" ", 3), "Please enter integers.");
+            assert.deepStrictEqual(primeService.primeRange("", ""), "Please enter integers.");
+            assert.deepStrictEqual(primeService.primeRange(3, "asdasdacac"), "Please enter integers.");
         });
     });
 });

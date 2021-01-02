@@ -13,22 +13,10 @@ describe("dec2Bin", function () {
 describe("dec2Bin", function () {
     describe("with input not numerical", function () {
         it("should return error", function () {
-            assert.strictEqual(
-                converter.dec2Bin("asdad"),
-                "Given argument is not a numerical."
-            );
-            assert.strictEqual(
-                converter.dec2Bin("123123asdadasdasd567"),
-                "Given argument is not a numerical."
-            );
-            assert.strictEqual(
-                converter.dec2Bin(""),
-                "Given argument is not a numerical."
-            );
-            assert.strictEqual(
-                converter.dec2Bin(" "),
-                "Given argument is not a numerical."
-            );
+            assert.strictEqual(converter.dec2Bin("asdad"), "Given argument is not a numerical.");
+            assert.strictEqual(converter.dec2Bin("123123asdadasdasd567"), "Given argument is not a numerical.");
+            assert.strictEqual(converter.dec2Bin(""), "Given argument is not a numerical.");
+            assert.strictEqual(converter.dec2Bin(" "), "Given argument is not a numerical.");
         });
     });
 });
@@ -46,30 +34,15 @@ describe("bin2Dec", function () {
 describe("bin2Dec", function () {
     describe("with bad input", function () {
         it("should return error", function () {
-            assert.strictEqual(
-                converter.bin2Dec("asdasd"),
-                "ERROR: Argument is not binary"
-            );
-            assert.strictEqual(
-                converter.bin2Dec("5465465410101"),
-                "ERROR: Argument is not binary"
-            );
-            assert.strictEqual(
-                converter.bin2Dec("asdasd1110101110a10asd54"),
-                "ERROR: Argument is not binary"
-            );
+            assert.strictEqual(converter.bin2Dec("asdasd"), "ERROR: Argument is not binary");
+            assert.strictEqual(converter.bin2Dec("5465465410101"), "ERROR: Argument is not binary");
+            assert.strictEqual(converter.bin2Dec("asdasd1110101110a10asd54"), "ERROR: Argument is not binary");
             assert.strictEqual(
                 converter.bin2Dec("1100011100010asdasdads54545asdasd101100"),
                 "ERROR: Argument is not binary"
             );
-            assert.strictEqual(
-                converter.bin2Dec(""),
-                "ERROR: Argument is not binary"
-            );
-            assert.strictEqual(
-                converter.bin2Dec(" "),
-                "ERROR: Argument is not binary"
-            );
+            assert.strictEqual(converter.bin2Dec(""), "ERROR: Argument is not binary");
+            assert.strictEqual(converter.bin2Dec(" "), "ERROR: Argument is not binary");
         });
     });
 });
