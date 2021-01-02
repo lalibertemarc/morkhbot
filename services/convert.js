@@ -12,7 +12,7 @@ function dec2Bin(int) {
 function bin2Dec(string) {
     let binaryRegex = /^[0-1]*$/;
     let match = binaryRegex.exec(string);
-    if (match == null) {
+    if (match == null || match[0].length == 0) {
         return "ERROR: Argument is not binary";
     } else {
         let input = match[0];

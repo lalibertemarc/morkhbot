@@ -2,7 +2,7 @@ var assert = require("assert");
 const converter = require("../services/convert");
 
 describe("dec2Bin", function () {
-    describe("convert normal int", function () {
+    describe("with normal int as input", function () {
         it("should return expected value", function () {
             assert.strictEqual(converter.dec2Bin(4), "100");
             assert.strictEqual(converter.dec2Bin("4"), "100");
@@ -19,6 +19,14 @@ describe("dec2Bin", function () {
             );
             assert.strictEqual(
                 converter.dec2Bin("123123asdadasdasd567"),
+                "Given argument is not a numerical."
+            );
+            assert.strictEqual(
+                converter.dec2Bin(""),
+                "Given argument is not a numerical."
+            );
+            assert.strictEqual(
+                converter.dec2Bin(" "),
                 "Given argument is not a numerical."
             );
         });
@@ -52,6 +60,14 @@ describe("bin2Dec", function () {
             );
             assert.strictEqual(
                 converter.bin2Dec("1100011100010asdasdads54545asdasd101100"),
+                "ERROR: Argument is not binary"
+            );
+            assert.strictEqual(
+                converter.bin2Dec(""),
+                "ERROR: Argument is not binary"
+            );
+            assert.strictEqual(
+                converter.bin2Dec(" "),
                 "ERROR: Argument is not binary"
             );
         });
