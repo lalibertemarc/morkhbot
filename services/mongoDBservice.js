@@ -6,7 +6,7 @@ const uri = `mongodb+srv://${process.env.MONGOUSER}:${process.env.MONGOPASS}${pr
 
 const keyv = new Keyv();
 
-keyv.on("error", err => console.log("Connection Error", err));
+keyv.on("error", (err) => console.log("Connection Error", err));
 
 //if query is null, its select all
 async function selectFromCollectionAsync(collectionName, query = {}) {
@@ -17,10 +17,7 @@ async function selectFromCollectionAsync(collectionName, query = {}) {
 
         const client = await MongoClient.connect(uri);
         const db = client.db(process.env.DBNAME);
-        const item = await db
-            .collection(collectionName)
-            .find(query)
-            .toArray();
+        const item = await db.collection(collectionName).find(query).toArray();
         client.close();
         if (query != {}) await keyv.set(collectionName, item, 20000);
         return item;
@@ -33,7 +30,9 @@ async function insertOneInCollectionAsync(collectionName, itemToInsert) {
     try {
         const client = await MongoClient.connect(uri);
         const db = client.db(process.env.DBNAME);
-        const response = await db.collection(collectionName).insertOne(itemToInsert);
+        const response = await db
+            .collection(collectionName)
+            .insertOne(itemToInsert);
         client.close();
         await keyv.delete(collectionName);
         return response;
@@ -46,7 +45,9 @@ async function deleteOneFromCollectionAsync(collectionName, itemToDelete) {
     try {
         const client = await MongoClient.connect(uri);
         const db = client.db(process.env.DBNAME);
-        const response = await db.collection(collectionName).deleteOne(itemToDelete);
+        const response = await db
+            .collection(collectionName)
+            .deleteOne(itemToDelete);
         client.close();
         await keyv.delete(collectionName);
         return response;
@@ -55,11 +56,17 @@ async function deleteOneFromCollectionAsync(collectionName, itemToDelete) {
     }
 }
 
-async function replaceOneFromCollectionAsync(collectionName, itemToUpate, newContent) {
+async function replaceOneFromCollectionAsync(
+    collectionName,
+    itemToUpate,
+    newContent
+) {
     try {
         const client = await MongoClient.connect(uri);
         const db = client.db(process.env.DBNAME);
-        const response = await db.collection(collectionName).replaceOne(itemToUpate, newContent);
+        const response = await db
+            .collection(collectionName)
+            .replaceOne(itemToUpate, newContent);
         client.close();
         await keyv.delete(collectionName);
         return response;
@@ -72,5 +79,5 @@ module.exports = {
     selectFromCollectionAsync: selectFromCollectionAsync,
     insertOneInCollectionAsync: insertOneInCollectionAsync,
     deleteOneFromCollectionAsync: deleteOneFromCollectionAsync,
-    replaceOneFromCollectionAsync: replaceOneFromCollectionAsync
+    replaceOneFromCollectionAsync: replaceOneFromCollectionAsync,
 };

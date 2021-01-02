@@ -56,5 +56,5 @@ module.exports = {
     getUserUUID: getUserUUID,
     getUserSkinURL: getUserSkinURL,
     getOfficialName: getOfficialName,
-    getNethercoord: getNethercoord
+    getNethercoord: getNethercoord,
 };

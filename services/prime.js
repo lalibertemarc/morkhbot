@@ -73,8 +73,7 @@ function isNumberPrime(n) {
 }
 
 function isPrime(n) {
-    if (helperFunctions.isNumber(n))
-        return `${n} ${isNumberPrime(n) ? "is" : "is not"} prime.`;
+    if (helperFunctions.isNumber(n)) return `${n} ${isNumberPrime(n) ? "is" : "is not"} prime.`;
     else return `${n} is not a number.`;
 }
 

@@ -12,7 +12,13 @@ router.get("/send/:channelId/:message", (req, res) => {
     let channelId = req.params.channelId;
     let message = req.params.message;
     let channel = Bot.channels.find("id", channelId);
-    channel.send(helpers.botResponse("Morkh Bot is saying : ", message, "This is blood magic!"));
+    channel.send(
+        helpers.botResponse(
+            "Morkh Bot is saying : ",
+            message,
+            "This is blood magic!"
+        )
+    );
     res.send(`${message} was transmitted to the ${channel.name} channel`);
 });
 
