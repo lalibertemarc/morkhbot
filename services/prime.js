@@ -1,20 +1,19 @@
+const helperFunctions = require("./helperFunctions");
+
 function gcd(a, b) {
-    if (!Number.isInteger(a) || !Number.isInteger(b)) {
+    if (!helperFunctions.isNumber(a) || !helperFunctions.isNumber(b)) {
         return "Please enter integers.";
     }
     if (b == 0) {
-        return a;
+        return +a;
     } else {
-        return gcd(b, a % b);
+        return gcd(+b, +a % +b);
     }
 }
 
-function printAll(p) {
-    p.forEach((item) => console.log(item));
-}
 //find prime numbers between 1 and n
 function nPrime(n) {
-    if (!Number.isInteger(n)) {
+    if (!helperFunctions.isNumber(n)) {
         return "Please enter integers.";
     }
     var resultat = [1];
@@ -30,7 +29,7 @@ function nPrime(n) {
 
 //check if number is prime with array of primes
 function isPrimeArray(n, r) {
-    if (!Number.isInteger(n)) {
+    if (!helperFunctions.isNumber(n)) {
         return "Please enter integers.";
     }
     for (var j = 0; j < r.length; j++) {
@@ -42,7 +41,7 @@ function isPrimeArray(n, r) {
 }
 
 function primeRange(n, k) {
-    if (!Number.isInteger(n) || !Number.isInteger(k)) {
+    if (!helperFunctions.isNumber(n) || !helperFunctions.isNumber(k)) {
         return "Please enter integers.";
     }
     //inversion du range si jamais cest inverse a linput
@@ -52,8 +51,8 @@ function primeRange(n, k) {
         k = temp;
     }
     var resultat = [];
-    for (var i = n; i <= k; i++) {
-        if (isPrime(i)) {
+    for (var i = +n; i <= k; i++) {
+        if (isNumberPrime(i)) {
             resultat.push(i);
         }
     }
@@ -61,16 +60,21 @@ function primeRange(n, k) {
 }
 
 //mode semi-brute to be used by bot
-function isPrime(n) {
-    if (!Number.isInteger(n)) {
-        return "Please enter integers.";
-    }
-    for (var j = 1; j < n / 2; j++) {
-        if (gcd(n, j) != 1) {
-            return false;
+function isNumberPrime(n) {
+    if (n != 2 && n % 2 == 0) return false;
+    else {
+        for (var j = 1; j < n / 2; j++) {
+            if (gcd(n, j) != 1) {
+                return false;
+            }
         }
+        return true;
     }
-    return true;
+}
+
+function isPrime(n) {
+    if (helperFunctions.isNumber(n)) return `${n} ${isNumberPrime(n) ? "is" : "is not"} prime.`;
+    else return `${n} is not a number.`;
 }
 
 module.exports = {
@@ -78,4 +82,5 @@ module.exports = {
     nPrime: nPrime,
     gcd: gcd,
     primeRange: primeRange,
+    isNumberPrime: isNumberPrime,
 };
