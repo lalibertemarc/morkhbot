@@ -37,6 +37,8 @@ describe("isNumber", function () {
         it("should give expected value", function () {
             assert.strictEqual(helpers.isNumber(NaN), false);
             assert.strictEqual(helpers.isNumber("5asdasd"), false);
+            assert.strictEqual(helpers.isNumber(""), false);
+            assert.strictEqual(helpers.isNumber(" "), false);
             assert.strictEqual(helpers.isNumber(null), false);
         });
     });
