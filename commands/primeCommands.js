@@ -6,13 +6,7 @@ const isPrime = new Command(
     "!isPrime",
     "Is the given number a prime number? !isPrime <number>",
     function (message, args) {
-        let commandResponse = "";
-        let numberToCheck = args[0];
-        let bool = false;
-        if (helpers.isNumber(numberToCheck))
-            bool = primeService.isPrime(+numberToCheck);
-        else commandResponse = "Given argument is not a numerical.";
-        commandResponse = `${numberToCheck} ${bool ? "is" : "is not"} prime.`;
+        let commandResponse = primeService.isPrime(args[0]);
         helpers.commandResponse(message, this, commandResponse);
     }
 );
@@ -33,10 +27,7 @@ const gcd = new Command(
     "!gcd",
     "Gives the greater common diviser between the 2 given arguments. !gcd <number> <number>",
     function (message, args) {
-        var commandResponse = "";
-        if (helpers.isNumber(args[0]) || helpers.isNumber(args[1]))
-            commandResponse = primeService.gcd(+args[0], +args[1]);
-        else commandResponse = "One of the given arguments is not a numerical.";
+        let commandResponse = primeService.gcd(+args[0], +args[1]);
         helpers.commandResponse(message, this, commandResponse);
     }
 );
