@@ -7,7 +7,7 @@
     "scripts": {
         "prestart": "npm install",
         "start": "node server.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "mocha 'tests/**/*.js'"
     },
     "dependencies": {
         "@keyv/mongo": "^1.1.0",
@@ -19,6 +19,7 @@
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "keyv": "^4.0.0",
+        "mocha": "^8.2.1",
         "mongodb": "^3.5.2",
         "opusscript": "0.0.3",
         "pug": "^2.0.4",
