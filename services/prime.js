@@ -51,7 +51,7 @@ function primeRange(n, k) {
         k = temp;
     }
     var resultat = [];
-    for (var i = n; i <= k; i++) {
+    for (var i = +n; i <= k; i++) {
         if (isNumberPrime(i)) {
             resultat.push(i);
         }
