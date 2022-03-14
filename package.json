@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@keyv/mongo": "^1.1.0",
-        "axios": "^0.21.1",
+        "axios": "^0.21.2",
         "body-parser": "^1.18.3",
         "cumberbatch-name": "^1.2.1",
         "discord.io": "^2.5.2",
