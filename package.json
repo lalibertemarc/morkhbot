@@ -23,7 +23,7 @@
         "mongodb": "^3.5.2",
         "opusscript": "0.0.3",
         "pug": "^3.0.1",
-        "request": "^2.81.0",
+        "request": "^2.88.2",
         "thesaurus-com": "^1.1.3",
         "underscore": "^1.12.1"
     }
