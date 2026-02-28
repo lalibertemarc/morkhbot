@@ -7,7 +7,7 @@
     "scripts": {
         "prestart": "npm install",
         "start": "node server.js",
-        "test": "mocha 'tests/**/*.js'"
+        "test": "mocha tests/**/*.js"
     },
     "dependencies": {
         "axios": "^1.13.5",
@@ -17,10 +17,14 @@
         "dotenv": "^8.2.0",
         "express": "^4.21.2",
         "keyv": "^4.0.0",
-        "mocha": "^10.1.0",
+        "mocha": "^11.7.5",
         "mongodb": "^3.5.2",
-        "opusscript": "0.0.3",
+        "opusscript": "^0.0.6",
         "pug": "^3.0.1",
         "underscore": "^1.12.1"
+    },
+    "overrides": {
+        "serialize-javascript": "^7.0.3",
+        "diff": "^8.0.3"
     }
 }
